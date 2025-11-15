@@ -340,7 +340,26 @@ export const spectrumPicker = (testId) => {
      * @param {string} optionText - The text of the option to select
      */
     selectOption: async (optionText) => {
-      await page.getByTestId(testId).click();
+      const button = page.getByTestId(testId);
+      await button.click();
+
+      // Get the listbox that was opened by this picker
+      const buttonElement = button.element();
+      const listboxId = buttonElement.getAttribute("aria-controls");
+
+      if (listboxId) {
+        // Find option within the specific listbox
+        const listbox = document.getElementById(listboxId);
+        const option = Array.from(
+          listbox.querySelectorAll('[role="option"]'),
+        ).find((opt) => opt.textContent.trim() === optionText);
+        if (option) {
+          option.click();
+          return;
+        }
+      }
+
+      // Fallback to the original behavior if aria-controls is not present
       await page.getByRole("option", { name: optionText }).click();
     },
 
