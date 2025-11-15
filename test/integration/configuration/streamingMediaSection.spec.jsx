@@ -20,7 +20,7 @@ import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
 
-describe("Streaming media component", () => {
+describe("Config streaming media section", () => {
   beforeEach(() => {
     extensionBridge = createExtensionBridge();
     window.extensionBridge = extensionBridge;

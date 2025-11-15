@@ -21,7 +21,7 @@ import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
 
-describe("Consent component", () => {
+describe("Config consent section", () => {
   beforeEach(() => {
     extensionBridge = createExtensionBridge();
     window.extensionBridge = extensionBridge;

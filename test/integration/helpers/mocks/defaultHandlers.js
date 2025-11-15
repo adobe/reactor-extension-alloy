@@ -125,7 +125,7 @@ export const handlers = [
                 id: "0a106b4d-1937-4196-a64d-4a324e972459",
                 revision: 10,
                 createdAt: "2022-06-15T20:28:15Z",
-                createdBy: "waters@adobe.com",
+                createdBy: "exeg_config_service@AdobeID",
                 updatedAt: "2024-02-05T17:35:26Z",
                 updatedBy: "EE-Gateway-Flow@AdobeID",
               },
@@ -138,7 +138,7 @@ export const handlers = [
 
             {
               data: {
-                title: "analytics enabled ",
+                title: "analytics enabled",
                 enabled: true,
                 description: "testing activity map",
                 settings: {
@@ -183,7 +183,7 @@ export const handlers = [
 
             {
               data: {
-                title: "Analytics enabled",
+                title: "datastream enabled",
                 enabled: true,
                 description: "to test activity map",
                 settings: {
@@ -276,6 +276,130 @@ export const handlers = [
         _links: {
           self: {
             href: "/metadata/namespaces/edge/datasets/datastreams/records/2fdb3763-0507-42ea-8856-e91bf3b64faa",
+          },
+        },
+      });
+    },
+  ),
+
+  http.get(
+    "https://edge.adobe.io/metadata/namespaces/edge/datasets/datastreams/records/0a106b4d-1937-4196-a64d-4a324e972459",
+    async () => {
+      return HttpResponse.json({
+        data: {
+          title: "aep-edge-samples",
+          enabled: true,
+          settings: {
+            input: {},
+            geo_resolution: "none",
+            state: {
+              first_party_id: {
+                cookie: {
+                  enabled: false,
+                },
+              },
+            },
+            com_adobe_identity: {
+              idSyncEnabled: false,
+            },
+            access_type: "mixed",
+            com_adobe_target: {
+              enabled: true,
+              propertyToken: "abf13992-2ba6-fcc7-5d83-885501ed6883",
+            },
+            com_adobe_analytics: {
+              enabled: true,
+              reportSuites: ["ujslujslwaters"],
+            },
+            com_adobe_experience_platform: {
+              enabled: true,
+              datasets: {
+                event: [
+                  {
+                    datasetId: "5eb4502dd3903818a8d113f5",
+                    primary: true,
+                    xdmSchema:
+                      "https://ns.adobe.com/unifiedjslab/schemas/96bb756ec16fac4d53de2018b2571da61721c7bfc14a3ed6",
+                    flowId: "978715b4-972a-49bb-8eed-d90977451956",
+                  },
+                ],
+              },
+            },
+            com_adobe_experience_platform_ode: {
+              enabled: false,
+              containerId: "94b98c41-6ec1-34c4-8d60-011c0e376833",
+            },
+            com_adobe_experience_platform_edge_segmentation: {
+              enabled: true,
+            },
+            com_adobe_experience_platform_edge_destinations: {
+              enabled: true,
+            },
+            com_adobe_experience_platform_ajo: {
+              enabled: true,
+              containerId: "94b98c41-6ec1-34c4-8d60-011c0e376833",
+            },
+          },
+        },
+        orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg",
+        sandboxName: "prod",
+        _system: {
+          id: "0a106b4d-1937-4196-a64d-4a324e972459",
+          revision: 10,
+          createdAt: "2022-06-15T20:28:15Z",
+          createdBy: "waters@adobe.comexeg_config_service@AdobeID",
+          updatedAt: "2024-02-05T17:35:26Z",
+          updatedBy: "EE-Gateway-Flow@AdobeID",
+        },
+        _links: {
+          self: {
+            href: "/metadata/namespaces/edge/datasets/datastreams/records/0a106b4d-1937-4196-a64d-4a324e972459",
+          },
+        },
+      });
+    },
+  ),
+
+  http.get(
+    "https://edge.adobe.io/metadata/namespaces/edge/datasets/datastreams/records/77469821-5ead-4045-97b6-acfd889ded6b",
+    async () => {
+      return HttpResponse.json({
+        data: {
+          title: "datastream enabled",
+          enabled: true,
+          description: "to test activity map",
+          settings: {
+            input: {
+              schemaId:
+                "https://ns.adobe.com/unifiedjslab/schemas/96bb756ec16fac4d53de2018b2571da61721c7bfc14a3ed6",
+            },
+            geo_resolution: "none",
+            state: {
+              first_party_id: {
+                cookie: {
+                  enabled: false,
+                },
+              },
+            },
+            com_adobe_identity: {
+              idSyncEnabled: false,
+            },
+            access_type: "mixed",
+          },
+        },
+        orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg",
+        sandboxName: "prod",
+        _system: {
+          id: "77469821-5ead-4045-97b6-acfd889ded6b",
+          revision: 3,
+          createdAt: "2022-10-12T19:10:03Z",
+          createdBy: "nciocanu@adobe.com",
+          updatedAt: "2022-10-24T13:12:05Z",
+          updatedBy: "exeg_config_service@AdobeID",
+        },
+        _links: {
+          self: {
+            href: "/metadata/namespaces/edge/datasets/datastreams/records/77469821-5ead-4045-97b6-acfd889ded6b",
           },
         },
       });

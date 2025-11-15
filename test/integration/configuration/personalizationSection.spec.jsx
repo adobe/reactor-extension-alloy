@@ -22,7 +22,7 @@ import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
 
-describe("Personalization component", () => {
+describe("Config personalization section", () => {
   beforeEach(() => {
     extensionBridge = createExtensionBridge();
     window.extensionBridge = extensionBridge;

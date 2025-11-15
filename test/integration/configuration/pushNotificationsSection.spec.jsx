@@ -20,7 +20,7 @@ import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
 
-describe("Push notifications component", () => {
+describe("Config push notifications section", () => {
   beforeEach(() => {
     extensionBridge = createExtensionBridge();
     window.extensionBridge = extensionBridge;
