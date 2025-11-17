@@ -297,3 +297,195 @@ export const spectrumCheckbox = (testId) => {
     },
   };
 };
+
+/**
+ * Helper to interact with Spectrum Picker components
+ * @param {string} testId - The data-test-id attribute value
+ * @returns {Object} Helper methods for Picker interaction
+ */
+export const spectrumPicker = (testId) => {
+  /**
+   * Check if picker is in loading state
+   * @returns {boolean} True if picker is loading
+   */
+  const isLoading = () => {
+    // React Spectrum shows a progress circle when loading
+    // Look for the progressbar role within or near the picker button
+    const button = page.getByTestId(testId).element();
+
+    // First check if progressbar is inside the button
+    let progressCircle = button.querySelector('[role="progressbar"]');
+
+    // If not found, check if it's a sibling (in case of different structure)
+    if (!progressCircle && button.parentElement) {
+      progressCircle = button.parentElement.querySelector(
+        '[role="progressbar"]',
+      );
+    }
+
+    return progressCircle !== null;
+  };
+
+  return {
+    /**
+     * Open the picker dropdown
+     */
+    open: async () => {
+      const button = page.getByTestId(testId);
+      await button.click();
+    },
+
+    /**
+     * Select an option by its text
+     * @param {string} optionText - The text of the option to select
+     */
+    selectOption: async (optionText) => {
+      const button = page.getByTestId(testId);
+      await button.click();
+
+      // Get the listbox that was opened by this picker
+      const buttonElement = button.element();
+      const listboxId = buttonElement.getAttribute("aria-controls");
+
+      if (listboxId) {
+        // Find option within the specific listbox
+        const listbox = document.getElementById(listboxId);
+        const option = Array.from(
+          listbox.querySelectorAll('[role="option"]'),
+        ).find((opt) => opt.textContent.trim() === optionText);
+        if (option) {
+          option.click();
+          return;
+        }
+      }
+
+      // Fallback to the original behavior if aria-controls is not present
+      await page.getByRole("option", { name: optionText }).click();
+    },
+
+    /**
+     * Get the currently selected value text
+     * @returns {string|null} The selected option text or null if none selected
+     */
+    getSelectedText: async () => {
+      const button = page.getByTestId(testId).element();
+      const valueElement = button.querySelector("span");
+      return valueElement ? valueElement.textContent.trim() : null;
+    },
+
+    /**
+     * Check if the picker is open
+     * @returns {boolean} True if picker dropdown is open
+     */
+    isOpen: async () => {
+      const button = page.getByTestId(testId).element();
+      return button.getAttribute("aria-expanded") === "true";
+    },
+
+    /**
+     * Check if the picker is disabled
+     * @returns {boolean} True if picker is disabled
+     */
+    isDisabled: async () => {
+      const button = page.getByTestId(testId).element();
+      return button.disabled || button.getAttribute("aria-disabled") === "true";
+    },
+
+    /**
+     * Check if the picker has an error
+     * @returns {boolean} True if picker has error
+     */
+    hasError: async () => {
+      const button = page.getByTestId(testId).element();
+      return button.getAttribute("aria-invalid") === "true";
+    },
+
+    /**
+     * Get the error message if present
+     * @returns {string|null} The error message or null
+     */
+    getErrorMessage: async () => {
+      const button = page.getByTestId(testId).element();
+      const errorId = button.getAttribute("aria-describedby");
+      if (!errorId) return null;
+      const errorElement = document.getElementById(errorId);
+      return errorElement ? errorElement.textContent : null;
+    },
+
+    /**
+     * Check if a specific option is available in the dropdown
+     * @param {string} optionText - The text of the option to check
+     * @returns {boolean} True if option exists
+     */
+    hasOption: async (optionText) => {
+      await page.getByTestId(testId).click();
+      const option = page.getByRole("option", { name: optionText });
+      const exists = await option.query().then((el) => el !== null);
+      // Close the picker
+      await userEvent.keyboard("{Escape}");
+      return exists;
+    },
+
+    /**
+     * Get all available options in the picker
+     * @returns {string[]} Array of option texts
+     */
+    getOptions: async () => {
+      await page.getByTestId(testId).click();
+      const options = await page.getByRole("option").all();
+      const optionTexts = options.map((option) =>
+        option.element().textContent.trim(),
+      );
+      // Close the picker
+      await userEvent.keyboard("{Escape}");
+      return optionTexts;
+    },
+
+    /**
+     * Check if the picker is required
+     * @returns {boolean} True if picker is required
+     */
+    isRequired: async () => {
+      const button = page.getByTestId(testId).element();
+      return button.getAttribute("aria-required") === "true";
+    },
+
+    /**
+     * Get the placeholder text
+     * @returns {string|null} The placeholder text or null
+     */
+    getPlaceholder: async () => {
+      const button = page.getByTestId(testId).element();
+      const placeholderElement = button.querySelector(
+        '[data-placeholder="true"]',
+      );
+      return placeholderElement ? placeholderElement.textContent.trim() : null;
+    },
+
+    /**
+     * Check if picker is in loading state
+     * @returns {boolean} True if picker is loading
+     */
+    isLoading,
+
+    /**
+     * Wait for the picker to finish loading
+     */
+    waitForLoad: async () => {
+      while (isLoading()) {
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((resolve) => {
+          setTimeout(resolve, 50);
+        });
+      }
+    },
+
+    /**
+     * Get the raw button element
+     * @returns {HTMLElement} The button element
+     */
+    getElement: async () => {
+      return page.getByTestId(testId).element();
+    },
+  };
+};

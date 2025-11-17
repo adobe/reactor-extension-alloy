@@ -22,7 +22,7 @@ import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
 
-describe("Identity section", () => {
+describe("Config Identity section", () => {
   beforeEach(() => {
     extensionBridge = createExtensionBridge();
     window.extensionBridge = extensionBridge;
