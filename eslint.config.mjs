@@ -59,6 +59,7 @@ export default [
       },
     },
     rules: {
+      "no-restricted-syntax": "off",
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
       "no-param-reassign": "off",
