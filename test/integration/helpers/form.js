@@ -299,6 +299,87 @@ export const spectrumCheckbox = (testId) => {
 };
 
 /**
+ * Helper to interact with Spectrum Radio components
+ * @param {string} testId - The data-test-id attribute value
+ * @returns {Object} Helper methods for Radio interaction
+ */
+export const spectrumRadio = (testId) => {
+  return {
+    /**
+     * Click the radio button to select it
+     */
+    click: async () => {
+      await page.getByTestId(testId).click();
+    },
+
+    /**
+     * Select the radio button if it's not already selected
+     */
+    select: async () => {
+      const element = page.getByTestId(testId).element();
+      if (!element.checked) {
+        await page.getByTestId(testId).click();
+      }
+    },
+
+    /**
+     * Check if the radio button is selected
+     * @returns {boolean} True if radio button is selected
+     */
+    isSelected: async () => {
+      return page.getByTestId(testId).element().checked;
+    },
+
+    /**
+     * Check if the radio button has an error
+     * @returns {boolean} True if radio button has error
+     */
+    hasError: async () => {
+      return (
+        page.getByTestId(testId).element().getAttribute("aria-invalid") ===
+        "true"
+      );
+    },
+
+    /**
+     * Get the error message if present
+     * @returns {string|null} The error message or null
+     */
+    getErrorMessage: async () => {
+      const element = page.getByTestId(testId).element();
+      const errorId = element.getAttribute("aria-describedby");
+      if (!errorId) return null;
+      const errorElement = document.getElementById(errorId);
+      return errorElement ? errorElement.textContent : null;
+    },
+
+    /**
+     * Check if the radio button is disabled
+     * @returns {boolean} True if radio button is disabled
+     */
+    isDisabled: async () => {
+      return page.getByTestId(testId).element().disabled;
+    },
+
+    /**
+     * Get the value of the radio button
+     * @returns {string} The value attribute of the radio button
+     */
+    getValue: async () => {
+      return page.getByTestId(testId).element().value;
+    },
+
+    /**
+     * Get the raw input element
+     * @returns {HTMLElement} The input element
+     */
+    getElement: async () => {
+      return page.getByTestId(testId).element();
+    },
+  };
+};
+
+/**
  * Helper to interact with Spectrum Picker components
  * @param {string} testId - The data-test-id attribute value
  * @returns {Object} Helper methods for Picker interaction
