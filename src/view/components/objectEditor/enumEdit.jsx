@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2025 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,35 +11,48 @@ governing permissions and limitations under the License.
 */
 
 import PropTypes from "prop-types";
-import FormikTextField from "../formikReactSpectrum3/formikTextField";
+import { Item } from "@adobe/react-spectrum";
+import FormikKeyedComboBox from "../formikReactSpectrum3/formikKeyedComboBox";
 import DataElementSelector from "../dataElementSelector";
 
 /**
- * The form for editing a number or integer field.
+ * The form for editing a node that is a string type with an enum property.
  */
-const IntegerEdit = (props) => {
-  const { displayName, fieldName, nodeDescription } = props;
+const EnumEdit = (props) => {
+  const { displayName, fieldName, possibleValues, nodeDescription } = props;
 
   return (
     <div>
       <DataElementSelector clearable>
-        <FormikTextField
+        <FormikKeyedComboBox
           data-test-id="valueField"
-          name={`${fieldName}.value`}
           label={displayName}
+          name={`${fieldName}.value`}
           width="size-5000"
-          description="Data element should resolve to an integer."
+          items={possibleValues}
+          getKey={(item) => item.value}
+          getLabel={(item) => item.label}
+          allowsCustomValue
+          description="Type to search or select from the list. Data element should resolve to one of the listed values."
           contextualHelp={nodeDescription}
-        />
+        >
+          {(item) => (
+            <Item key={item.value} data-test-id={item.value}>
+              {item.label}
+            </Item>
+          )}
+        </FormikKeyedComboBox>
       </DataElementSelector>
     </div>
   );
 };
 
-IntegerEdit.propTypes = {
+EnumEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  possibleValues: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string))
+    .isRequired,
   nodeDescription: PropTypes.node,
 };
 
-export default IntegerEdit;
+export default EnumEdit;

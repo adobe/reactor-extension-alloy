@@ -31,7 +31,7 @@ const validate = ({
   if (!schema) {
     return {};
   }
-  const errors = getTypeSpecificHelpers(schema.type).validate({
+  const errors = getTypeSpecificHelpers(schema).validate({
     formStateNode,
     // By using "once", we ensure that the parent is notified that
     // data is populated at the current or descendant node at most
