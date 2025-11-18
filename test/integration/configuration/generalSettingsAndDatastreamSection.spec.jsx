@@ -604,20 +604,16 @@ describe("Config general settings and datastream section", () => {
         .toBeVisible();
     });
 
-    it("does not show alert when name matches persisted value", async () => {
+    it("does not show alert when name is changed on a new configuration", async () => {
       const view = await renderView(ConfigurationView);
 
-      extensionBridge.init(
-        buildSettings({
-          instances: [
-            {
-              name: "alloy",
-            },
-          ],
-        }),
-      );
+      extensionBridge.init({ settings: null });
 
       await waitForConfigurationViewToLoad(view);
+
+      // Change the name
+      const nameField = spectrumTextField("nameField");
+      await nameField.fill("newName");
 
       // Alert should not be present
       await expect
