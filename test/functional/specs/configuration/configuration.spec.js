@@ -45,43 +45,6 @@ const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
-test("shows error for duplicate edge configuration ID", async () => {
-  await extensionViewController.init();
-  await instances[0].edgeConfig.inputMethodFreeformRadio.click();
-  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123",
-  );
-  await addInstanceButton.click();
-  await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123",
-  );
-  // We'll select the first instance before we validate to test that
-  // validation selects the invalid instance (in this case, the second one)
-  // Even though both tab labels are "alloy", this will select the first one.
-  await instancesTabs.selectTab("alloy");
-  await extensionViewController.expectIsNotValid();
-  await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectError();
-});
-
-test("shows error for empty download link qualifier", async () => {
-  await extensionViewController.init();
-  // Click on the field before clearing to get rid of the "..."
-  await instances[0].downloadLinkQualifierField.click();
-  await instances[0].downloadLinkQualifierField.clear();
-  await extensionViewController.expectIsNotValid();
-  await instances[0].downloadLinkQualifierField.expectError();
-});
-
-test("shows error for invalid download link qualifier", async () => {
-  await extensionViewController.init();
-  // Click on the field before clearing to get rid of the "..."
-  await instances[0].downloadLinkQualifierField.click();
-  await instances[0].downloadLinkQualifierField.clear();
-  await instances[0].downloadLinkQualifierField.typeText("[");
-  await extensionViewController.expectIsNotValid();
-  await instances[0].downloadLinkQualifierField.expectError();
-});
-
 test("shows error for invalid third party cookies enabled value", async () => {
   await extensionViewController.init();
   await instances[0].thirdPartyCookiesEnabled.clear();

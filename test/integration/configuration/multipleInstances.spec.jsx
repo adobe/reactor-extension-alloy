@@ -107,6 +107,49 @@ describe("Config Multiple Instances", () => {
     );
   });
 
+  it("prevents creating two instances with the same edge config id", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(
+      buildSettings({
+        instances: [
+          {
+            name: "alloy",
+            edgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+            sandbox: "prod",
+          },
+          {
+            name: "alloy2",
+            orgId: "x@AdobeOrg",
+            edgeConfigId: "3fdb3763-0507-42ea-8856-e91bf3b64fbb",
+            sandbox: "prod",
+          },
+        ],
+      }),
+    );
+
+    await waitForConfigurationViewToLoad(view);
+
+    expect(await extensionBridge.validate()).toBe(true);
+
+    const secondTab = tabs("alloy").nth(1);
+    await expect.element(secondTab.element()).toBeVisible();
+    await secondTab.click();
+
+    expect(await extensionBridge.validate()).toBe(true);
+
+    const edgeConfigField = spectrumTextField("productionEnvironmentTextfield");
+    await edgeConfigField.fill("2fdb3763-0507-42ea-8856-e91bf3b64faa");
+
+    expect(await extensionBridge.validate()).toBe(false);
+
+    expect(await edgeConfigField.hasError()).toBe(true);
+    const errorMessage = await edgeConfigField.getErrorMessage();
+    expect(errorMessage).toBe(
+      "Please provide a value unique from those used for other instances.",
+    );
+  });
+
   it("allows creating two instances with different names and different org ids", async () => {
     const view = await renderView(ConfigurationView);
 
