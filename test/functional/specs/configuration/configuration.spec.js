@@ -45,40 +45,6 @@ const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
-test("shows error for duplicate name", async () => {
-  await extensionViewController.init();
-  await instances[0].edgeConfig.inputMethodFreeformRadio.click();
-  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123",
-  );
-  await addInstanceButton.click();
-  await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR456",
-  );
-  // We'll select the first instance before we validate to test that
-  // validation selects the invalid instance (in this case, the second one)
-  // Even though both tab labels are "alloy", this will select the first one.
-  await instancesTabs.selectTab("alloy");
-  await extensionViewController.expectIsNotValid();
-  await instances[1].nameField.expectError();
-});
-
-test("shows error for name that matches key on window", async () => {
-  await extensionViewController.init();
-  await instances[0].nameField.clear();
-  await instances[0].nameField.typeText("addEventListener");
-  await extensionViewController.expectIsNotValid();
-  await instances[0].nameField.expectError();
-});
-
-test("shows error for numeric name", async () => {
-  await extensionViewController.init();
-  await instances[0].nameField.clear();
-  await instances[0].nameField.typeText("123");
-  await extensionViewController.expectIsNotValid();
-  await instances[0].nameField.expectError();
-});
-
 test("shows error for duplicate edge configuration ID", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
@@ -95,24 +61,6 @@ test("shows error for duplicate edge configuration ID", async () => {
   await instancesTabs.selectTab("alloy");
   await extensionViewController.expectIsNotValid();
   await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectError();
-});
-
-test("shows error for duplicate IMS org ID", async () => {
-  await extensionViewController.init();
-  await instances[0].edgeConfig.inputMethodFreeformRadio.click();
-  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123",
-  );
-  await addInstanceButton.click();
-  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR456",
-  );
-  // We'll select the first instance before we validate to test that
-  // validation selects the invalid instance (in this case, the second one)
-  // Even though both tab labels are "alloy", this will select the first one.
-  await instancesTabs.selectTab("alloy");
-  await extensionViewController.expectIsNotValid();
-  await instances[1].orgIdField.expectError();
 });
 
 test("shows error for empty download link qualifier", async () => {

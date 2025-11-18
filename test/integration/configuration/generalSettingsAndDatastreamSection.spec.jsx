@@ -425,6 +425,26 @@ describe("Config general settings and datastream section", () => {
       expect(await extensionBridge.validate()).toBe(false);
     });
 
+    it("validates that name cannot be property existing on window object", async () => {
+      const view = await renderView(ConfigurationView);
+
+      extensionBridge.init(buildSettings());
+
+      await waitForConfigurationViewToLoad(view);
+
+      expect(await extensionBridge.validate()).toBe(true);
+
+      const nameField = spectrumTextField("nameField");
+      await nameField.fill("addEventListener");
+
+      expect(await nameField.hasError()).toBe(true);
+      expect(await nameField.getErrorMessage()).toBe(
+        "Please provide a name that does not conflict with a property already found on the window object.",
+      );
+
+      expect(await extensionBridge.validate()).toBe(false);
+    });
+
     it("validates that production datastream is required in freeform mode", async () => {
       const view = await renderView(ConfigurationView);
 

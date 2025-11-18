@@ -33,6 +33,11 @@ export default () => {
         this,
         args,
       );
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
       return validationResult;
     },
 

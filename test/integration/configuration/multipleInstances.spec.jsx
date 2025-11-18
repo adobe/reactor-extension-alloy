@@ -1,0 +1,147 @@
+/*
+Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+import { describe, it, beforeEach, afterEach, expect } from "vitest";
+// eslint-disable-next-line import/no-unresolved
+import { page } from "vitest/browser";
+import renderView from "../helpers/renderView";
+import createExtensionBridge from "../helpers/createExtensionBridge";
+import ConfigurationView from "../../../src/view/configuration/configurationView";
+import { waitForConfigurationViewToLoad } from "../helpers/ui";
+import { buildSettings } from "../helpers/settingsUtils";
+import { tabs, spectrumTextField } from "../helpers/form";
+
+let extensionBridge;
+
+describe("Config Multiple Instances", () => {
+  beforeEach(() => {
+    extensionBridge = createExtensionBridge();
+    window.extensionBridge = extensionBridge;
+  });
+
+  afterEach(() => {
+    delete window.extensionBridge;
+  });
+
+  it("prevents creating two instances with the same name", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(
+      buildSettings({
+        instances: [
+          {
+            name: "alloy",
+            edgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+            sandbox: "prod",
+          },
+        ],
+      }),
+    );
+
+    await waitForConfigurationViewToLoad(view);
+
+    expect(await extensionBridge.validate()).toBe(true);
+
+    const addInstanceButton = page.getByTestId("addInstanceButton");
+    await addInstanceButton.click();
+
+    const secondTab = tabs("alloy").nth(1);
+    await expect.element(secondTab.element()).toBeVisible();
+    await secondTab.click();
+
+    expect(await extensionBridge.validate()).toBe(false);
+
+    const nameField = spectrumTextField("nameField");
+    expect(await nameField.hasError()).toBe(true);
+    const errorMessage = await nameField.getErrorMessage();
+    expect(errorMessage).toBe(
+      "Please provide a name unique from those used for other instances.",
+    );
+  });
+
+  it("prevents creating two instances with the org name", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(
+      buildSettings({
+        instances: [
+          {
+            name: "alloy",
+            edgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+            sandbox: "prod",
+          },
+        ],
+      }),
+    );
+
+    await waitForConfigurationViewToLoad(view);
+
+    expect(await extensionBridge.validate()).toBe(true);
+
+    const addInstanceButton = page.getByTestId("addInstanceButton");
+    await addInstanceButton.click();
+
+    const secondTab = tabs("alloy").nth(1);
+    await expect.element(secondTab.element()).toBeVisible();
+    await secondTab.click();
+
+    const nameField = spectrumTextField("nameField");
+    await nameField.fill("alloy2");
+
+    expect(await extensionBridge.validate()).toBe(false);
+
+    const orgIdField = spectrumTextField("orgIdField");
+    expect(await orgIdField.hasError()).toBe(true);
+    const errorMessage = await orgIdField.getErrorMessage();
+    expect(errorMessage).toBe(
+      "Please provide an IMS Organization ID unique from those used for other instances.",
+    );
+  });
+
+  it("allows creating two instances with different names and different org ids", async () => {
+    const view = await renderView(ConfigurationView);
+
+    // Start with two instances that have different names, different orgIds, and valid configs
+    extensionBridge.init({
+      settings: {
+        components: {
+          eventMerge: false,
+        },
+        instances: [
+          {
+            name: "alloy",
+            edgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+            sandbox: "prod",
+            orgId: "ORG1@AdobeOrg",
+          },
+          {
+            name: "alloy2",
+            edgeConfigId: "3fdb3763-0507-42ea-8856-e91bf3b64fbb",
+            sandbox: "prod",
+            orgId: "ORG2@AdobeOrg",
+          },
+        ],
+      },
+    });
+
+    await waitForConfigurationViewToLoad(view);
+
+    expect(await extensionBridge.validate()).toBe(true);
+
+    const settings = await extensionBridge.getSettings();
+    expect(settings.instances).toHaveLength(2);
+    expect(settings.instances[0].name).toBe("alloy");
+    expect(settings.instances[0].orgId).toBe("ORG1@AdobeOrg");
+    expect(settings.instances[1].name).toBe("alloy2");
+    expect(settings.instances[1].orgId).toBe("ORG2@AdobeOrg");
+  });
+});
