@@ -45,53 +45,9 @@ const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
-test("shows error for invalid third party cookies enabled value", async () => {
-  await extensionViewController.init();
-  await instances[0].thirdPartyCookiesEnabled.clear();
-  await instances[0].thirdPartyCookiesEnabled.enterSearch("foo");
-  await extensionViewController.expectIsNotValid();
-  await instances[0].thirdPartyCookiesEnabled.expectError();
-
-  await instances[0].thirdPartyCookiesEnabled.clear();
-  await instances[0].thirdPartyCookiesEnabled.enterSearch("%foo%%bar%");
-  await extensionViewController.expectIsNotValid();
-  await instances[0].thirdPartyCookiesEnabled.expectError();
-
-  await instances[0].thirdPartyCookiesEnabled.clear();
-  await instances[0].thirdPartyCookiesEnabled.enterSearch("%foo%");
-  await extensionViewController.expectIsNotValid();
-  await instances[0].thirdPartyCookiesEnabled.expectNoError();
-});
-
-test("restores default IMS org ID value when restore button is clicked", async () => {
-  await extensionViewController.init();
-  await instances[0].orgIdField.typeText("foo");
-  await instances[0].orgIdRestoreButton.click();
-  await instances[0].orgIdField.expectValue(
-    "5BFE274A5F6980A50A495C08@AdobeOrg",
-  );
-});
-
-test("restores default edge domain value when restore button is clicked", async () => {
-  await extensionViewController.init();
-  await instances[0].edgeDomainField.typeText("foo");
-  await instances[0].edgeDomainRestoreButton.click();
-  await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
-});
-
 test("sets default edge domain to edge.adobedc.net when no tenant ID is provided", async () => {
   await extensionViewController.init();
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
-});
-
-test("sets default edge domain to tenant-specific domain when tenant ID is provided", async () => {
-  await extensionViewController.init({
-    company: {
-      orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
-      tenantId: "mytenant",
-    },
-  });
-  await instances[0].edgeDomainField.expectValue("mytenant.data.adobedc.net");
 });
 
 test("restores default edge base path value when restore button is clicked", async () => {

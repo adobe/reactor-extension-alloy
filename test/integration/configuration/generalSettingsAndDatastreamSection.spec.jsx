@@ -346,6 +346,25 @@ describe("Config general settings and datastream section", () => {
     });
   });
 
+  it("sets default edge domain to tenant-specific domain when tenant ID is provided", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init({
+      company: {
+        orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+        tenantId: "mytenant",
+      },
+      ...buildSettings(),
+    });
+
+    await waitForConfigurationViewToLoad(view);
+
+    expect(await extensionBridge.validate()).toBe(true);
+
+    const edgeDomainField = page.getByTestId("edgeDomainField");
+    expect(edgeDomainField.element().value).toBe("mytenant.data.adobedc.net");
+  });
+
   describe("validation", () => {
     it("validates that name is required", async () => {
       const view = await renderView(ConfigurationView);
