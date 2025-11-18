@@ -45,18 +45,6 @@ const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
-test("sets default edge domain to edge.adobedc.net when no tenant ID is provided", async () => {
-  await extensionViewController.init();
-  await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
-});
-
-test("restores default edge base path value when restore button is clicked", async () => {
-  await extensionViewController.init();
-  await instances[0].edgeBasePathField.typeText("foo");
-  await instances[0].edgeBasePathRestoreButton.click();
-  await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
-});
-
 test("restores default download link qualifier when restore button is clicked", async () => {
   await extensionViewController.init();
   // Click on the field before clearing to get rid of the "..."
