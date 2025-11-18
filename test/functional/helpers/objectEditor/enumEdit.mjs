@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2025 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,31 +13,23 @@ governing permissions and limitations under the License.
 import spectrum from "../spectrum.mjs";
 
 /**
- * Provides methods for managing form fields when editing a boolean node.
+ * Provides methods for managing form fields when editing an enum node.
  */
 export default {
-  selectConstantTrueValueField: async () => {
+  selectEnumValue: async (label) => {
     const valueField = spectrum.comboBox("valueField");
     await valueField.openMenu();
-    await valueField.selectMenuOption("True");
+    await valueField.selectMenuOption(label);
   },
-  selectConstantFalseValueField: async () => {
-    const valueField = spectrum.comboBox("valueField");
-    await valueField.openMenu();
-    await valueField.selectMenuOption("False");
+  expectEnumValue: async (value) => {
+    await spectrum.comboBox("valueField").expectValue(value);
   },
-  expectConstantTrueValue: async () => {
-    await spectrum.comboBox("valueField").expectValue("true");
-  },
-  expectConstantFalseValue: async () => {
-    await spectrum.comboBox("valueField").expectValue("false");
-  },
-  enterDataElementValue: async (text) => {
+  enterCustomValue: async (text) => {
     const valueField = spectrum.comboBox("valueField");
     await valueField.clear();
     await valueField.enterSearch(text);
   },
-  expectDataElementValue: async (value) => {
+  expectValue: async (value) => {
     await spectrum.comboBox("valueField").expectValue(value);
   },
 };

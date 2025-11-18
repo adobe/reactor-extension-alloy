@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import PropTypes from "prop-types";
 import Data from "@spectrum-icons/workflow/Data";
 import { ActionButton, Flex } from "@adobe/react-spectrum";
+import ClearButton from "./clearButton";
 
 const RawDataElementSelector = ({
   children,
@@ -22,6 +23,7 @@ const RawDataElementSelector = ({
   adjustForLabel,
   isDisabled,
   tokenize = true,
+  clearable = false,
 }) => {
   // We have to vertically nudge down the data element selector
   // button if the field has a label so the button aligns
@@ -52,6 +54,13 @@ const RawDataElementSelector = ({
       >
         <Data />
       </ActionButton>
+      {clearable && (
+        <ClearButton
+          value={value}
+          setValue={onChange}
+          marginTop={adjustForLabel ? "size-300" : 0}
+        />
+      )}
     </Flex>
   );
 };
@@ -69,6 +78,7 @@ RawDataElementSelector.propTypes = {
   adjustForLabel: PropTypes.bool,
   tokenize: PropTypes.bool,
   isDisabled: PropTypes.bool,
+  clearable: PropTypes.bool,
 };
 
 export default RawDataElementSelector;

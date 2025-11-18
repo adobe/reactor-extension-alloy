@@ -22,7 +22,12 @@ import FormElementContainer from "../formElementContainer";
 /**
  * The form for editing a node that is an object type.
  */
-const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
+const ObjectEdit = ({
+  displayName,
+  fieldName,
+  verticalLayout = false,
+  nodeDescription,
+}) => {
   const [{ value: formStateNode }] = useField(fieldName);
 
   const { isPartsPopulationStrategySupported, populationStrategy } =
@@ -32,9 +37,10 @@ const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
     <FormElementContainer>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
-          label="Population strategy"
+          label={displayName}
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
+          contextualHelp={nodeDescription}
         >
           <Radio data-test-id="partsPopulationStrategyField" value={PARTS}>
             Provide individual attributes
@@ -45,13 +51,16 @@ const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
         </FormikRadioGroup>
       )}
       {populationStrategy === WHOLE ? (
-        <DataElementSelector>
+        <DataElementSelector clearable>
           <FormikTextField
             data-test-id="valueField"
             name={`${fieldName}.value`}
-            label="Data element"
+            label={isPartsPopulationStrategySupported ? "" : displayName}
             description="This data element should resolve to an object."
             width="size-5000"
+            contextualHelp={
+              isPartsPopulationStrategySupported ? undefined : nodeDescription
+            }
           />
         </DataElementSelector>
       ) : (
@@ -65,8 +74,10 @@ const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
 };
 
 ObjectEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   verticalLayout: PropTypes.bool,
+  nodeDescription: PropTypes.node,
 };
 
 export default ObjectEdit;
