@@ -82,7 +82,8 @@ export const bridge = {
       orgId: string().required("Please specify an IMS organization ID."),
       edgeDomain: string().required("Please specify an edge domain."),
     })
-    .test("uniqueName", (instance, testContext) => {
+    // eslint-disable-next-line func-names
+    .test("uniqueName", function (instance, testContext) {
       const { path: instancePath, parent: instances } = testContext;
       return validateDuplicateValue({
         createError: this.createError,
@@ -94,7 +95,8 @@ export const bridge = {
           "Please provide a name unique from those used for other instances.",
       });
     })
-    .test("uniqueOrgId", (instance, testContext) => {
+    // eslint-disable-next-line func-names
+    .test("uniqueOrgId", function (instance, testContext) {
       const { path: instancePath, parent: instances } = testContext;
       return validateDuplicateValue({
         createError: this.createError,
