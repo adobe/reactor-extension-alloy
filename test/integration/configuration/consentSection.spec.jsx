@@ -11,8 +11,8 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
-// eslint-disable-next-line import/no-unresolved
-import { page } from "vitest/browser";
+
+import { spectrumRadio, spectrumTextField } from "../helpers/form";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
@@ -47,8 +47,8 @@ describe("Config consent section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const outRadio = page.getByTestId("defaultConsentOutRadio");
-    expect(outRadio.element().checked).toBe(true);
+    const outRadio = spectrumRadio("defaultConsentOutRadio");
+    expect(await outRadio.isSelected()).toBe(true);
   });
 
   it("updates form values and saves to settings", async () => {
@@ -59,8 +59,8 @@ describe("Config consent section", () => {
     await waitForConfigurationViewToLoad(view);
 
     // Change to "pending"
-    const pendingRadio = page.getByTestId("defaultConsentPendingRadio");
-    await pendingRadio.click();
+    const pendingRadio = spectrumRadio("defaultConsentPendingRadio");
+    await pendingRadio.select();
 
     // Get settings and verify
     const settings = await extensionBridge.getSettings();
@@ -118,8 +118,8 @@ describe("Config consent section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const inRadio = page.getByTestId("defaultConsentInRadio");
-    expect(inRadio.element().checked).toBe(true);
+    const inRadio = spectrumRadio("defaultConsentInRadio");
+    expect(await inRadio.isSelected()).toBe(true);
   });
 
   it("does not save default value 'in' to settings", async () => {
@@ -132,5 +132,76 @@ describe("Config consent section", () => {
     // Default should be "in" but not saved
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].defaultConsent).toBeUndefined();
+  });
+
+  describe("validation", () => {
+    it("accepts data element in default consent field", async () => {
+      const view = await renderView(ConfigurationView);
+
+      extensionBridge.init(buildSettings());
+
+      await waitForConfigurationViewToLoad(view);
+      expect(await extensionBridge.validate()).toBe(true);
+
+      const dataElementRadio = spectrumRadio("defaultConsentDataElementRadio");
+      await dataElementRadio.select();
+
+      // Verify the data element field shows the correct value
+      const dataElementField = spectrumTextField(
+        "defaultConsentDataElementField",
+      );
+      await dataElementField.fill("%consentDataElement%");
+
+      expect(await extensionBridge.validate()).toBe(true);
+    });
+
+    it("validates data element format in default consent field", async () => {
+      const view = await renderView(ConfigurationView);
+
+      extensionBridge.init(buildSettings());
+
+      await waitForConfigurationViewToLoad(view);
+      expect(await extensionBridge.validate()).toBe(true);
+
+      const dataElementRadio = spectrumRadio("defaultConsentDataElementRadio");
+      await dataElementRadio.click();
+
+      const dataElementField = spectrumTextField(
+        "defaultConsentDataElementField",
+      );
+      await dataElementField.fill("%consentDataElement");
+
+      expect(await extensionBridge.validate()).toBe(false);
+
+      expect(await dataElementField.hasError()).toBe(true);
+
+      // Check the error message
+      const errorMessage = await dataElementField.getErrorMessage();
+      expect(errorMessage).toBe("Please specify a data element.");
+    });
+
+    it("shows error when value is missing in default consent field", async () => {
+      const view = await renderView(ConfigurationView);
+
+      extensionBridge.init(buildSettings());
+
+      await waitForConfigurationViewToLoad(view);
+      expect(await extensionBridge.validate()).toBe(true);
+
+      const dataElementRadio = spectrumRadio("defaultConsentDataElementRadio");
+      await dataElementRadio.click();
+
+      expect(await extensionBridge.validate()).toBe(false);
+
+      const dataElementField = spectrumTextField(
+        "defaultConsentDataElementField",
+      );
+      await dataElementField.clear();
+      expect(await dataElementField.hasError()).toBe(true);
+
+      // Check the error message
+      const errorMessage = await dataElementField.getErrorMessage();
+      expect(errorMessage).toBe("Please specify a data element.");
+    });
   });
 });

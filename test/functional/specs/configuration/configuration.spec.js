@@ -115,34 +115,6 @@ test("shows error for duplicate IMS org ID", async () => {
   await instances[1].orgIdField.expectError();
 });
 
-test("shows error for bad default consent data element", async () => {
-  await extensionViewController.init();
-
-  // This test would sometimes fail seemingly because when TestCafe would go to click
-  // the data element radio button, the edge configuration combobox would go from
-  // being hidden to shown, which would move the data element radio button down,
-  // which apparently made the radio button click ineffective.
-  // This seems more like a bug in TestCafe, but we're working around it by waiting
-  // for the combo box to be present before trying to click the data element
-  // radio button.
-  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectExists();
-  await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectExists();
-
-  await instances[0].defaultConsent.dataElementRadio.click();
-  await instances[0].defaultConsent.dataElementField.typeText(
-    "notadataelement",
-  );
-  await extensionViewController.expectIsNotValid();
-  await instances[0].defaultConsent.dataElementField.expectError();
-});
-
-test("shows error for empty default consent data element", async () => {
-  await extensionViewController.init();
-  await instances[0].defaultConsent.dataElementRadio.click();
-  await extensionViewController.expectIsNotValid();
-  await instances[0].defaultConsent.dataElementField.expectError();
-});
-
 test("shows error for empty download link qualifier", async () => {
   await extensionViewController.init();
   // Click on the field before clearing to get rid of the "..."
