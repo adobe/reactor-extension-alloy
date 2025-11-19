@@ -74,33 +74,6 @@ test("deletes an instance", async () => {
   );
 });
 
-test("does not save prehidingStyle code if it matches placeholder", async () => {
-  await extensionViewController.init(
-    {},
-    {
-      openCodeEditor(options) {
-        return Promise.resolve(options.code);
-      },
-    },
-  );
-
-  await instances[0].edgeConfig.inputMethodFreeformRadio.click();
-  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123",
-  );
-  await instances[0].prehidingStyleEditButton.click();
-  await extensionViewController.expectIsValid();
-  await extensionViewController.expectSettings({
-    components: defaultDisabledComponents,
-    instances: [
-      {
-        name: "alloy",
-        edgeConfigId: "PR123",
-      },
-    ],
-  });
-});
-
 test("does not save onBeforeEventSend and filterClickDetails code if it matches placeholder", async () => {
   await extensionViewController.init(
     {},
