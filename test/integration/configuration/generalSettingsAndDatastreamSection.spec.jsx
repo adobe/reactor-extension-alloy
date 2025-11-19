@@ -17,7 +17,11 @@ import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad } from "../helpers/ui";
-import { spectrumPicker, spectrumTextField } from "../helpers/form";
+import {
+  spectrumPicker,
+  spectrumRadio,
+  spectrumTextField,
+} from "../helpers/form";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
@@ -543,9 +547,7 @@ describe("Config general settings and datastream section", () => {
       await edgeDomainField.fill("%myEdgeDomain%");
 
       // Switch to freeform and fill datastream fields with data elements
-      const freeformRadio = page.getByTestId(
-        "edgeConfigInputMethodFreeformRadio",
-      );
+      const freeformRadio = spectrumRadio("edgeConfigInputMethodFreeformRadio");
       await freeformRadio.click();
 
       const productionField = spectrumTextField(
