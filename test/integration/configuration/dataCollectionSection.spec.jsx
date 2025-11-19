@@ -627,6 +627,106 @@ describe("Config data collection section", () => {
     expect(settings.instances[0].clickCollectionEnabled).toBe(false);
   });
 
+  it("sets download link qualifier when test button is clicked", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(buildSettings());
+
+    await waitForConfigurationViewToLoad(view);
+
+    const downloadLinkQualifierTestButton = page.getByTestId(
+      "downloadLinkQualifierTestButton",
+    );
+    await downloadLinkQualifierTestButton.click();
+
+    const downloadLinkQualifierField = spectrumTextField(
+      "downloadLinkQualifierField",
+    );
+    expect(await downloadLinkQualifierField.getValue()).toMatch(
+      /edited regex/i,
+    );
+  });
+
+  it("does not save onBeforeEventSend code if it matches placeholder", async () => {
+    const testExtensionBridge = createExtensionBridge({
+      openCodeEditor: ({ code }) => {
+        return code;
+      },
+    });
+    window.extensionBridge = testExtensionBridge;
+
+    const view = await renderView(ConfigurationView);
+
+    testExtensionBridge.init(buildSettings());
+
+    await waitForConfigurationViewToLoad(view);
+
+    const onBeforeEventSendEditButton = page.getByTestId(
+      "onBeforeEventSendEditButton",
+    );
+    await onBeforeEventSendEditButton.click();
+
+    const settings = await testExtensionBridge.getSettings();
+    expect(settings.instances[0].onBeforeEventSend).toBeUndefined();
+  });
+
+  it("does not save filterClickDetails code if it matches placeholder", async () => {
+    const testExtensionBridge = createExtensionBridge({
+      openCodeEditor: ({ code }) => {
+        return code;
+      },
+    });
+    window.extensionBridge = testExtensionBridge;
+
+    const view = await renderView(ConfigurationView);
+
+    testExtensionBridge.init(buildSettings());
+
+    await waitForConfigurationViewToLoad(view);
+
+    const filterClickDetailsEditButton = page.getByTestId(
+      "filterClickDetailsEditButton",
+    );
+    await filterClickDetailsEditButton.click();
+
+    const settings = await testExtensionBridge.getSettings();
+    expect(
+      settings.instances[0].clickCollection?.filterClickDetails,
+    ).toBeUndefined();
+  });
+
+  describe("restore default buttons", () => {
+    it("restores default download link qualifier when button is clicked", async () => {
+      const view = await renderView(ConfigurationView);
+
+      extensionBridge.init(buildSettings());
+
+      await waitForConfigurationViewToLoad(view);
+
+      // First, change the orgId
+      const downloadLinkQualifierField = spectrumTextField(
+        "downloadLinkQualifierField",
+      );
+      const originalDownloadLinkQualifier =
+        await downloadLinkQualifierField.getValue();
+      await downloadLinkQualifierField.fill("\\.(exe|zip)$");
+
+      // Verify it changed
+      expect(await downloadLinkQualifierField.getValue()).toBe("\\.(exe|zip)$");
+
+      const restoreButton = page.getByTestId(
+        "downloadLinkQualifierRestoreButton",
+      );
+      // Click restore button - click in a different position area to avoid margin issues.
+      // When running in headless mode, clicking at center of the button sometimes misses.
+      await restoreButton.click({ position: { x: 10, y: 10 } });
+
+      expect(await downloadLinkQualifierField.getValue()).toBe(
+        originalDownloadLinkQualifier,
+      );
+    });
+  });
+
   describe("validation", () => {
     it("validates download link qualifier regex format", async () => {
       const view = await renderView(ConfigurationView);

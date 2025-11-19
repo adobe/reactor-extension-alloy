@@ -22,6 +22,246 @@ export const clickAccordion = async (name) => {
 };
 
 /**
+ * Helper to interact with Spectrum ComboBox components
+ * @param {string} testId - The data-test-id attribute value
+ * @returns {Object} Helper methods for ComboBox interaction
+ */
+export const spectrumComboBox = (testId) => {
+  /**
+   * Check if combobox is in loading state
+   * @returns {boolean} True if combobox is loading
+   */
+  const isLoading = () => {
+    // React Spectrum shows a progress circle when loading
+    // Look for the progressbar role within or near the combobox button
+    const button = page.getByTestId(testId).element();
+
+    // First check if progressbar is inside the button
+    let progressCircle = button.querySelector('[role="progressbar"]');
+
+    // If not found, check if it's a sibling (in case of different structure)
+    if (!progressCircle && button.parentElement) {
+      progressCircle = button.parentElement.querySelector(
+        '[role="progressbar"]',
+      );
+    }
+
+    return progressCircle !== null;
+  };
+
+  return {
+    /**
+     * Open the combobox dropdown
+     */
+    open: async () => {
+      const button = page.getByTestId(testId);
+      await button.click();
+    },
+
+    /**
+     * Type text into the combobox input
+     * @param {string} text - Text to type
+     */
+    type: async (text) => {
+      const input = page.getByTestId(testId);
+      await input.type(text);
+    },
+
+    /**
+     * Clear the combobox and type new text
+     * @param {string} text - Text to type
+     */
+    fill: async (text) => {
+      const input = page.getByTestId(testId);
+      await input.clear();
+      await input.fill(text);
+      // Tab away to trigger blur and ensure all handlers complete
+      await userEvent.keyboard("{Tab}");
+    },
+
+    /**
+     * Clear the combobox
+     */
+    clear: async () => {
+      const input = page.getByTestId(testId);
+      await input.clear();
+    },
+
+    /**
+     * Get the current value of the combobox
+     * @returns {string} The current value
+     */
+    getValue: async () => {
+      return page.getByTestId(testId).element().value;
+    },
+
+    /**
+     * Select an option by its text (opens dropdown and clicks option)
+     * @param {string} optionText - The text of the option to select
+     */
+    selectOption: async (optionText) => {
+      const input = page.getByTestId(testId);
+
+      // Click the input to open the dropdown and focus it
+      await input.click();
+
+      // Type to filter options (this is how ComboBox works - you type to filter)
+      await input.fill(optionText);
+
+      // Wait a bit for the listbox to appear and filter
+      await new Promise((resolve) => {
+        setTimeout(resolve, 200);
+      });
+
+      // Now find and click the matching option
+      // First try exact match
+      const options = await page.getByRole("option").all();
+      for (const option of options) {
+        const element = option.element();
+        const text = element.textContent?.trim() || "";
+        // Try exact match first (case-insensitive)
+        if (text.toLowerCase() === optionText.toLowerCase()) {
+          // eslint-disable-next-line no-await-in-loop
+          await option.click();
+          return;
+        }
+      }
+
+      // If no exact match, try partial match
+      for (const option of options) {
+        const element = option.element();
+        const text = element.textContent?.trim() || "";
+        if (text.toLowerCase().includes(optionText.toLowerCase())) {
+          // eslint-disable-next-line no-await-in-loop
+          await option.click();
+          return;
+        }
+      }
+
+      // If still not found, throw error
+      throw new Error(
+        `Could not find option with text "${optionText}". Available options: ${options.map((o) => o.element().textContent?.trim()).join(", ")}`,
+      );
+    },
+
+    /**
+     * Check if the combobox is open
+     * @returns {boolean} True if combobox dropdown is open
+     */
+    isOpen: async () => {
+      const button = page.getByTestId(testId).element();
+      return button.getAttribute("aria-expanded") === "true";
+    },
+
+    /**
+     * Check if the combobox is disabled
+     * @returns {boolean} True if combobox is disabled
+     */
+    isDisabled: async () => {
+      const input = page.getByTestId(testId).element();
+      return input.disabled || input.getAttribute("aria-disabled") === "true";
+    },
+
+    /**
+     * Check if the combobox has an error
+     * @returns {boolean} True if combobox has error
+     */
+    hasError: async () => {
+      const input = page.getByTestId(testId).element();
+      return input.getAttribute("aria-invalid") === "true";
+    },
+
+    /**
+     * Get the error message if present
+     * @returns {string|null} The error message or null
+     */
+    getErrorMessage: async () => {
+      const input = page.getByTestId(testId).element();
+      const errorId = input.getAttribute("aria-describedby");
+      if (!errorId) return null;
+      const errorElement = document.getElementById(errorId);
+      return errorElement ? errorElement.textContent : null;
+    },
+
+    /**
+     * Check if a specific option is available in the dropdown
+     * @param {string} optionText - The text of the option to check
+     * @returns {boolean} True if option exists
+     */
+    hasOption: async (optionText) => {
+      await page.getByTestId(testId).click();
+      const option = page.getByRole("option", { name: optionText });
+      const exists = await option.query().then((el) => el !== null);
+      // Close the combobox
+      await userEvent.keyboard("{Escape}");
+      return exists;
+    },
+
+    /**
+     * Get all available options in the combobox
+     * @returns {string[]} Array of option texts
+     */
+    getOptions: async () => {
+      await page.getByTestId(testId).click();
+      const options = await page.getByRole("option").all();
+      const optionTexts = options.map((option) =>
+        option.element().textContent.trim(),
+      );
+      // Close the combobox
+      await userEvent.keyboard("{Escape}");
+      return optionTexts;
+    },
+
+    /**
+     * Check if the combobox is required
+     * @returns {boolean} True if combobox is required
+     */
+    isRequired: async () => {
+      const input = page.getByTestId(testId).element();
+      return input.getAttribute("aria-required") === "true";
+    },
+
+    /**
+     * Get the placeholder text
+     * @returns {string|null} The placeholder text or null
+     */
+    getPlaceholder: async () => {
+      const button = page.getByTestId(testId).element();
+      const placeholderElement = button.querySelector(
+        '[data-placeholder="true"]',
+      );
+      return placeholderElement ? placeholderElement.textContent.trim() : null;
+    },
+
+    /**
+     * Check if combobox is in loading state
+     * @returns {boolean} True if combobox is loading
+     */
+    isLoading,
+
+    /**
+     * Wait for the combobox to finish loading
+     */
+    waitForLoad: async () => {
+      while (isLoading()) {
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((resolve) => {
+          setTimeout(resolve, 50);
+        });
+      }
+    },
+
+    /**
+     * Get the raw input element
+     * @returns {HTMLElement} The input element
+     */
+    getElement: async () => {
+      return page.getByTestId(testId).element();
+    },
+  };
+};
+
+/**
  * Helper to interact with Spectrum TextField components
  * @param {string} testId - The data-test-id attribute value
  * @returns {Object} Helper methods for TextField interaction
@@ -91,6 +331,15 @@ export const spectrumTextField = (testId) => {
      */
     isDisabled: async () => {
       return page.getByTestId(testId).element().disabled;
+    },
+
+    /**
+     * Check if the text field is required
+     * @returns {boolean} True if field is required
+     */
+    isRequired: async () => {
+      const input = page.getByTestId(testId).element();
+      return input.getAttribute("aria-required") === "true";
     },
 
     /**
@@ -567,6 +816,68 @@ export const spectrumPicker = (testId) => {
      */
     getElement: async () => {
       return page.getByTestId(testId).element();
+    },
+  };
+};
+
+/**
+ * Helper to interact with tabs
+ * @param {string|number} selector - Tab name (string) or tab index (number)
+ * @returns {Object} Helper methods for tab interaction
+ */
+export const tabs = (selector) => {
+  /**
+   * Get the tab element
+   * @returns {Promise<Element>} The tab element
+   */
+  const getTab = async () => {
+    if (typeof selector === "number") {
+      // Select by index
+      const allTabs = page.getByRole("tab");
+      return allTabs.nth(selector);
+    }
+    // Select by name
+    return page.getByRole("tab", { name: selector });
+  };
+
+  return {
+    /**
+     * Click on the tab
+     */
+    click: async () => {
+      const tab = await getTab();
+      await tab.click();
+    },
+
+    /**
+     * Get the nth occurrence of a tab with the same name
+     * @param {number} index - The index of the tab (0-based)
+     * @returns {Object} Tab helper for the specific occurrence
+     */
+    nth: (index) => {
+      if (typeof selector !== "string") {
+        throw new Error("nth() can only be used with string selectors");
+      }
+      const tabsByName = page.getByRole("tab", { name: selector });
+      const specificTab = tabsByName.nth(index);
+
+      return {
+        click: async () => {
+          await specificTab.click();
+        },
+        element: () => {
+          return specificTab;
+        },
+      };
+    },
+
+    /**
+     * Get the tab element for expect assertions
+     * @returns {Promise<Element>}
+     */
+    element: async () => {
+      const tab = await getTab();
+      return tab;
     },
   };
 };
