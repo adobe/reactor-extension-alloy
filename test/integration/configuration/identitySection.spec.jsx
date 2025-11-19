@@ -146,23 +146,16 @@ describe("Config Identity section", () => {
     it("validates data element format in third-party cookies field", async () => {
       const view = await renderView(ConfigurationView);
 
-      extensionBridge.init(
-        buildSettings({
-          instances: [
-            {
-              name: "alloy",
-              thirdPartyCookiesEnabled: "invalid%dataElement",
-            },
-          ],
-        }),
-      );
+      extensionBridge.init(buildSettings());
 
       await waitForConfigurationViewToLoad(view);
-      expect(await extensionBridge.validate()).toBe(false);
 
       const thirdPartyCookiesCombo = spectrumComboBox(
         "thirdPartyCookiesEnabledField",
       );
+      await thirdPartyCookiesCombo.fill("invalid%DataElement");
+
+      expect(await extensionBridge.validate()).toBe(false);
 
       expect(await thirdPartyCookiesCombo.hasError()).toBe(true);
       const errorMessage = await thirdPartyCookiesCombo.getErrorMessage();
