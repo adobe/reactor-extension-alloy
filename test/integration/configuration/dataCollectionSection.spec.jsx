@@ -646,11 +646,12 @@ describe("Config data collection section", () => {
       // Verify it changed
       expect(await downloadLinkQualifierField.getValue()).toBe("\\.(exe|zip)$");
 
-      // Click restore button
       const restoreButton = page.getByTestId(
         "downloadLinkQualifierRestoreButton",
       );
-      await restoreButton.click();
+      // Click restore button - click in a different position area to avoid margin issues.
+      // When running in headless mode, clicking at center of the button sometimes misses.
+      await restoreButton.click({ position: { x: 10, y: 10 } });
 
       expect(await downloadLinkQualifierField.getValue()).toBe(
         originalDownloadLinkQualifier,
