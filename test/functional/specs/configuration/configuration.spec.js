@@ -15,8 +15,6 @@ import extensionViewController from "../../helpers/extensionViewController.mjs";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
 import {
   addInstanceButton,
-  instancesTabs,
-  resourceUsageDialog,
   instances,
   components,
 } from "../../helpers/viewSelectors.mjs";
@@ -44,35 +42,6 @@ const defaultEdgeDomain = "edge.adobedc.net";
 const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
-
-test("deletes an instance", async () => {
-  await extensionViewController.init();
-  await instances[0].edgeConfig.inputMethodFreeformRadio.click();
-  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123",
-  );
-  await instances[0].deleteButton.expectNotExists();
-  await addInstanceButton.click();
-  await instances[1].deleteButton.expectExists();
-  // Make tab label unique
-  await instances[1].nameField.typeText("2");
-  await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR456",
-  );
-  await instancesTabs.selectTab("alloy");
-  await instances[0].deleteButton.click();
-  // Ensure that clicking cancel doesn't delete anything.
-  await resourceUsageDialog.cancelDeleteInstanceButton.click();
-  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
-    "PR123",
-  );
-  // Alright, delete for real.
-  await instances[0].deleteButton.click();
-  await resourceUsageDialog.confirmDeleteInstanceButton.click();
-  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
-    "PR456",
-  );
-});
 
 test("does not save onBeforeEventSend and filterClickDetails code if it matches placeholder", async () => {
   await extensionViewController.init(

@@ -187,4 +187,76 @@ describe("Config Multiple Instances", () => {
     expect(settings.instances[1].name).toBe("alloy2");
     expect(settings.instances[1].orgId).toBe("ORG2@AdobeOrg");
   });
+
+  it("allows deleting an instance", async () => {
+    const view = await renderView(ConfigurationView);
+
+    // Start with two instances
+    extensionBridge.init({
+      settings: {
+        components: {
+          eventMerge: false,
+        },
+        instances: [
+          {
+            name: "alloy",
+            edgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+            sandbox: "prod",
+            orgId: "ORG1@AdobeOrg",
+          },
+          {
+            name: "alloy2",
+            edgeConfigId: "3fdb3763-0507-42ea-8856-e91bf3b64fbb",
+            sandbox: "prod",
+            orgId: "ORG2@AdobeOrg",
+          },
+        ],
+      },
+    });
+
+    await waitForConfigurationViewToLoad(view);
+
+    expect(await extensionBridge.validate()).toBe(true);
+
+    const firstTab = tabs("alloy").nth(0);
+    await firstTab.click();
+
+    const deleteButton = page.getByTestId("deleteInstanceButton");
+    await expect.element(deleteButton.element()).toBeVisible();
+
+    // Click the delete button on the first instance
+    await deleteButton.click();
+
+    // Verify the confirmation dialog appears
+    const cancelButton = page.getByTestId("cancelDeleteInstanceButton");
+    const confirmButton = page.getByTestId("confirmDeleteInstanceButton");
+    await expect.element(cancelButton.element()).toBeVisible();
+    await expect.element(confirmButton.element()).toBeVisible();
+
+    // First, test canceling the deletion
+    await cancelButton.click();
+
+    // Verify we still have two instances after canceling
+    let settings = await extensionBridge.getSettings();
+    expect(settings.instances).toHaveLength(2);
+    expect(settings.instances[0].name).toBe("alloy");
+    expect(settings.instances[0].orgId).toBe("ORG1@AdobeOrg");
+    expect(settings.instances[1].name).toBe("alloy2");
+    expect(settings.instances[1].orgId).toBe("ORG2@AdobeOrg");
+
+    // Now delete for real - click delete button again
+    await deleteButton.click();
+
+    // Confirm the deletion
+    await confirmButton.click();
+
+    // Verify we now have only one instance (the second one, "alloy2")
+    settings = await extensionBridge.getSettings();
+    expect(settings.instances).toHaveLength(1);
+    expect(settings.instances[0].name).toBe("alloy2");
+    expect(settings.instances[0].orgId).toBe("ORG2@AdobeOrg");
+
+    // Verify the form is still valid
+    expect(await extensionBridge.validate()).toBe(true);
+  });
 });
