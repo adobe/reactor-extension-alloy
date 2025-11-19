@@ -819,3 +819,65 @@ export const spectrumPicker = (testId) => {
     },
   };
 };
+
+/**
+ * Helper to interact with tabs
+ * @param {string|number} selector - Tab name (string) or tab index (number)
+ * @returns {Object} Helper methods for tab interaction
+ */
+export const tabs = (selector) => {
+  /**
+   * Get the tab element
+   * @returns {Promise<Element>} The tab element
+   */
+  const getTab = async () => {
+    if (typeof selector === "number") {
+      // Select by index
+      const allTabs = page.getByRole("tab");
+      return allTabs.nth(selector);
+    }
+    // Select by name
+    return page.getByRole("tab", { name: selector });
+  };
+
+  return {
+    /**
+     * Click on the tab
+     */
+    click: async () => {
+      const tab = await getTab();
+      await tab.click();
+    },
+
+    /**
+     * Get the nth occurrence of a tab with the same name
+     * @param {number} index - The index of the tab (0-based)
+     * @returns {Object} Tab helper for the specific occurrence
+     */
+    nth: (index) => {
+      if (typeof selector !== "string") {
+        throw new Error("nth() can only be used with string selectors");
+      }
+      const tabsByName = page.getByRole("tab", { name: selector });
+      const specificTab = tabsByName.nth(index);
+
+      return {
+        click: async () => {
+          await specificTab.click();
+        },
+        element: () => {
+          return specificTab;
+        },
+      };
+    },
+
+    /**
+     * Get the tab element for expect assertions
+     * @returns {Promise<Element>}
+     */
+    element: async () => {
+      const tab = await getTab();
+      return tab;
+    },
+  };
+};

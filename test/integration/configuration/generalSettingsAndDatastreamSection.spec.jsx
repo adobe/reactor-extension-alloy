@@ -17,7 +17,11 @@ import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad } from "../helpers/ui";
-import { spectrumPicker, spectrumTextField } from "../helpers/form";
+import {
+  spectrumPicker,
+  spectrumRadio,
+  spectrumTextField,
+} from "../helpers/form";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
@@ -346,6 +350,25 @@ describe("Config general settings and datastream section", () => {
     });
   });
 
+  it("sets default edge domain to tenant-specific domain when tenant ID is provided", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init({
+      company: {
+        orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+        tenantId: "mytenant",
+      },
+      ...buildSettings(),
+    });
+
+    await waitForConfigurationViewToLoad(view);
+
+    expect(await extensionBridge.validate()).toBe(true);
+
+    const edgeDomainField = page.getByTestId("edgeDomainField");
+    expect(edgeDomainField.element().value).toBe("mytenant.data.adobedc.net");
+  });
+
   describe("validation", () => {
     it("validates that name is required", async () => {
       const view = await renderView(ConfigurationView);
@@ -420,6 +443,26 @@ describe("Config general settings and datastream section", () => {
       expect(await nameField.hasError()).toBe(true);
       expect(await nameField.getErrorMessage()).toBe(
         "Please provide a non-numeric name.",
+      );
+
+      expect(await extensionBridge.validate()).toBe(false);
+    });
+
+    it("validates that name cannot be property existing on window object", async () => {
+      const view = await renderView(ConfigurationView);
+
+      extensionBridge.init(buildSettings());
+
+      await waitForConfigurationViewToLoad(view);
+
+      expect(await extensionBridge.validate()).toBe(true);
+
+      const nameField = spectrumTextField("nameField");
+      await nameField.fill("addEventListener");
+
+      expect(await nameField.hasError()).toBe(true);
+      expect(await nameField.getErrorMessage()).toBe(
+        "Please provide a name that does not conflict with a property already found on the window object.",
       );
 
       expect(await extensionBridge.validate()).toBe(false);
@@ -504,9 +547,7 @@ describe("Config general settings and datastream section", () => {
       await edgeDomainField.fill("%myEdgeDomain%");
 
       // Switch to freeform and fill datastream fields with data elements
-      const freeformRadio = page.getByTestId(
-        "edgeConfigInputMethodFreeformRadio",
-      );
+      const freeformRadio = spectrumRadio("edgeConfigInputMethodFreeformRadio");
       await freeformRadio.click();
 
       const productionField = spectrumTextField(
@@ -604,20 +645,16 @@ describe("Config general settings and datastream section", () => {
         .toBeVisible();
     });
 
-    it("does not show alert when name matches persisted value", async () => {
+    it("does not show alert when name is changed on a new configuration", async () => {
       const view = await renderView(ConfigurationView);
 
-      extensionBridge.init(
-        buildSettings({
-          instances: [
-            {
-              name: "alloy",
-            },
-          ],
-        }),
-      );
+      extensionBridge.init({ settings: null });
 
       await waitForConfigurationViewToLoad(view);
+
+      // Change the name
+      const nameField = spectrumTextField("nameField");
+      await nameField.fill("newName");
 
       // Alert should not be present
       await expect

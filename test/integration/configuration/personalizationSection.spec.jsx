@@ -275,4 +275,30 @@ describe("Config personalization section", () => {
       settings.instances[0].autoCollectPropositionInteractions?.AJO,
     ).toBeUndefined();
   });
+
+  it("does not save prehidingStyle code if it matches placeholder", async () => {
+    const testExtensionBridge = createExtensionBridge({
+      openCodeEditor: ({ code }) => {
+        return code;
+      },
+    });
+    window.extensionBridge = testExtensionBridge;
+
+    const view = await renderView(ConfigurationView);
+
+    testExtensionBridge.init(
+      buildSettings({
+        components: {
+          personalization: true,
+        },
+      }),
+    );
+
+    await waitForConfigurationViewToLoad(view);
+    await page.getByTestId("prehidingStyleEditButton").click();
+
+    const settings = await testExtensionBridge.getSettings();
+
+    expect(settings.instances[0].prehidingStyle).toBeUndefined();
+  });
 });

@@ -9,7 +9,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-export default () => {
+export default ({ openCodeEditor } = {}) => {
   let registeredOptions;
 
   return {
@@ -33,6 +33,11 @@ export default () => {
         this,
         args,
       );
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
       return validationResult;
     },
 
@@ -41,10 +46,16 @@ export default () => {
     },
 
     openCodeEditor({ code }) {
+      if (openCodeEditor) {
+        return openCodeEditor({ code });
+      }
+
       return Promise.resolve(`${code} + modified code`);
     },
 
-    openRegexTester() {},
+    openRegexTester() {
+      return `Edited Regex ${Math.round(Math.random() * 10000)}`;
+    },
 
     openDataElementSelector({ tokenize }) {
       return Promise.resolve(
