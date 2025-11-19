@@ -49,7 +49,9 @@ export default () => {
       return Promise.resolve(`${code} + modified code`);
     },
 
-    openRegexTester() {},
+    openRegexTester() {
+      return `Edited Regex ${Math.round(Math.random() * 10000)}`;
+    },
 
     openDataElementSelector({ tokenize }) {
       return Promise.resolve(

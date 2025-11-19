@@ -627,6 +627,26 @@ describe("Config data collection section", () => {
     expect(settings.instances[0].clickCollectionEnabled).toBe(false);
   });
 
+  it("sets download link qualifier when test button is clicked", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(buildSettings());
+
+    await waitForConfigurationViewToLoad(view);
+
+    const downloadLinkQualifierTestButton = page.getByTestId(
+      "downloadLinkQualifierTestButton",
+    );
+    await downloadLinkQualifierTestButton.click();
+
+    const downloadLinkQualifierField = spectrumTextField(
+      "downloadLinkQualifierField",
+    );
+    expect(await downloadLinkQualifierField.getValue()).toMatch(
+      /edited regex/i,
+    );
+  });
+
   describe("restore default buttons", () => {
     it("restores default download link qualifier when button is clicked", async () => {
       const view = await renderView(ConfigurationView);

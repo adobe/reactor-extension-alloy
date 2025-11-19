@@ -45,24 +45,6 @@ const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
-test("restores default download link qualifier when restore button is clicked", async () => {
-  await extensionViewController.init();
-  // Click on the field before clearing to get rid of the "..."
-  await instances[0].downloadLinkQualifierField.click();
-  await instances[0].downloadLinkQualifierField.typeText(".");
-  await instances[0].downloadLinkQualifierRestoreButton.click();
-  await instances[0].downloadLinkQualifierField.expectValue(
-    defaultDownloadLinkQualifier,
-  );
-});
-
-test("sets download link qualifier when test button is clicked", async () => {
-  await extensionViewController.init();
-  await instances[0].downloadLinkQualifierTestButton.click();
-  // openRegexTester returns Edited Regex ### in the sandbox environment
-  await instances[0].downloadLinkQualifierField.expectMatch(/^Edited Regex/);
-});
-
 test("deletes an instance", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
