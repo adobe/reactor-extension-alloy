@@ -43,34 +43,6 @@ const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
-test("does not save onBeforeEventSend and filterClickDetails code if it matches placeholder", async () => {
-  await extensionViewController.init(
-    {},
-    {
-      openCodeEditor(options) {
-        return Promise.resolve(options.code);
-      },
-    },
-  );
-
-  await instances[0].edgeConfig.inputMethodFreeformRadio.click();
-  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123",
-  );
-  await instances[0].onBeforeEventSendEditButton.click();
-  await instances[0].filterClickDetailsEditButton.click();
-  await extensionViewController.expectIsValid();
-  await extensionViewController.expectSettings({
-    components: defaultDisabledComponents,
-    instances: [
-      {
-        name: "alloy",
-        edgeConfigId: "PR123",
-      },
-    ],
-  });
-});
-
 test.requestHooks(
   sandboxesMocks.singleWithoutDefault,
   datastreamsMocks.multiple,

@@ -647,6 +647,54 @@ describe("Config data collection section", () => {
     );
   });
 
+  it("does not save onBeforeEventSend code if it matches placeholder", async () => {
+    const testExtensionBridge = createExtensionBridge({
+      openCodeEditor: ({ code }) => {
+        return code;
+      },
+    });
+    window.extensionBridge = testExtensionBridge;
+
+    const view = await renderView(ConfigurationView);
+
+    testExtensionBridge.init(buildSettings());
+
+    await waitForConfigurationViewToLoad(view);
+
+    const onBeforeEventSendEditButton = page.getByTestId(
+      "onBeforeEventSendEditButton",
+    );
+    await onBeforeEventSendEditButton.click();
+
+    const settings = await testExtensionBridge.getSettings();
+    expect(settings.instances[0].onBeforeEventSend).toBeUndefined();
+  });
+
+  it("does not save filterClickDetails code if it matches placeholder", async () => {
+    const testExtensionBridge = createExtensionBridge({
+      openCodeEditor: ({ code }) => {
+        return code;
+      },
+    });
+    window.extensionBridge = testExtensionBridge;
+
+    const view = await renderView(ConfigurationView);
+
+    testExtensionBridge.init(buildSettings());
+
+    await waitForConfigurationViewToLoad(view);
+
+    const filterClickDetailsEditButton = page.getByTestId(
+      "filterClickDetailsEditButton",
+    );
+    await filterClickDetailsEditButton.click();
+
+    const settings = await testExtensionBridge.getSettings();
+    expect(
+      settings.instances[0].clickCollection?.filterClickDetails,
+    ).toBeUndefined();
+  });
+
   describe("restore default buttons", () => {
     it("restores default download link qualifier when button is clicked", async () => {
       const view = await renderView(ConfigurationView);
