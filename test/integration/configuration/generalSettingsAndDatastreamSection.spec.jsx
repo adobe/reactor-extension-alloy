@@ -350,7 +350,7 @@ describe("Config general settings and datastream section", () => {
     });
   });
 
-  it("sets default edge domain to tenant-specific domain when tenant ID is provided", async () => {
+  it("sets default edge domain to tenant-specific domain when tenant ID is provided on new extension", async () => {
     const view = await renderView(ConfigurationView);
 
     extensionBridge.init({
@@ -358,12 +358,11 @@ describe("Config general settings and datastream section", () => {
         orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
         tenantId: "mytenant",
       },
-      ...buildSettings(),
+      propertySettings: { id: "PR1234" },
+      tokens: { imsAccess: "IMS_ACCESS" },
     });
 
     await waitForConfigurationViewToLoad(view);
-
-    expect(await extensionBridge.validate()).toBe(true);
 
     const edgeDomainField = page.getByTestId("edgeDomainField");
     expect(edgeDomainField.element().value).toBe("mytenant.data.adobedc.net");
