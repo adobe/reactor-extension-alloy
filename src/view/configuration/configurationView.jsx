@@ -17,7 +17,7 @@ import {
   Button,
   ButtonGroup,
   Content,
-  DialogTrigger,
+  DialogContainer,
   Dialog,
   Flex,
   Heading as HeadingSlot,
@@ -165,6 +165,8 @@ const validationSchema = object().shape({
 const InstancesSection = ({ initInfo, context }) => {
   const [{ value: instances }] = useField("instances");
   const [selectedTabKey, setSelectedTabKey] = useState("0");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [instanceToDelete, setInstanceToDelete] = useState(null);
 
   useNewlyValidatedFormSubmission((errors) => {
     // If the user just tried to save the configuration and there's
@@ -267,53 +269,18 @@ const InstancesSection = ({ initInfo, context }) => {
                         />
                         {instances.length > 1 && (
                           <View marginTop="size-300">
-                            <DialogTrigger>
-                              <Button
-                                data-test-id="deleteInstanceButton"
-                                icon={<DeleteIcon />}
-                                variant="secondary"
-                                disabled={instances.length === 1}
-                              >
-                                Delete instance
-                              </Button>
-                              {(close) => (
-                                <Dialog data-test-id="resourceUsageDialog">
-                                  <HeadingSlot>Resource Usage</HeadingSlot>
-                                  <Divider />
-                                  <Content>
-                                    <Text>
-                                      Any rule components or data elements using
-                                      this instance will no longer function as
-                                      expected when running on your website. We
-                                      recommend removing these resources or
-                                      switching them to use a different instance
-                                      before publishing your next library. Would
-                                      you like to proceed?
-                                    </Text>
-                                  </Content>
-                                  <ButtonGroup>
-                                    <Button
-                                      data-test-id="cancelDeleteInstanceButton"
-                                      variant="secondary"
-                                      onPress={close}
-                                    >
-                                      Cancel
-                                    </Button>
-                                    <Button
-                                      data-test-id="confirmDeleteInstanceButton"
-                                      variant="cta"
-                                      onPress={() => {
-                                        arrayHelpers.remove(index);
-                                        setSelectedTabKey(String(index));
-                                      }}
-                                      autoFocus
-                                    >
-                                      Delete
-                                    </Button>
-                                  </ButtonGroup>
-                                </Dialog>
-                              )}
-                            </DialogTrigger>
+                            <Button
+                              data-test-id="deleteInstanceButton"
+                              icon={<DeleteIcon />}
+                              variant="secondary"
+                              disabled={instances.length === 1}
+                              onPress={() => {
+                                setInstanceToDelete(index);
+                                setDeleteDialogOpen(true);
+                              }}
+                            >
+                              Delete instance
+                            </Button>
                           </View>
                         )}
                       </Item>
@@ -321,6 +288,57 @@ const InstancesSection = ({ initInfo, context }) => {
                   })}
                 </TabPanels>
               </Tabs>
+              <DialogContainer
+                onDismiss={() => {
+                  setDeleteDialogOpen(false);
+                  setInstanceToDelete(null);
+                }}
+              >
+                {deleteDialogOpen && (
+                  <Dialog data-test-id="resourceUsageDialog">
+                    <HeadingSlot>Resource Usage</HeadingSlot>
+                    <Divider />
+                    <Content>
+                      <Text>
+                        Any rule components or data elements using this instance
+                        will no longer function as expected when running on your
+                        website. We recommend removing these resources or
+                        switching them to use a different instance before
+                        publishing your next library. Would you like to proceed?
+                      </Text>
+                    </Content>
+                    <ButtonGroup>
+                      <Button
+                        data-test-id="cancelDeleteInstanceButton"
+                        variant="secondary"
+                        onPress={() => {
+                          setDeleteDialogOpen(false);
+                          setInstanceToDelete(null);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        data-test-id="confirmDeleteInstanceButton"
+                        variant="cta"
+                        onPress={() => {
+                          arrayHelpers.remove(instanceToDelete);
+                          setSelectedTabKey(
+                            String(
+                              instanceToDelete > 0 ? instanceToDelete - 1 : 0,
+                            ),
+                          );
+                          setDeleteDialogOpen(false);
+                          setInstanceToDelete(null);
+                        }}
+                        autoFocus
+                      >
+                        Delete
+                      </Button>
+                    </ButtonGroup>
+                  </Dialog>
+                )}
+              </DialogContainer>
             </div>
           );
         }}
