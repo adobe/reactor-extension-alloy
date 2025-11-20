@@ -53,6 +53,10 @@ export default defineProject({
             locators: {
               testIdAttribute: "data-test-id",
             },
+            viewport: {
+              width: 1000,
+              height: 1000,
+            },
           },
           setupFiles: ["test/integration/helpers/setup.js"],
         },
