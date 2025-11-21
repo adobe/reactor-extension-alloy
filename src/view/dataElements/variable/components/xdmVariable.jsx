@@ -232,9 +232,18 @@ const XdmVariable = ({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Create a schema first,
-          </Link>{" "}
-          or choose an existing one below.
+            Create a schema
+          </Link>
+          {" ("}
+          <Link
+            href="https://experience.adobe.com/#/data-collection/platform/workflow/ml-schema-create"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            with ML assistance
+          </Link>
+          {") "}
+          first, or choose an existing one below.
         </Content>
         {(missingSavedSandbox || missingSavedSchema) && (
           <InlineAlert
