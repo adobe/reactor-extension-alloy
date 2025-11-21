@@ -60,32 +60,30 @@ describe("Config general settings and datastream section", () => {
     await waitForConfigurationViewToLoad(view);
 
     // Verify basic fields
-    const nameField = page.getByTestId("nameField");
-    expect(nameField.element().value).toBe("alloy");
+    const nameField = spectrumTextField("nameField");
+    expect(await nameField.getValue()).toBe("alloy");
 
-    const orgIdField = page.getByTestId("orgIdField");
-    expect(orgIdField.element().value).toBe("123456@AdobeOrg");
+    const orgIdField = spectrumTextField("orgIdField");
+    expect(await orgIdField.getValue()).toBe("123456@AdobeOrg");
 
-    const edgeDomainField = page.getByTestId("edgeDomainField");
-    expect(edgeDomainField.element().value).toBe("custom.example.com");
+    const edgeDomainField = spectrumTextField("edgeDomainField");
+    expect(await edgeDomainField.getValue()).toBe("custom.example.com");
 
     // Verify freeform input method is selected
-    const freeformRadio = page.getByTestId(
-      "edgeConfigInputMethodFreeformRadio",
-    );
-    expect(freeformRadio.element().checked).toBe(true);
+    const freeformRadio = spectrumRadio("edgeConfigInputMethodFreeformRadio");
+    expect(await freeformRadio.isSelected()).toBe(true);
 
     // Verify datastream fields
-    const productionField = page.getByTestId("productionEnvironmentTextfield");
-    expect(productionField.element().value).toBe("prod-datastream-id");
+    const productionField = spectrumTextField("productionEnvironmentTextfield");
+    expect(await productionField.getValue()).toBe("prod-datastream-id");
 
-    const stagingField = page.getByTestId("stagingEnvironmentTextfield");
-    expect(stagingField.element().value).toBe("staging-datastream-id");
+    const stagingField = spectrumTextField("stagingEnvironmentTextfield");
+    expect(await stagingField.getValue()).toBe("staging-datastream-id");
 
-    const developmentField = page.getByTestId(
+    const developmentField = spectrumTextField(
       "developmentEnvironmentTextfield",
     );
-    expect(developmentField.element().value).toBe("dev-datastream-id");
+    expect(await developmentField.getValue()).toBe("dev-datastream-id");
   });
 
   it("sets list form values from settings", async () => {
@@ -143,9 +141,7 @@ describe("Config general settings and datastream section", () => {
     await edgeDomainField.fill("firstparty.example.com");
 
     // Switch to freeform input method for datastreams
-    const freeformRadio = page.getByTestId(
-      "edgeConfigInputMethodFreeformRadio",
-    );
+    const freeformRadio = spectrumRadio("edgeConfigInputMethodFreeformRadio");
     await freeformRadio.click();
 
     // Update datastream fields
@@ -220,14 +216,14 @@ describe("Config general settings and datastream section", () => {
     await waitForConfigurationViewToLoad(view);
 
     // Verify basic field defaults
-    const nameField = page.getByTestId("nameField");
-    expect(nameField.element().value).toBe("alloy");
+    const nameField = spectrumTextField("nameField");
+    expect(await nameField.getValue()).toBe("alloy");
 
-    const orgIdField = page.getByTestId("orgIdField");
-    expect(orgIdField.element().value).toBe("1234@AdobeOrg");
+    const orgIdField = spectrumTextField("orgIdField");
+    expect(await orgIdField.getValue()).toBe("1234@AdobeOrg");
 
-    const edgeDomainField = page.getByTestId("edgeDomainField");
-    expect(edgeDomainField.element().value).toBe("edge.adobedc.net");
+    const edgeDomainField = spectrumTextField("edgeDomainField");
+    expect(await edgeDomainField.getValue()).toBe("edge.adobedc.net");
   });
 
   it("does not save default values to settings", async () => {
@@ -255,8 +251,8 @@ describe("Config general settings and datastream section", () => {
     const nameField = spectrumTextField("nameField");
     await nameField.fill("%instanceName%");
 
-    const nameFieldElement = page.getByTestId("nameField");
-    expect(nameFieldElement.element().value).toBe("%instanceName%");
+    const nameFieldElement = spectrumTextField("nameField");
+    expect(await nameFieldElement.getValue()).toBe("%instanceName%");
 
     // Verify it's saved as string
     const settings = await extensionBridge.getSettings();
@@ -279,8 +275,8 @@ describe("Config general settings and datastream section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const orgIdField = page.getByTestId("orgIdField");
-    expect(orgIdField.element().value).toBe("%myOrgId%");
+    const orgIdField = spectrumTextField("orgIdField");
+    expect(await orgIdField.getValue()).toBe("%myOrgId%");
 
     // Verify it's saved as string
     const settings = await extensionBridge.getSettings();
@@ -303,8 +299,8 @@ describe("Config general settings and datastream section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const edgeDomainField = page.getByTestId("edgeDomainField");
-    expect(edgeDomainField.element().value).toBe("%myEdgeDomain%");
+    const edgeDomainField = spectrumTextField("edgeDomainField");
+    expect(await edgeDomainField.getValue()).toBe("%myEdgeDomain%");
 
     // Verify it's saved as string
     const settings = await extensionBridge.getSettings();
@@ -332,13 +328,11 @@ describe("Config general settings and datastream section", () => {
       await waitForConfigurationViewToLoad(view);
 
       // Verify freeform mode is selected
-      const freeformRadio = page.getByTestId(
-        "edgeConfigInputMethodFreeformRadio",
-      );
-      expect(freeformRadio.element().checked).toBe(true);
+      const freeformRadio = spectrumRadio("edgeConfigInputMethodFreeformRadio");
+      expect(await freeformRadio.isSelected()).toBe(true);
 
-      const field = page.getByTestId(`${name}EnvironmentTextfield`);
-      expect(field.element().value).toBe(`%${name}Datastream%`);
+      const field = spectrumTextField(`${name}EnvironmentTextfield`);
+      expect(await field.getValue()).toBe(`%${name}Datastream%`);
 
       // Verify it's saved as string
       const settings = await extensionBridge.getSettings();
@@ -365,8 +359,8 @@ describe("Config general settings and datastream section", () => {
 
     expect(await extensionBridge.validate()).toBe(true);
 
-    const edgeDomainField = page.getByTestId("edgeDomainField");
-    expect(edgeDomainField.element().value).toBe("mytenant.data.adobedc.net");
+    const edgeDomainField = spectrumTextField("edgeDomainField");
+    expect(await edgeDomainField.getValue()).toBe("mytenant.data.adobedc.net");
   });
 
   describe("validation", () => {
@@ -478,9 +472,7 @@ describe("Config general settings and datastream section", () => {
       expect(await extensionBridge.validate()).toBe(true);
 
       // Switch to freeform input method
-      const freeformRadio = page.getByTestId(
-        "edgeConfigInputMethodFreeformRadio",
-      );
+      const freeformRadio = spectrumRadio("edgeConfigInputMethodFreeformRadio");
       await freeformRadio.click();
 
       const productionField = spectrumTextField(
@@ -505,9 +497,7 @@ describe("Config general settings and datastream section", () => {
       expect(await extensionBridge.validate()).toBe(true);
 
       // Switch to freeform input method
-      const freeformRadio = page.getByTestId(
-        "edgeConfigInputMethodFreeformRadio",
-      );
+      const freeformRadio = spectrumRadio("edgeConfigInputMethodFreeformRadio");
       await freeformRadio.click();
 
       const productionField = spectrumTextField(
@@ -676,25 +666,23 @@ describe("Config general settings and datastream section", () => {
       await waitForConfigurationViewToLoad(view);
 
       // Initially select method should be selected (buildSettings provides sandbox)
-      const selectRadio = page.getByTestId("edgeConfigInputMethodSelectRadio");
-      expect(selectRadio.element().checked).toBe(true);
+      const selectRadio = spectrumRadio("edgeConfigInputMethodSelectRadio");
+      expect(await selectRadio.isSelected()).toBe(true);
 
       // Switch to freeform
-      const freeformRadio = page.getByTestId(
-        "edgeConfigInputMethodFreeformRadio",
-      );
+      const freeformRadio = spectrumRadio("edgeConfigInputMethodFreeformRadio");
       await freeformRadio.click();
 
-      expect(freeformRadio.element().checked).toBe(true);
+      expect(await freeformRadio.isSelected()).toBe(true);
 
       // Verify production field is visible
-      await expect
-        .element(page.getByTestId("productionEnvironmentTextfield"))
-        .toBeVisible();
+      expect(
+        await spectrumTextField("productionEnvironmentTextfield").getElement(),
+      ).toBeVisible();
 
       // Switch back to select
       await selectRadio.click();
-      expect(selectRadio.element().checked).toBe(true);
+      expect(await selectRadio.isSelected()).toBe(true);
     });
   });
 });
