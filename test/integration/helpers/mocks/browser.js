@@ -10,5 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { setupWorker } from "msw/browser";
+import { defaultHandlers } from "./defaultHandlers";
 
-export const worker = setupWorker();
+export const worker = setupWorker(...defaultHandlers);
