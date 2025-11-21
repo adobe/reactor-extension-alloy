@@ -94,6 +94,14 @@ const contextOptions = [
       "Provides more detailed information about the client device, such as platform version, architecture, model, bitness (64 bit or 32 bit platforms), or full operating system version",
     default: false,
   },
+  {
+    label: "Send referrer to Adobe Analytics only once per page view",
+    value: "oneTimeAnalyticsReferrer",
+    testId: "contextOneTimeAnalyticsReferrerField",
+    description:
+      "Enable this setting to prevent duplicate referrer data from being sent to Adobe Analytics.",
+    default: false,
+  },
 ];
 
 const clickCollectionIsEnabled = (instanceValues) => {

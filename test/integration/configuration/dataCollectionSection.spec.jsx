@@ -94,6 +94,7 @@ describe("Config data collection section", () => {
       ["Environment", false],
       ["PlaceContext", false],
       ["HighEntropyUserAgentHints", false],
+      ["OneTimeAnalyticsReferrer", false],
     ];
 
     for (const [fieldName, expectedValue] of fields) {
@@ -564,6 +565,9 @@ describe("Config data collection section", () => {
     await expect
       .element(view.getByTestId("contextHighEntropyUserAgentHintsField"))
       .toBeInTheDocument();
+    await expect
+      .element(view.getByTestId("contextOneTimeAnalyticsReferrerField"))
+      .toBeInTheDocument();
   });
 
   it("saves non-default context when specific is selected", async () => {
@@ -589,6 +593,12 @@ describe("Config data collection section", () => {
     );
     await contextHighEntropyField.check();
 
+    // Check Analytics Referrer
+    const contextOneTimeAnalyticsReferrerField = spectrumCheckbox(
+      "contextOneTimeAnalyticsReferrerField",
+    );
+    await contextOneTimeAnalyticsReferrerField.check();
+
     // Get settings and verify
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].context).toEqual([
@@ -596,7 +606,53 @@ describe("Config data collection section", () => {
       "device",
       "placeContext",
       "highEntropyUserAgentHints",
+      "oneTimeAnalyticsReferrer",
     ]);
+  });
+
+  it("loads context options from settings", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(
+      buildSettings({
+        instances: [
+          {
+            name: "alloy",
+            context: ["web", "device", "oneTimeAnalyticsReferrer"],
+          },
+        ],
+      }),
+    );
+
+    await waitForConfigurationViewToLoad(view);
+
+    // Check that context is set to specific
+    const contextGranularitySpecificField = page.getByTestId(
+      "contextGranularitySpecificField",
+    );
+    expect(contextGranularitySpecificField.element().checked).toBe(true);
+
+    // Check that default context options are set properly
+    const contextWebField = spectrumCheckbox("contextWebField");
+    expect(await contextWebField.isChecked()).toBe(true);
+    const contextDeviceField = spectrumCheckbox("contextDeviceField");
+    expect(await contextDeviceField.isChecked()).toBe(true);
+    const contextEnvironmentField = spectrumCheckbox("contextEnvironmentField");
+    expect(await contextEnvironmentField.isChecked()).toBe(false);
+    const contextPlaceContextField = spectrumCheckbox(
+      "contextPlaceContextField",
+    );
+    expect(await contextPlaceContextField.isChecked()).toBe(false);
+
+    // Check that default-disabled context options are set properly
+    const contextHighEntropyUserAgentHintsField = spectrumCheckbox(
+      "contextHighEntropyUserAgentHintsField",
+    );
+    expect(await contextHighEntropyUserAgentHintsField.isChecked()).toBe(false);
+    const contextOneTimeAnalyticsReferrerField = spectrumCheckbox(
+      "contextOneTimeAnalyticsReferrerField",
+    );
+    expect(await contextOneTimeAnalyticsReferrerField.isChecked()).toBe(true);
   });
 
   it("disables click collection when all link types are disabled", async () => {
