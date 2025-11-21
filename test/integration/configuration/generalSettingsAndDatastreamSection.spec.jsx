@@ -350,7 +350,7 @@ describe("Config general settings and datastream section", () => {
     });
   });
 
-  it("sets default edge domain to tenant-specific domain when tenant ID is provided", async () => {
+  it("sets default edge domain to tenant-specific domain when tenant ID is provided on new extension", async () => {
     const view = await renderView(ConfigurationView);
 
     extensionBridge.init({
@@ -358,15 +358,61 @@ describe("Config general settings and datastream section", () => {
         orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
         tenantId: "mytenant",
       },
-      ...buildSettings(),
+      propertySettings: { id: "PR1234" },
+      tokens: { imsAccess: "IMS_ACCESS" },
     });
 
     await waitForConfigurationViewToLoad(view);
 
-    expect(await extensionBridge.validate()).toBe(true);
-
     const edgeDomainField = page.getByTestId("edgeDomainField");
     expect(edgeDomainField.element().value).toBe("mytenant.data.adobedc.net");
+  });
+
+  it("sets default edge domain to edge.adobedc.net when editing existing instance without saved edgeDomain", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init({
+      company: {
+        orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+        tenantId: "mytenant",
+      },
+      propertySettings: { id: "PR1234" },
+      tokens: { imsAccess: "IMS_ACCESS" },
+      settings: {
+        components: {
+          eventMerge: false,
+        },
+        instances: [
+          {
+            name: "alloy",
+            edgeConfigId: "PR123",
+          },
+        ],
+      },
+    });
+
+    await waitForConfigurationViewToLoad(view);
+
+    const edgeDomainField = page.getByTestId("edgeDomainField");
+    expect(edgeDomainField.element().value).toBe("edge.adobedc.net");
+  });
+
+  it("saves tenant-specific edge domain even when it matches the default on new extension", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init({
+      company: {
+        orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+        tenantId: "mytenant",
+      },
+      propertySettings: { id: "PR1234" },
+      tokens: { imsAccess: "IMS_ACCESS" },
+    });
+
+    await waitForConfigurationViewToLoad(view);
+
+    const settings = await extensionBridge.getSettings();
+    expect(settings.instances[0].edgeDomain).toBe("mytenant.data.adobedc.net");
   });
 
   describe("validation", () => {
@@ -612,6 +658,67 @@ describe("Config general settings and datastream section", () => {
 
       // Verify it's restored to default
       expect(await edgeDomainField.getValue()).toBe(originalEdgeDomain);
+    });
+
+    it("restores default edge domain to tenant-specific domain when restore button is clicked on new instance with tenant ID", async () => {
+      const view = await renderView(ConfigurationView);
+
+      extensionBridge.init({
+        company: {
+          orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+          tenantId: "mytenant",
+        },
+        propertySettings: { id: "PR1234" },
+        tokens: { imsAccess: "IMS_ACCESS" },
+      });
+
+      await waitForConfigurationViewToLoad(view);
+
+      const edgeDomainField = spectrumTextField("edgeDomainField");
+      await edgeDomainField.fill("custom.example.com");
+
+      const restoreButton = page.getByTestId("edgeDomainRestoreButton");
+      await restoreButton.click();
+
+      expect(await edgeDomainField.getValue()).toBe(
+        "mytenant.data.adobedc.net",
+      );
+    });
+
+    it("restores to tenant-specific default when restore button is clicked on existing instance with tenant ID", async () => {
+      const view = await renderView(ConfigurationView);
+
+      extensionBridge.init({
+        company: {
+          orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+          tenantId: "mytenant",
+        },
+        propertySettings: { id: "PR1234" },
+        tokens: { imsAccess: "IMS_ACCESS" },
+        settings: {
+          components: {
+            eventMerge: false,
+          },
+          instances: [
+            {
+              name: "alloy",
+              edgeConfigId: "PR123",
+            },
+          ],
+        },
+      });
+
+      await waitForConfigurationViewToLoad(view);
+
+      const edgeDomainField = spectrumTextField("edgeDomainField");
+      await edgeDomainField.fill("custom.example.com");
+
+      const restoreButton = page.getByTestId("edgeDomainRestoreButton");
+      await restoreButton.click();
+
+      expect(await edgeDomainField.getValue()).toBe(
+        "mytenant.data.adobedc.net",
+      );
     });
   });
 
