@@ -10,8 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { afterEach, afterAll } from "vitest";
+import { afterEach, afterAll, beforeEach } from "vitest";
 import { worker } from "./mocks/browser";
+import { defaultHandlers } from "./mocks/defaultHandlers";
 
 worker.start({
   onUnhandledRequest: "bypass",
@@ -25,6 +26,10 @@ window.process = {
     VIRT_ON: true,
   },
 };
+
+beforeEach(() => {
+  worker.use(...defaultHandlers);
+});
 
 // Reset handlers after each test (important for test isolation)
 afterEach(() => {
