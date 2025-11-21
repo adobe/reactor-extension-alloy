@@ -703,4 +703,10 @@ EdgeConfigurationsSection.propTypes = {
   context: PropTypes.object.isRequired,
 };
 
+// Export a function to reset cached values (useful for testing)
+export const resetEdgeConfigurationsCache = () => {
+  firstPageOfSandboxes = undefined;
+  firstPageOfDatastreams = undefined;
+};
+
 export default EdgeConfigurationsSection;

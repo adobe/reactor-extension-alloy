@@ -24,6 +24,7 @@ import {
   singleSandboxNoDefaultHandlers,
   sandboxUserRegionMissingHandlers,
 } from "../helpers/mocks/defaultHandlers";
+import { resetEdgeConfigurationsCache } from "../../../src/view/configuration/edgeConfigurationsSection";
 
 let extensionBridge;
 
@@ -35,6 +36,7 @@ describe("Config Sandboxes", () => {
 
   afterEach(() => {
     delete window.extensionBridge;
+    resetEdgeConfigurationsCache();
   });
 
   it("shows disabled sandbox dropdown when only one non default sandbox is returned", async () => {
