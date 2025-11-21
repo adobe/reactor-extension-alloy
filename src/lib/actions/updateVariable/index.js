@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { deepAssign } = require("../../alloy");
-const { variableStore } = require("../../index");
-const createUpdateVariable = require("./createUpdateVariable");
+import { deepAssign } from "../../alloy";
+import { variableStore } from "../../index";
+import createUpdateVariable from "./createUpdateVariable";
 
-module.exports = createUpdateVariable({ variableStore, deepAssign });
+export default createUpdateVariable({ variableStore, deepAssign });

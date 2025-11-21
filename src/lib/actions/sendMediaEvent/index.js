@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createMediaEvent = require("./createSendMediaEvent");
-const createMediaSession = require("./createMediaSession");
-const instanceManager = require("../../instanceManager/index");
-const { mediaCollectionSessionStorage } = require("../../index");
-const createGetConfigOverrides = require("../../utils/createGetConfigOverrides");
+import createMediaEvent from "./createSendMediaEvent";
+import createMediaSession from "./createMediaSession";
+import instanceManager from "../../instanceManager/index";
+import { mediaCollectionSessionStorage } from "../../index";
+import createGetConfigOverrides from "../../utils/createGetConfigOverrides";
 
 // eslint-disable-next-line no-underscore-dangle
 const satelliteApi = window._satellite;
@@ -25,7 +25,8 @@ const trackMediaSession = createMediaSession({
   satelliteApi,
   getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage),
 });
-module.exports = createMediaEvent({
+
+export default createMediaEvent({
   instanceManager,
   trackMediaSession,
   logger: turbine.logger,
