@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 import { http, HttpResponse } from "msw";
 
-export const handlers = [
+export const defaultHandlers = [
   http.get(
     "https://platform.adobe.io/data/foundation/sandbox-management/",
     async () => {
