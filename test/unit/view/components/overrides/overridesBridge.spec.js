@@ -15,10 +15,11 @@ import { bridge } from "../../../../../src/view/components/overrides/overridesBr
 const FIELD = Object.freeze({
   enabled: "Enabled",
   disabled: "Disabled",
+  match: "No override",
 });
-const MATCH_FIELD = Object.freeze({
-  ...FIELD,
-  disabled: "Match datastream configuration",
+const ENV_FIELD = Object.freeze({
+  enabled: "Enabled",
+  disabled: "No override",
 });
 
 const envs = Object.freeze(["production", "staging", "development"]);
@@ -32,9 +33,9 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: MATCH_FIELD.disabled,
+          enabled: ENV_FIELD.disabled,
           com_adobe_experience_platform: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             datasets: {
               event: {
                 datasetId: "",
@@ -54,21 +55,21 @@ describe("overridesBridge", () => {
             },
           },
           com_adobe_analytics: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             reportSuites: [""],
           },
           com_adobe_identity: {
-            idSyncContainerId: undefined,
+            idSyncContainerId: "",
           },
           com_adobe_target: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             propertyToken: "",
           },
           com_adobe_audiencemanager: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
           com_adobe_launch_ssf: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
         };
       });
@@ -130,9 +131,9 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: MATCH_FIELD.enabled,
+          enabled: ENV_FIELD.enabled,
           com_adobe_experience_platform: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             datasets: {
               event: {
                 datasetId: "",
@@ -152,28 +153,28 @@ describe("overridesBridge", () => {
             },
           },
           com_adobe_analytics: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             reportSuites: [""],
           },
           com_adobe_identity: {
-            idSyncContainerId: undefined,
+            idSyncContainerId: "",
           },
           com_adobe_target: {
             enabled: FIELD.disabled,
             propertyToken: "",
           },
           com_adobe_audiencemanager: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
           com_adobe_launch_ssf: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
         },
         staging: {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: MATCH_FIELD.enabled,
+          enabled: ENV_FIELD.enabled,
           com_adobe_experience_platform: {
             enabled: FIELD.enabled,
             datasets: {
@@ -195,30 +196,30 @@ describe("overridesBridge", () => {
             },
           },
           com_adobe_analytics: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             reportSuites: [""],
           },
           com_adobe_identity: {
-            idSyncContainerId: undefined,
+            idSyncContainerId: "",
           },
           com_adobe_target: {
             enabled: FIELD.enabled,
             propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
           },
           com_adobe_audiencemanager: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
           com_adobe_launch_ssf: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
         },
         production: {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: MATCH_FIELD.disabled,
+          enabled: ENV_FIELD.disabled,
           com_adobe_experience_platform: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             datasets: {
               event: {
                 datasetId: "",
@@ -238,21 +239,21 @@ describe("overridesBridge", () => {
             },
           },
           com_adobe_analytics: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             reportSuites: [""],
           },
           com_adobe_identity: {
-            idSyncContainerId: undefined,
+            idSyncContainerId: "",
           },
           com_adobe_target: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             propertyToken: "",
           },
           com_adobe_audiencemanager: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
           com_adobe_launch_ssf: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
         },
       };
@@ -289,12 +290,12 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: MATCH_FIELD.enabled,
+          enabled: ENV_FIELD.enabled,
           com_adobe_audiencemanager: {
             enabled: FIELD.disabled,
           },
           com_adobe_experience_platform: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             datasets: {
               event: {
                 datasetId: "",
@@ -314,18 +315,18 @@ describe("overridesBridge", () => {
             },
           },
           com_adobe_analytics: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             reportSuites: [""],
           },
           com_adobe_identity: {
-            idSyncContainerId: undefined,
+            idSyncContainerId: "",
           },
           com_adobe_target: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
             propertyToken: "",
           },
           com_adobe_launch_ssf: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
         };
         return acc;
@@ -385,7 +386,7 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: MATCH_FIELD.enabled,
+          enabled: ENV_FIELD.enabled,
           com_adobe_experience_platform: {
             enabled: FIELD.enabled,
             datasets: {
@@ -414,10 +415,10 @@ describe("overridesBridge", () => {
             idSyncContainerId: "30793",
           },
           com_adobe_launch_ssf: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
           com_adobe_audiencemanager: {
-            enabled: FIELD.enabled,
+            enabled: FIELD.match,
           },
           com_adobe_target: {
             enabled: FIELD.enabled,
@@ -449,9 +450,9 @@ describe("overridesBridge", () => {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: MATCH_FIELD.enabled,
+            enabled: ENV_FIELD.enabled,
             com_adobe_experience_platform: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               datasets: {
                 event: {
                   datasetId: "",
@@ -471,30 +472,30 @@ describe("overridesBridge", () => {
               },
             },
             com_adobe_analytics: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               reportSuites: [""],
             },
             com_adobe_identity: {
               idSyncContainerId: "123123",
             },
             com_adobe_target: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               propertyToken: "",
             },
             com_adobe_audiencemanager: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
             com_adobe_launch_ssf: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
           },
           staging: {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: MATCH_FIELD.disabled,
+            enabled: ENV_FIELD.disabled,
             com_adobe_experience_platform: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               datasets: {
                 event: {
                   datasetId: "",
@@ -514,30 +515,30 @@ describe("overridesBridge", () => {
               },
             },
             com_adobe_analytics: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               reportSuites: [""],
             },
             com_adobe_identity: {
-              idSyncContainerId: undefined,
+              idSyncContainerId: "",
             },
             com_adobe_target: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               propertyToken: "",
             },
             com_adobe_audiencemanager: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
             com_adobe_launch_ssf: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
           },
           production: {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: MATCH_FIELD.disabled,
+            enabled: ENV_FIELD.disabled,
             com_adobe_experience_platform: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               datasets: {
                 event: {
                   datasetId: "",
@@ -557,21 +558,21 @@ describe("overridesBridge", () => {
               },
             },
             com_adobe_analytics: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               reportSuites: [""],
             },
             com_adobe_identity: {
-              idSyncContainerId: undefined,
+              idSyncContainerId: "",
             },
             com_adobe_target: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               propertyToken: "",
             },
             com_adobe_audiencemanager: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
             com_adobe_launch_ssf: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
           },
         },
@@ -595,9 +596,9 @@ describe("overridesBridge", () => {
             sandbox: "",
             datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
             datastreamIdInputMethod: "freeform",
-            enabled: MATCH_FIELD.enabled,
+            enabled: ENV_FIELD.enabled,
             com_adobe_experience_platform: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               datasets: {
                 event: {
                   datasetId: "",
@@ -617,30 +618,30 @@ describe("overridesBridge", () => {
               },
             },
             com_adobe_analytics: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               reportSuites: [""],
             },
             com_adobe_identity: {
-              idSyncContainerId: undefined,
+              idSyncContainerId: "",
             },
             com_adobe_target: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               propertyToken: "",
             },
             com_adobe_audiencemanager: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
             com_adobe_launch_ssf: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
           },
           staging: {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: MATCH_FIELD.disabled,
+            enabled: ENV_FIELD.disabled,
             com_adobe_experience_platform: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               datasets: {
                 event: {
                   datasetId: "",
@@ -660,30 +661,30 @@ describe("overridesBridge", () => {
               },
             },
             com_adobe_analytics: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               reportSuites: [""],
             },
             com_adobe_identity: {
-              idSyncContainerId: undefined,
+              idSyncContainerId: "",
             },
             com_adobe_target: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               propertyToken: "",
             },
             com_adobe_audiencemanager: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
             com_adobe_launch_ssf: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
           },
           production: {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: MATCH_FIELD.disabled,
+            enabled: ENV_FIELD.disabled,
             com_adobe_experience_platform: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               datasets: {
                 event: {
                   datasetId: "",
@@ -703,21 +704,21 @@ describe("overridesBridge", () => {
               },
             },
             com_adobe_analytics: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               reportSuites: [""],
             },
             com_adobe_identity: {
-              idSyncContainerId: undefined,
+              idSyncContainerId: "",
             },
             com_adobe_target: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
               propertyToken: "",
             },
             com_adobe_audiencemanager: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
             com_adobe_launch_ssf: {
-              enabled: FIELD.enabled,
+              enabled: FIELD.match,
             },
           },
         },
@@ -772,7 +773,7 @@ describe("overridesBridge", () => {
           (acc, env) => ({
             ...acc,
             [env]: {
-              enabled: MATCH_FIELD.enabled,
+              enabled: ENV_FIELD.enabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.enabled,
                 com_adobe_edge_ode: {
@@ -808,7 +809,7 @@ describe("overridesBridge", () => {
                 enabled: FIELD.enabled,
               },
               com_adobe_identity: {
-                idSyncContainerId: undefined,
+                idSyncContainerId: "",
               },
               datastreamId: "",
               datastreamIdInputMethod: "freeform",
@@ -866,7 +867,7 @@ describe("overridesBridge", () => {
           (acc, env) => ({
             ...acc,
             [env]: {
-              enabled: MATCH_FIELD.enabled,
+              enabled: ENV_FIELD.enabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.disabled,
                 com_adobe_edge_ode: {
@@ -902,7 +903,7 @@ describe("overridesBridge", () => {
                 enabled: FIELD.disabled,
               },
               com_adobe_identity: {
-                idSyncContainerId: undefined,
+                idSyncContainerId: "",
               },
               datastreamId: "",
               datastreamIdInputMethod: "freeform",
@@ -1001,7 +1002,7 @@ describe("overridesBridge", () => {
                 enabled: "%Data element of enabledness%",
               },
               com_adobe_identity: {
-                idSyncContainerId: undefined,
+                idSyncContainerId: "",
               },
             },
           }),
@@ -1031,9 +1032,9 @@ describe("overridesBridge", () => {
           (acc, env) => ({
             ...acc,
             [env]: {
-              enabled: MATCH_FIELD.disabled,
+              enabled: ENV_FIELD.disabled,
               com_adobe_experience_platform: {
-                enabled: FIELD.enabled,
+                enabled: FIELD.match,
                 com_adobe_edge_ode: {
                   enabled: FIELD.enabled,
                 },
@@ -1053,21 +1054,21 @@ describe("overridesBridge", () => {
                 },
               },
               com_adobe_analytics: {
-                enabled: FIELD.enabled,
+                enabled: FIELD.match,
                 reportSuites: [""],
               },
               com_adobe_target: {
-                enabled: FIELD.enabled,
+                enabled: FIELD.match,
                 propertyToken: "",
               },
               com_adobe_audiencemanager: {
-                enabled: FIELD.enabled,
+                enabled: FIELD.match,
               },
               com_adobe_launch_ssf: {
-                enabled: FIELD.enabled,
+                enabled: FIELD.match,
               },
               com_adobe_identity: {
-                idSyncContainerId: undefined,
+                idSyncContainerId: "",
               },
               datastreamId: "",
               datastreamIdInputMethod: "freeform",
@@ -1088,7 +1089,7 @@ describe("overridesBridge", () => {
             sandbox: "prod",
             datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
             datastreamIdInputMethod: "freeform",
-            enabled: MATCH_FIELD.enabled,
+            enabled: ENV_FIELD.enabled,
             com_adobe_experience_platform: {
               enabled: FIELD.disabled,
               datasets: {
@@ -1256,6 +1257,7 @@ describe("overridesBridge", () => {
           development: {
             enabled: FIELD.enabled,
             com_adobe_analytics: {
+              enabled: FIELD.enabled,
               reportSuites: [
                 "",
                 "unifiedjsqeonly2",
@@ -1290,125 +1292,125 @@ describe("overridesBridge", () => {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: "Enabled",
+            enabled: ENV_FIELD.enabled,
             com_adobe_experience_platform: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
               datasets: {
                 event: {
                   datasetId: "",
                 },
               },
               com_adobe_edge_ode: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
               com_adobe_edge_segmentation: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
               com_adobe_edge_destinations: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
               com_adobe_edge_ajo: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
             },
             com_adobe_analytics: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
               reportSuites: [""],
             },
             com_adobe_identity: {
               idSyncContainerId: "",
             },
             com_adobe_target: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
               propertyToken: "",
             },
             com_adobe_audiencemanager: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
             },
             com_adobe_launch_ssf: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
             },
           },
           staging: {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: "Match datastream configuration",
+            enabled: ENV_FIELD.disabled,
             com_adobe_experience_platform: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
               datasets: {
                 event: {
                   datasetId: "",
                 },
               },
               com_adobe_edge_ode: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
               com_adobe_edge_segmentation: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
               com_adobe_edge_destinations: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
               com_adobe_edge_ajo: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
             },
             com_adobe_analytics: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
               reportSuites: [""],
             },
             com_adobe_identity: {},
             com_adobe_target: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
               propertyToken: "",
             },
             com_adobe_audiencemanager: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
             },
             com_adobe_launch_ssf: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
             },
           },
           production: {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: "Match datastream configuration",
+            enabled: ENV_FIELD.disabled,
             com_adobe_experience_platform: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
               datasets: {
                 event: {
                   datasetId: "",
                 },
               },
               com_adobe_edge_ode: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
               com_adobe_edge_segmentation: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
               com_adobe_edge_destinations: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
               com_adobe_edge_ajo: {
-                enabled: "Enabled",
+                enabled: FIELD.enabled,
               },
             },
             com_adobe_analytics: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
               reportSuites: [""],
             },
             com_adobe_identity: {},
             com_adobe_target: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
               propertyToken: "",
             },
             com_adobe_audiencemanager: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
             },
             com_adobe_launch_ssf: {
-              enabled: "Enabled",
+              enabled: FIELD.match,
             },
           },
         },
@@ -1539,7 +1541,7 @@ describe("overridesBridge", () => {
             sandbox: "prod",
             datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
             datastreamIdInputMethod: "freeform",
-            enabled: MATCH_FIELD.disabled,
+            enabled: ENV_FIELD.disabled,
             com_adobe_experience_platform: {
               enabled: FIELD.disabled,
               datasets: {
@@ -1654,7 +1656,7 @@ describe("overridesBridge", () => {
           edgeConfigOverrides: {
             development: {
               sandbox: "prod",
-              enabled: MATCH_FIELD.enabled,
+              enabled: ENV_FIELD.enabled,
               datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
               datastreamIdInputMethod: "freeform",
               com_adobe_experience_platform: {
@@ -1702,7 +1704,7 @@ describe("overridesBridge", () => {
         bridge.formikStateValidationSchema.validateSync({
           edgeConfigOverrides: {
             development: {
-              enabled: MATCH_FIELD.enabled,
+              enabled: ENV_FIELD.enabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.disabled,
                 datasets: {
@@ -1739,7 +1741,7 @@ describe("overridesBridge", () => {
               },
             },
             staging: {
-              enabled: MATCH_FIELD.enabled,
+              enabled: ENV_FIELD.enabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.disabled,
                 datasets: {
@@ -1776,7 +1778,7 @@ describe("overridesBridge", () => {
               },
             },
             production: {
-              enabled: MATCH_FIELD.enabled,
+              enabled: ENV_FIELD.enabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.disabled,
                 datasets: {
