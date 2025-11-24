@@ -204,23 +204,20 @@ const XdmVariable = ({
     firstPage: schemasFirstPage,
     firstPageCursor: schemasFirstPageCursor,
   });
-  const [schemaRefreshTrigger, setSchemaRefreshTrigger] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadItems = async ({ filterText, cursor, signal }) => {
+    let results;
+    let nextPage;
     try {
-      const { results, nextPage } = await fetchSchemasMeta({
+      ({ results, nextPage } = await fetchSchemasMeta({
         orgId,
         imsAccess,
         sandboxName: sandbox,
         search: filterText,
         start: cursor,
         signal,
-      });
-      return {
-        items: results,
-        cursor: nextPage,
-      };
+      }));
     } catch (e) {
       if (e.name !== "AbortError") {
         reportAsyncError(e);
@@ -229,6 +226,10 @@ const XdmVariable = ({
     } finally {
       setIsRefreshing(false);
     }
+    return {
+      items: results,
+      cursor: nextPage,
+    };
   };
 
   const handleRefreshSchemas = () => {
@@ -237,7 +238,6 @@ const XdmVariable = ({
       firstPage: [],
       firstPageCursor: null,
     });
-    setSchemaRefreshTrigger((prev) => prev + 1);
   };
 
   return (
@@ -305,7 +305,7 @@ const XdmVariable = ({
                 loadItems={loadItems}
                 getKey={getKey}
                 getLabel={getLabel}
-                dependencies={[sandbox, schemaRefreshTrigger]}
+                dependencies={[sandbox, isRefreshing]}
                 firstPage={schemasData.firstPage}
                 firstPageCursor={schemasData.firstPageCursor}
                 alertTitle="No schemas found"
