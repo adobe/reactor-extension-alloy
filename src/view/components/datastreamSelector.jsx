@@ -29,6 +29,7 @@ import { useField } from "formik";
 import Copy from "@spectrum-icons/workflow/Copy";
 import Delete from "@spectrum-icons/workflow/Delete";
 import copyToClipboard from "clipboard-copy";
+import RefreshButton from "./refreshButton";
 import fetchConfigs from "../configuration/utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
 import {
@@ -235,6 +236,14 @@ const DatastreamSelector = ({
         direction="row"
         marginTop={defaultSandboxOnly ? "size-250" : "size-150"}
       >
+        <RefreshButton
+          onPress={() => {
+            datastreamList.reload();
+          }}
+          isDisabled={datastreamList.isLoading}
+          tooltipText="Refresh datastreams list"
+          ariaLabel="Refresh datastreams"
+        />
         <TooltipTrigger>
           <ActionButton
             isQuiet

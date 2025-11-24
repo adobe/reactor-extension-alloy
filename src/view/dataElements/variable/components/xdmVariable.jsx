@@ -16,8 +16,11 @@ import {
   Heading,
   Content,
   Link,
+  Flex,
+  View,
 } from "@adobe/react-spectrum";
 import { useField } from "formik";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import UserReportableError from "../../../errors/userReportableError";
 import fetchSandboxes from "../../../utils/fetchSandboxes";
@@ -28,6 +31,7 @@ import FormikPagedComboBox from "../../../components/formikReactSpectrum3/formik
 import FieldSubset from "../../../components/fieldSubset";
 import FormElementContainer from "../../../components/formElementContainer";
 import useReportAsyncError from "../../../utils/useReportAsyncError";
+import RefreshButton from "../../../components/refreshButton";
 import { DATA } from "../constants/variableTypes";
 
 const initializeSandboxes = async ({
@@ -196,31 +200,44 @@ const XdmVariable = ({
   const reportAsyncError = useReportAsyncError();
 
   const [{ value: sandbox }] = useField("sandbox");
+  const [schemasData, setSchemasData] = useState({
+    firstPage: schemasFirstPage,
+    firstPageCursor: schemasFirstPageCursor,
+  });
+  const [schemaRefreshTrigger, setSchemaRefreshTrigger] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadItems = async ({ filterText, cursor, signal }) => {
-    let results;
-    let nextPage;
     try {
-      ({ results, nextPage } = await fetchSchemasMeta({
+      const { results, nextPage } = await fetchSchemasMeta({
         orgId,
         imsAccess,
         sandboxName: sandbox,
         search: filterText,
         start: cursor,
         signal,
-      }));
+      });
+      return {
+        items: results,
+        cursor: nextPage,
+      };
     } catch (e) {
       if (e.name !== "AbortError") {
         reportAsyncError(e);
       }
-      // usePagedComboBox expects us to throw an error
-      // if we can't produce a valid return object.
       throw e;
+    } finally {
+      setIsRefreshing(false);
     }
-    return {
-      items: results,
-      cursor: nextPage,
-    };
+  };
+
+  const handleRefreshSchemas = () => {
+    setIsRefreshing(true);
+    setSchemasData({
+      firstPage: [],
+      firstPageCursor: null,
+    });
+    setSchemaRefreshTrigger((prev) => prev + 1);
   };
 
   return (
@@ -277,21 +294,33 @@ const XdmVariable = ({
         </FormikPicker>
 
         {sandbox && (
-          <FormikPagedComboBox
-            data-test-id="schemaField"
-            name="schema"
-            label="Schema"
-            width="size-5000"
-            description="Choose an XDM schema for this variable."
-            loadItems={loadItems}
-            getKey={getKey}
-            getLabel={getLabel}
-            dependencies={[sandbox]}
-            firstPage={schemasFirstPage}
-            firstPageCursor={schemasFirstPageCursor}
-            alertTitle="No schemas found"
-            alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
-          />
+          <Flex direction="row" gap="size-100">
+            <View>
+              <FormikPagedComboBox
+                data-test-id="schemaField"
+                name="schema"
+                label="Schema"
+                width="size-5000"
+                description="Choose an XDM schema for this variable."
+                loadItems={loadItems}
+                getKey={getKey}
+                getLabel={getLabel}
+                dependencies={[sandbox, schemaRefreshTrigger]}
+                firstPage={schemasData.firstPage}
+                firstPageCursor={schemasData.firstPageCursor}
+                alertTitle="No schemas found"
+                alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
+              />
+            </View>
+            <Flex direction="row" marginTop="size-250">
+              <RefreshButton
+                onPress={handleRefreshSchemas}
+                isDisabled={isRefreshing}
+                tooltipText="Refresh schema list"
+                ariaLabel="Refresh schemas"
+              />
+            </Flex>
+          </Flex>
         )}
       </FormElementContainer>
     </FieldSubset>
