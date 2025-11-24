@@ -290,8 +290,6 @@ const getSelectInputMethodStateForExistingInstance = async ({
   return selectInputMethodState;
 };
 
-let firstPageOfSandboxes;
-let firstPageOfDatastreams;
 const getSelectInputMethodStateForNewInstance = async ({
   orgId,
   imsAccess,
@@ -302,9 +300,16 @@ const getSelectInputMethodStateForNewInstance = async ({
   // We cache the first page of edge configs for optimization,
   // particularly so when a user clicks the Add Instance button,
   // they don't have to wait while the instance is created.
-  if (!firstPageOfSandboxes) {
+  // Cache is keyed by orgId to ensure fresh data when organization changes.
+  const cacheKey = `cache_${orgId}`;
+  if (!context.current[cacheKey]) {
+    context.current[cacheKey] = {};
+  }
+  const cache = context.current[cacheKey];
+
+  if (!cache.firstPageOfSandboxes) {
     try {
-      ({ results: firstPageOfSandboxes } = await fetchSandboxes({
+      ({ results: cache.firstPageOfSandboxes } = await fetchSandboxes({
         orgId,
         imsAccess,
       }));
@@ -313,36 +318,38 @@ const getSelectInputMethodStateForNewInstance = async ({
     }
   }
 
-  context.current.sandboxes = firstPageOfSandboxes;
+  context.current.sandboxes = cache.firstPageOfSandboxes;
 
   // when not enough permissions we might get empty array of sandboxes
   if (
-    !firstPageOfSandboxes ||
-    (firstPageOfSandboxes && firstPageOfSandboxes.length === 0)
+    !cache.firstPageOfSandboxes ||
+    (cache.firstPageOfSandboxes && cache.firstPageOfSandboxes.length === 0)
   ) {
     context.current.fetchSandboxError = true;
   }
   // checking if this is a organization with one sandbox ( default sandbox )
-  if (firstPageOfSandboxes && firstPageOfSandboxes.length === 1) {
-    try {
-      ({ results: firstPageOfDatastreams } = await fetchConfigs({
-        orgId,
-        imsAccess,
-        limit: 1000,
-        sandbox: firstPageOfSandboxes[0].name,
-      }));
-    } catch {
-      context.current.fetchConfigsError = true;
+  if (cache.firstPageOfSandboxes && cache.firstPageOfSandboxes.length === 1) {
+    if (!cache.firstPageOfDatastreams) {
+      try {
+        ({ results: cache.firstPageOfDatastreams } = await fetchConfigs({
+          orgId,
+          imsAccess,
+          limit: 1000,
+          sandbox: cache.firstPageOfSandboxes[0].name,
+        }));
+      } catch {
+        context.current.fetchConfigsError = true;
+      }
     }
 
-    context.current.datastreams = firstPageOfDatastreams;
+    context.current.datastreams = cache.firstPageOfDatastreams;
 
     selectInputMethodState.productionEnvironment.sandbox =
-      firstPageOfSandboxes[0].name;
+      cache.firstPageOfSandboxes[0].name;
     selectInputMethodState.stagingEnvironment.sandbox =
-      firstPageOfSandboxes[0].name;
+      cache.firstPageOfSandboxes[0].name;
     selectInputMethodState.developmentEnvironment.sandbox =
-      firstPageOfSandboxes[0].name;
+      cache.firstPageOfSandboxes[0].name;
   }
 
   return selectInputMethodState;
@@ -373,7 +380,14 @@ export const bridge = {
       tokens: { imsAccess },
     } = initInfo;
 
+    // Preserve sandbox cache when resetting context
+    const cacheKey = `cache_${orgId}`;
+    const preservedCache = context.current?.[cacheKey];
     context.current = {};
+    if (preservedCache) {
+      context.current[cacheKey] = preservedCache;
+    }
+
     const instanceDefaults = {
       edgeConfigInputMethod: isFirstInstance
         ? INPUT_METHOD.SELECT
@@ -701,12 +715,6 @@ EdgeConfigurationsSection.propTypes = {
   instanceIndex: PropTypes.number.isRequired,
   initInfo: PropTypes.object.isRequired,
   context: PropTypes.object.isRequired,
-};
-
-// Export a function to reset cached values (useful for testing)
-export const resetEdgeConfigurationsCache = () => {
-  firstPageOfSandboxes = undefined;
-  firstPageOfDatastreams = undefined;
 };
 
 export default EdgeConfigurationsSection;

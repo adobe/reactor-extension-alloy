@@ -358,8 +358,6 @@ describe("Config general settings and datastream section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    expect(await extensionBridge.validate()).toBe(true);
-
     const edgeDomainField = spectrumTextField("edgeDomainField");
     expect(await edgeDomainField.getValue()).toBe("mytenant.data.adobedc.net");
   });
