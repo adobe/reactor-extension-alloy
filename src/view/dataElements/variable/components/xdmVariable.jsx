@@ -312,7 +312,7 @@ const XdmVariable = ({
                 alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
               />
             </View>
-            <Flex direction="row" marginTop="size-250">
+            <Flex direction="row" marginTop="size-300">
               <RefreshButton
                 onPress={handleRefreshSchemas}
                 isDisabled={isRefreshing}

@@ -234,7 +234,7 @@ const DatastreamSelector = ({
 
       <Flex
         direction="row"
-        marginTop={defaultSandboxOnly ? "size-250" : "size-150"}
+        marginTop={defaultSandboxOnly ? "size-300" : "size-200"}
       >
         <RefreshButton
           onPress={() => {
