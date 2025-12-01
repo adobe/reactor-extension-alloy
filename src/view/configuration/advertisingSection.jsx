@@ -420,8 +420,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
           response?.items || response?.data || response || [];
 
         setAdvertisers(advertisersList);
-      } catch (e) {
-        console.error("Failed to fetch advertisers:", e);
+      } catch {
         setError(
           "Unable to retrieve advertiser data. Please contact your system administrator for assistance.",
         );
