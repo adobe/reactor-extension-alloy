@@ -42,9 +42,6 @@ describe("Config push notifications section", () => {
         instances: [
           {
             name: "alloy",
-            components: {
-              pushNotifications: true,
-            },
             pushNotifications: {
               vapidPublicKey: "test-vapid-key",
               appId: "test-app-id",

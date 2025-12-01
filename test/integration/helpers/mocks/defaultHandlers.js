@@ -585,3 +585,49 @@ export const sandboxUserRegionMissingHandlers = [
     },
   ),
 ];
+
+export const datastreamForbiddenHandlers = [
+  http.get(
+    "https://edge.adobe.io/metadata/namespaces/edge/datasets/datastreams/records/2fdb3763-0507-42ea-8856-e91bf3b64faa",
+    async () => {
+      return HttpResponse.json(
+        {
+          type: "https://ns.adobe.com/aep/errors/EXEG-3050-403",
+          status: 403,
+          title: "Forbidden",
+          detail: "Access is denied",
+          report: {
+            timestamp: "2022-10-20T12:31:11Z",
+            version: "1.3.13",
+            requestId: "1yMgl3lAhfaBzteXQiBPqymbbEhSNFQ5",
+            orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg",
+          },
+        },
+        { status: 403 },
+      );
+    },
+  ),
+];
+
+export const datastreamsForbiddenHandlers = [
+  http.get(
+    "https://edge.adobe.io/metadata/namespaces/edge/datasets/datastreams/records/",
+    async () => {
+      return HttpResponse.json(
+        {
+          type: "https://ns.adobe.com/aep/errors/EXEG-3050-403",
+          status: 403,
+          title: "Forbidden",
+          detail: "Access is denied",
+          report: {
+            timestamp: "2022-10-20T12:31:11Z",
+            version: "1.3.13",
+            requestId: "1yMgl3lAhfaBzteXQiBPqymbbEhSNFQ5",
+            orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg",
+          },
+        },
+        { status: 403 },
+      );
+    },
+  ),
+];
