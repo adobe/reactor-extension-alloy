@@ -11,8 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
-// eslint-disable-next-line import/no-unresolved
-import { page } from "vitest/browser";
+
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
@@ -677,7 +676,7 @@ describe("Config advertising section", () => {
     await advertiser0Field.selectOption("test");
 
     // Add second advertiser
-    const addAdvertiserButton = page.getByTestId("addAdvertiserButton");
+    const addAdvertiserButton = view.getByTestId("addAdvertiserButton");
     await addAdvertiserButton.click();
 
     // Select second advertiser
@@ -738,7 +737,7 @@ describe("Config advertising section", () => {
     await waitForOptionalFieldsToLoad(view);
 
     // Remove first advertiser
-    const removeButton0 = page.getByTestId("deleteAdvertiser0Button");
+    const removeButton0 = view.getByTestId("deleteAdvertiser0Button");
     await removeButton0.click();
 
     // Verify settings
