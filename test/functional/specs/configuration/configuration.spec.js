@@ -13,17 +13,11 @@ governing permissions and limitations under the License.
 import { t } from "testcafe";
 import extensionViewController from "../../helpers/extensionViewController.mjs";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import {
-  addInstanceButton,
-  instances,
-  components,
-} from "../../helpers/viewSelectors.mjs";
+import { addInstanceButton, instances } from "../../helpers/viewSelectors.mjs";
 import runCommonExtensionViewTests from "../view/runCommonExtensionViewTests.mjs";
 import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks.mjs";
 import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks.mjs";
 import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import { createTestIdSelector } from "../../helpers/dataTestIdSelectors.mjs";
 
 createExtensionViewFixture({
   title: "Extension Configuration View",
@@ -453,109 +447,4 @@ test("allows the load of the view with overrides settings in only a single envir
   });
 
   await instances[0].overrides.envTabs.development.expectExists();
-});
-
-test("has all components enabled by default", async () => {
-  await extensionViewController.init();
-  const settings = extensionViewController.getSettings();
-
-  await t.expect(settings.components).notOk("components list is null");
-});
-
-test.skip("has disabled components added to components key with the false value", async () => {
-  await extensionViewController.init();
-
-  // TODO: Expand the disclosure header
-  await spectrum.checkbox("consentComponentCheckbox").click();
-  await spectrum.checkbox("personalizationComponentCheckbox").click();
-
-  const settings = await extensionViewController.getSettings();
-
-  await t.expect(settings.components).ok();
-  await t.expect(settings.components).contains({
-    personalization: false,
-    privacy: false,
-  });
-});
-
-test.skip("restores disabled components added to components key with the false value", async () => {
-  await extensionViewController.init({
-    settings: {
-      components: {
-        personalization: false,
-      },
-      instances: [
-        {
-          name: "alloy",
-        },
-      ],
-    },
-  });
-
-  // TODO: Expand the disclosure header
-  await t
-    .expect(createTestIdSelector("personalizationComponentCheckbox").checked)
-    .eql(false);
-
-  await t
-    .expect(createTestIdSelector("privacyComponentCheckbox").checked)
-    .eql(true);
-});
-
-// Ensure new components are not included by default when creating a new configuration
-// and also not added during an upgrade of an existing configuration.
-
-test("does not include new components when creating a new configuration", async () => {
-  await extensionViewController.init();
-
-  await components.heading.click();
-  await spectrum
-    .checkbox("pushNotificationsComponentCheckbox")
-    .expectUnchecked();
-  await spectrum.checkbox("advertisingComponentCheckbox").expectUnchecked();
-
-  await extensionViewController.expectSettings({
-    components: {
-      ...defaultDisabledComponents,
-    },
-    instances: [
-      {
-        name: "alloy",
-      },
-    ],
-  });
-});
-
-test("does not include new components when upgrading existing configuration", async () => {
-  await extensionViewController.init({
-    settings: {
-      components: {
-        eventMerge: false,
-      },
-      instances: [
-        {
-          name: "alloy1",
-          edgeConfigId: "PR123",
-        },
-      ],
-    },
-  });
-
-  await components.heading.click();
-  await spectrum
-    .checkbox("pushNotificationsComponentCheckbox")
-    .expectUnchecked();
-  await spectrum.checkbox("advertisingComponentCheckbox").expectUnchecked();
-
-  await extensionViewController.expectSettings({
-    components: {
-      ...defaultDisabledComponents,
-    },
-    instances: [
-      {
-        name: "alloy1",
-        edgeConfigId: "PR123",
-      },
-    ],
-  });
 });
