@@ -539,6 +539,43 @@ export const defaultHandlers = [
   ),
 ];
 
+export const noAdvertisersHandlers = [
+  http.get(
+    "https://api.tubemogul.com/v1/provisioning/advertisers/",
+    async () => {
+      return HttpResponse.json({
+        "@uri":
+          "https://api.tubemogul.com/v1/provisioning/advertisers?sort_by=name&sort_order=asc&ims_org_id=97D1F3F459CE0AD80A495CBE@AdobeOrg&limit=1000&offset=0",
+        "@type": "Collection",
+        paging: {
+          total_num_items: 0,
+          limit: 1000,
+          offset: 0,
+          num_items: 0,
+          has_more_items: false,
+          sort_by: "name",
+        },
+        items: [],
+      });
+    },
+  ),
+];
+
+export const advertisersUnauthorizedHandlers = [
+  http.get(
+    "https://api.tubemogul.com/v1/provisioning/advertisers/",
+    async () => {
+      return HttpResponse.json(
+        {
+          error: "Unauthorized",
+          message: "Invalid access token",
+        },
+        { status: 401 },
+      );
+    },
+  ),
+];
+
 export const singleSandboxNoDefaultHandlers = [
   http.get(
     "https://platform.adobe.io/data/foundation/sandbox-management/",
