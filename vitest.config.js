@@ -39,7 +39,7 @@ export default defineProject({
         test: {
           name: "integration",
           include: ["test/integration/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
-          isolate: false,
+          isolate: true,
           browser: {
             enabled: true,
             instances: [
@@ -52,6 +52,10 @@ export default defineProject({
             screenshotFailures: false,
             locators: {
               testIdAttribute: "data-test-id",
+            },
+            viewport: {
+              width: 1000,
+              height: 1000,
             },
           },
           setupFiles: ["test/integration/helpers/setup.js"],

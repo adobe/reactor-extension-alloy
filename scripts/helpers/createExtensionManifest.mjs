@@ -411,6 +411,7 @@ const createExtensionManifest = ({ version }) => {
                       "environment",
                       "placeContext",
                       "highEntropyUserAgentHints",
+                      "oneTimeAnalyticsReferrer",
                     ],
                   },
                 },

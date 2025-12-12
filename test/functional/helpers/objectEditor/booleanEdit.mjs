@@ -16,34 +16,28 @@ import spectrum from "../spectrum.mjs";
  * Provides methods for managing form fields when editing a boolean node.
  */
 export default {
-  selectDataElementInputMethod: async () => {
-    await spectrum.radio("dataElementInputMethodField").click();
-  },
-  selectConstantInputMethod: async () => {
-    await spectrum.radio("valueInputMethodField").click();
-  },
-  selectConstantNoValueField: async () => {
-    await spectrum.radio("constantNoValueField").click();
-  },
   selectConstantTrueValueField: async () => {
-    await spectrum.radio("constantTrueField").click();
+    const valueField = spectrum.comboBox("valueField");
+    await valueField.openMenu();
+    await valueField.selectMenuOption("True");
   },
   selectConstantFalseValueField: async () => {
-    await spectrum.radio("constantFalseField").click();
-  },
-  expectConstantNoValue: async () => {
-    await spectrum.radio("constantNoValueField").expectChecked();
+    const valueField = spectrum.comboBox("valueField");
+    await valueField.openMenu();
+    await valueField.selectMenuOption("False");
   },
   expectConstantTrueValue: async () => {
-    await spectrum.radio("constantTrueField").expectChecked();
+    await spectrum.comboBox("valueField").expectValue("true");
   },
   expectConstantFalseValue: async () => {
-    await spectrum.radio("constantFalseField").expectChecked();
+    await spectrum.comboBox("valueField").expectValue("false");
   },
   enterDataElementValue: async (text) => {
-    await spectrum.textField("dataElementValueField").typeText(text);
+    const valueField = spectrum.comboBox("valueField");
+    await valueField.clear();
+    await valueField.enterSearch(text);
   },
-  expectDataElementValue: async (label) => {
-    await spectrum.textField("dataElementValueField").expectValue(label);
+  expectDataElementValue: async (value) => {
+    await spectrum.comboBox("valueField").expectValue(value);
   },
 };

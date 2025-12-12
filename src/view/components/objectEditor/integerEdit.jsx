@@ -18,16 +18,18 @@ import DataElementSelector from "../dataElementSelector";
  * The form for editing a number or integer field.
  */
 const IntegerEdit = (props) => {
-  const { fieldName } = props;
+  const { displayName, fieldName, nodeDescription } = props;
 
   return (
     <div>
-      <DataElementSelector>
+      <DataElementSelector clearable>
         <FormikTextField
           data-test-id="valueField"
           name={`${fieldName}.value`}
-          label="Value"
+          label={displayName}
           width="size-5000"
+          description="Data element should resolve to an integer."
+          contextualHelp={nodeDescription}
         />
       </DataElementSelector>
     </div>
@@ -35,7 +37,9 @@ const IntegerEdit = (props) => {
 };
 
 IntegerEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  nodeDescription: PropTypes.node,
 };
 
 export default IntegerEdit;

@@ -26,9 +26,13 @@ import objectHelpers from "./object";
 import stringHelpers from "./string";
 import objectJsonHelpers from "./object-json";
 import objectAnalyticsHelpers from "./object-analytics";
+import enumHelpers from "./enum";
 
-export default (schemaType) => {
-  switch (schemaType) {
+export default (schema) => {
+  if (schema.enum) {
+    return enumHelpers;
+  }
+  switch (schema.type) {
     case ARRAY:
       return arrayHelpers;
     case BOOLEAN:

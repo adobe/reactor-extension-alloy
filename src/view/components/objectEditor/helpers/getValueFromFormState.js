@@ -34,7 +34,7 @@ const getValueFromFormState = ({
   if (!schema) {
     return {};
   }
-  return getTypeSpecificHelpers(schema.type).getValueFromFormState({
+  return getTypeSpecificHelpers(schema).getValueFromFormState({
     formStateNode,
     getValueFromFormState: ({ formStateNode: subFormStateNode }) => {
       return getValueFromFormState({

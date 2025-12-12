@@ -10,101 +10,50 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { useField } from "formik";
-import { useEffect, useState } from "react";
-import { Radio, RadioGroup } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
-import FormElementContainer from "../formElementContainer";
-import FormikTextField from "../formikReactSpectrum3/formikTextField";
-import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
+import { Item } from "@adobe/react-spectrum";
+import FormikKeyedComboBox from "../formikReactSpectrum3/formikKeyedComboBox";
 import DataElementSelector from "../dataElementSelector";
-
-const inputMethods = {
-  CONSTANT: "constant",
-  DATA_ELEMENT: "dataElement",
-};
 
 /**
  * The form for editing a boolean field.
  */
 const BooleanEdit = (props) => {
-  const { fieldName } = props;
-  const valueFieldName = `${fieldName}.value`;
-  const [{ value }, , { setValue }] = useField(valueFieldName);
+  const { displayName, fieldName, nodeDescription } = props;
 
-  // Notice that the input method (data element or constant) is stored as
-  // local state rather than Formik state and the `value` stored in
-  // Formik state is not partitioned between which input method is being used.
-  // This reduces the complexity of the Formik state, but does complicate this
-  // component a little more. Without adding more state management in this
-  // component, it also means that when users switch input methods, the field's
-  // value gets reset each time.
-  const [inputMethod, setInputMethod] = useState("");
-
-  useEffect(() => {
-    const defaultInputMethod =
-      typeof value === "boolean"
-        ? inputMethods.CONSTANT
-        : inputMethods.DATA_ELEMENT;
-    setInputMethod(defaultInputMethod);
-  }, [fieldName]);
+  const constantValues = [
+    { value: "true", label: "True" },
+    { value: "false", label: "False" },
+  ];
 
   return (
-    <FormElementContainer>
-      <RadioGroup
-        label="Input method"
-        orientation="horizontal"
-        value={inputMethod}
-        onChange={(newInputMethod) => {
-          setValue("");
-          setInputMethod(newInputMethod);
-        }}
+    <DataElementSelector clearable>
+      <FormikKeyedComboBox
+        data-test-id="valueField"
+        label={displayName}
+        name={`${fieldName}.value`}
+        width="size-5000"
+        items={constantValues}
+        getKey={(item) => item.value}
+        getLabel={(item) => item.label}
+        allowsCustomValue
+        description="Data element should resolve to true or false."
+        contextualHelp={nodeDescription}
       >
-        <Radio
-          data-test-id="dataElementInputMethodField"
-          value={inputMethods.DATA_ELEMENT}
-        >
-          Provide data element
-        </Radio>
-        <Radio
-          data-test-id="valueInputMethodField"
-          value={inputMethods.CONSTANT}
-        >
-          Select value
-        </Radio>
-      </RadioGroup>
-      {inputMethod === inputMethods.CONSTANT ? (
-        <FormikRadioGroup
-          label="Value"
-          name={valueFieldName}
-          orientation="horizontal"
-        >
-          <Radio data-test-id="constantNoValueField" value="">
-            No value
-          </Radio>
-          <Radio data-test-id="constantTrueField" value>
-            True
-          </Radio>
-          <Radio data-test-id="constantFalseField" value={false}>
-            False
-          </Radio>
-        </FormikRadioGroup>
-      ) : (
-        <DataElementSelector>
-          <FormikTextField
-            data-test-id="dataElementValueField"
-            label="Value"
-            name={valueFieldName}
-            width="size-5000"
-          />
-        </DataElementSelector>
-      )}
-    </FormElementContainer>
+        {(item) => (
+          <Item key={item.value} data-test-id={item.value}>
+            {item.label}
+          </Item>
+        )}
+      </FormikKeyedComboBox>
+    </DataElementSelector>
   );
 };
 
 BooleanEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  nodeDescription: PropTypes.node,
 };
 
 export default BooleanEdit;

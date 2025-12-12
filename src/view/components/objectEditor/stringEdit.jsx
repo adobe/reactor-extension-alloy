@@ -11,31 +11,55 @@ governing permissions and limitations under the License.
 */
 
 import PropTypes from "prop-types";
+import { Item } from "@adobe/react-spectrum";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
+import FormikKeyedComboBox from "../formikReactSpectrum3/formikKeyedComboBox";
 import DataElementSelector from "../dataElementSelector";
 
-/**
- * The form for editing a string field.
- */
 const StringEdit = (props) => {
-  const { fieldName } = props;
+  const { displayName, fieldName, possibleValues, nodeDescription } = props;
 
   return (
     <div>
-      <DataElementSelector>
-        <FormikTextField
-          data-test-id="valueField"
-          name={`${fieldName}.value`}
-          label="Value"
-          width="size-5000"
-        />
+      <DataElementSelector clearable>
+        {possibleValues ? (
+          <FormikKeyedComboBox
+            data-test-id="valueField"
+            label={displayName}
+            name={`${fieldName}.value`}
+            width="size-5000"
+            items={possibleValues}
+            getKey={(item) => item.value}
+            getLabel={(item) => item.label}
+            allowsCustomValue
+            description="Begin typing or open the menu to see suggested values. Custom values are allowed."
+            contextualHelp={nodeDescription}
+          >
+            {(item) => (
+              <Item key={item.value} data-test-id={item.value}>
+                {item.label}
+              </Item>
+            )}
+          </FormikKeyedComboBox>
+        ) : (
+          <FormikTextField
+            data-test-id="valueField"
+            name={`${fieldName}.value`}
+            label={displayName}
+            width="size-5000"
+            contextualHelp={nodeDescription}
+          />
+        )}
       </DataElementSelector>
     </div>
   );
 };
 
 StringEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  possibleValues: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)),
+  nodeDescription: PropTypes.node,
 };
 
 export default StringEdit;
