@@ -116,10 +116,10 @@ describe("Generated alloy.js (preinstalled mode)", () => {
       );
     });
 
-    it("throws error when calling deepAssign directly", () => {
-      expect(() => alloyExports.deepAssign()).toThrow(
-        "deepAssign should not be called directly in preinstalled mode",
-      );
+    it("deepAssign is a functional utility", () => {
+      // deepAssign should work in preinstalled mode for Update Variable actions
+      expect(() => alloyExports.deepAssign({}, { a: 1 })).not.toThrow();
+      expect(alloyExports.deepAssign({}, { a: 1 })).toEqual({ a: 1 });
     });
   });
 
@@ -289,10 +289,114 @@ describe("Generated alloy.js (preinstalled mode)", () => {
       const stats = fs.statSync(alloyPath);
       const sizeKB = stats.size / 1024;
 
-      // Should be less than 15KB (currently ~7KB)
+      // Should be less than 15KB (currently ~8KB)
       expect(sizeKB).toBeLessThan(15);
       // eslint-disable-next-line no-console
       console.log(`Generated alloy.js size: ${sizeKB.toFixed(2)} KB`);
+    });
+  });
+
+  describe("deepAssign utility", () => {
+    it("exports deepAssign function", () => {
+      expect(alloyExports.deepAssign).toBeDefined();
+      expect(typeof alloyExports.deepAssign).toBe("function");
+    });
+
+    it("performs shallow merge for simple objects", () => {
+      const target = { a: 1, b: 2 };
+      const source = { b: 3, c: 4 };
+      const result = alloyExports.deepAssign(target, source);
+
+      expect(result).toEqual({ a: 1, b: 3, c: 4 });
+      expect(result).toBe(target); // Should modify target
+    });
+
+    it("performs deep merge for nested objects", () => {
+      const target = { a: { x: 1, y: 2 }, b: 3 };
+      const source = { a: { y: 4, z: 5 }, c: 6 };
+      const result = alloyExports.deepAssign(target, source);
+
+      expect(result).toEqual({ a: { x: 1, y: 4, z: 5 }, b: 3, c: 6 });
+      expect(result.a).toBe(target.a); // Nested objects should be modified
+    });
+
+    it("handles multiple source objects", () => {
+      const target = { a: 1 };
+      const source1 = { b: 2 };
+      const source2 = { c: 3 };
+      const result = alloyExports.deepAssign(target, source1, source2);
+
+      expect(result).toEqual({ a: 1, b: 2, c: 3 });
+    });
+
+    it("throws error for null target", () => {
+      expect(() => {
+        alloyExports.deepAssign(null, { a: 1 });
+      }).toThrow('deepAssign "target" cannot be null or undefined');
+    });
+
+    it("throws error for undefined target", () => {
+      expect(() => {
+        alloyExports.deepAssign(undefined, { a: 1 });
+      }).toThrow('deepAssign "target" cannot be null or undefined');
+    });
+
+    it("handles empty objects", () => {
+      const result = alloyExports.deepAssign({}, {});
+      expect(result).toEqual({});
+    });
+
+    it("handles arrays by overwriting", () => {
+      const target = { arr: [1, 2, 3] };
+      const source = { arr: [4, 5] };
+      const result = alloyExports.deepAssign(target, source);
+
+      expect(result.arr).toEqual([4, 5]);
+    });
+
+    it("works with XDM-like objects (real use case)", () => {
+      const target = {
+        xdm: {
+          web: {
+            webPageDetails: {
+              name: "Homepage",
+            },
+          },
+        },
+      };
+
+      const source = {
+        xdm: {
+          web: {
+            webPageDetails: {
+              URL: "https://example.com",
+            },
+            webReferrer: {
+              URL: "https://google.com",
+            },
+          },
+          commerce: {
+            order: {
+              purchaseID: "12345",
+            },
+          },
+        },
+      };
+
+      const result = alloyExports.deepAssign(target, source);
+
+      expect(result.xdm.web.webPageDetails).toEqual({
+        name: "Homepage",
+        URL: "https://example.com",
+      });
+      expect(result.xdm.web.webReferrer).toEqual({
+        URL: "https://google.com",
+      });
+      expect(result.xdm.commerce).toEqual({
+        order: {
+          purchaseID: "12345",
+        },
+      });
     });
   });
 });

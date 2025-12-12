@@ -46,12 +46,32 @@ const RequiredComponent = (
     (wrapped) =>
     ({ initInfo, existingValidationShape }) => {
       const { components = {} } = initInfo?.extensionSettings || {};
+      const isPreinstalled =
+        initInfo?.extensionSettings?.libraryCode?.type === "preinstalled";
+
       componentEnabled = valueOrDefault(
         components[requiredComponent],
         isDefaultComponent(requiredComponent),
       );
 
       const isNew = initInfo?.settings == null;
+
+      // Check for preinstalled mode for eventMerge component
+      if (
+        requiredComponent === "eventMerge" &&
+        isPreinstalled &&
+        isNew &&
+        whole
+      ) {
+        return {
+          ...existingValidationShape,
+          requiredComponent: mixed().test(
+            "requiredComponent",
+            `The ${requiredComponent} component is not available in preinstalled mode.`,
+            () => false,
+          ),
+        };
+      }
 
       if (!componentEnabled && isNew && whole) {
         return {
@@ -97,6 +117,25 @@ const RequiredComponent = (
 
   const Component = (props) => {
     const { initInfo } = props;
+    const isPreinstalled =
+      initInfo?.extensionSettings?.libraryCode?.type === "preinstalled";
+
+    // For eventMerge in preinstalled mode, show specific message
+    if (requiredComponent === "eventMerge" && isPreinstalled) {
+      return (
+        <ComponentDependency
+          initInfo={initInfo}
+          requiredComponent={requiredComponent}
+          title={title}
+          whole={whole}
+          deprecated={deprecated}
+          isPreinstalled={isPreinstalled}
+        >
+          <ChildComponent {...props} />
+        </ComponentDependency>
+      );
+    }
+
     return (
       <ComponentDependency
         initInfo={initInfo}

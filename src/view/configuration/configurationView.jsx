@@ -412,7 +412,7 @@ const Configuration = ({ initInfo, context }) => {
 
   useNewlyValidatedFormSubmission((errors) => {
     if (errors) {
-      const alreadyOpenOrErrorKeys = ["components", "instances"].filter(
+      const alreadyOpenOrErrorKeys = ["buildOptions", "instances"].filter(
         (key) => {
           return !!errors[key] || expandedKeys.has(key);
         },
@@ -427,33 +427,36 @@ const Configuration = ({ initInfo, context }) => {
 
   return (
     <Flex direction="column" gap="size-200">
-      <View marginStart="size-200">
-        <FormikRadioGroup
-          data-test-id="libraryCodeField"
-          name="libraryCode.type"
-          label="Alloy library configuration"
-          description="Choose how the Alloy library should be loaded"
-          orientation="horizontal"
-        >
-          <Radio value="managed">Managed by Launch (default)</Radio>
-          <Radio value="preinstalled">
-            Use existing alloy.js instance (self-hosted)
-          </Radio>
-        </FormikRadioGroup>
-      </View>
       <Accordion
         expandedKeys={expandedKeys}
         onExpandedChange={setExpandedKeys}
         allowsMultipleExpanded
       >
-        {!isPreinstalled && (
-          <Disclosure id="components" data-test-id="customBuildHeading">
-            <DisclosureTitle>Custom build components</DisclosureTitle>
-            <DisclosurePanel>
-              <ComponentsSection />
-            </DisclosurePanel>
-          </Disclosure>
-        )}
+        <Disclosure id="buildOptions" data-test-id="buildOptionsHeading">
+          <DisclosureTitle>Web SDK build options</DisclosureTitle>
+          <DisclosurePanel>
+            <Flex direction="column" gap="size-200">
+              <FormikRadioGroup
+                data-test-id="libraryCodeField"
+                name="libraryCode.type"
+                label="Alloy library configuration"
+                description="Choose how the Alloy library should be loaded"
+                orientation="horizontal"
+              >
+                <Radio value="managed">Managed by Launch (default)</Radio>
+                <Radio value="preinstalled">
+                  Use existing alloy.js instance (self-hosted)
+                </Radio>
+              </FormikRadioGroup>
+              {!isPreinstalled && (
+                <>
+                  <Divider size="S" />
+                  <ComponentsSection />
+                </>
+              )}
+            </Flex>
+          </DisclosurePanel>
+        </Disclosure>
         <Disclosure id="instances" data-test-id="instancesHeading">
           <DisclosureTitle>SDK instances</DisclosureTitle>
           <DisclosurePanel>

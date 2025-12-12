@@ -13,9 +13,12 @@ governing permissions and limitations under the License.
 import extensionViewController from "../../../helpers/extensionViewController.mjs";
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
 
 const uuidRegex =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
+const preinstalledModeError = spectrum.alert("preinstalledModeError");
 
 createExtensionViewFixture({
   title: "Event Merge ID View",
@@ -44,4 +47,30 @@ test("does not modify cacheId if initialized with a cacheId", async () => {
   await extensionViewController.expectSettings({
     cacheId: "ab3d0f9b-6faa-40c2-bf68-a77a9bbb686a",
   });
+});
+
+test("shows error when using preinstalled library type and creating new data element", async () => {
+  await extensionViewController.init({
+    extensionSettings: {
+      libraryCode: { type: "preinstalled" },
+      instances: [{ name: "alloy" }],
+    },
+    settings: null,
+  });
+
+  await preinstalledModeError.expectExists();
+  await extensionViewController.expectIsNotValid();
+});
+
+test("shows no error when using managed library type", async () => {
+  await extensionViewController.init({
+    extensionSettings: {
+      libraryCode: { type: "managed" },
+      instances: [{ name: "alloy" }],
+    },
+    settings: null,
+  });
+
+  await preinstalledModeError.expectNotExists();
+  await extensionViewController.expectIsValid();
 });

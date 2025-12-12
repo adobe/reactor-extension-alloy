@@ -31,31 +31,47 @@ const getSettings = ({ values }) => {
 };
 
 const EventMergeId = ({ initInfo }) => {
+  const isPreinstalled =
+    initInfo?.extensionSettings?.libraryCode?.type === "preinstalled";
+
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       render={() => (
         <FillParentAndCenterChildren>
-          <RequiredComponent
-            initInfo={initInfo}
-            requiredComponent="eventMerge"
-            title="the event merge ID data element"
-          >
-            <InlineAlert variant="info" width="size-6000">
-              <Heading size="XXS">Event merge ID caching</Heading>
+          {isPreinstalled ? (
+            <InlineAlert variant="negative" width="size-6000">
+              <Heading>Not available in preinstalled mode</Heading>
               <Content>
-                This data element will provide an event merge ID. Regardless of
-                what you choose for the data element storage duration in Launch,
-                the value of this data element will remain the same until either
-                the visitor to your website leaves the current page or the event
-                merge ID is reset using the <b>Reset event merge ID</b> action.
+                The event merge ID data element is not available when using the
+                preinstalled library type. To use this data element, change the
+                extension configuration to use the &quot;Managed by Launch&quot;
+                library type instead.
               </Content>
             </InlineAlert>
-            <Body size="L" marginTop="size-200">
-              No configuration necessary.
-            </Body>
-          </RequiredComponent>
+          ) : (
+            <RequiredComponent
+              initInfo={initInfo}
+              requiredComponent="eventMerge"
+              title="the event merge ID data element"
+            >
+              <InlineAlert variant="info" width="size-6000">
+                <Heading size="XXS">Event merge ID caching</Heading>
+                <Content>
+                  This data element will provide an event merge ID. Regardless
+                  of what you choose for the data element storage duration in
+                  Launch, the value of this data element will remain the same
+                  until either the visitor to your website leaves the current
+                  page or the event merge ID is reset using the{" "}
+                  <b>Reset event merge ID</b> action.
+                </Content>
+              </InlineAlert>
+              <Body size="L" marginTop="size-200">
+                No configuration necessary.
+              </Body>
+            </RequiredComponent>
+          )}
         </FillParentAndCenterChildren>
       )}
     />
