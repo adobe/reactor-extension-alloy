@@ -53,47 +53,70 @@ program.action(async ({ outputDir }) => {
   const outputFile = path.join(outputDir, "alloy.js");
 
   try {
-    // Bundle the createPreinstalledProxy module with its dependencies
-    const inputFile = path.resolve(
-      __dirname,
-      "../src/lib/utils/createPreinstalledProxy.js",
-    );
-
     // eslint-disable-next-line no-console
     console.log("Building empty alloy.js for preinstalled mode...");
     // eslint-disable-next-line no-console
-    console.log(`Input: ${inputFile}`);
-    // eslint-disable-next-line no-console
     console.log(`Output: ${outputFile}`);
 
-    const bundle = await rollup({
-      input: inputFile,
-      plugins: [
-        nodeResolve({
-          preferBuiltins: false,
-        }),
-        commonjs(),
-        rollupBabel({
-          babelHelpers: "bundled",
-          presets: [
-            [
-              "@babel/preset-env",
-              {
-                targets: "> 0.25%, not dead",
-              },
-            ],
+    // Bundle the createPreinstalledProxy module with its dependencies
+    const proxyInputFile = path.resolve(
+      __dirname,
+      "../src/lib/utils/createPreinstalledProxy.js",
+    );
+    const deepAssignInputFile = path.resolve(
+      __dirname,
+      "../src/lib/utils/deepAssign.js",
+    );
+
+    // eslint-disable-next-line no-console
+    console.log(`Bundling createPreinstalledProxy: ${proxyInputFile}`);
+    // eslint-disable-next-line no-console
+    console.log(`Bundling deepAssign: ${deepAssignInputFile}`);
+
+    const rollupPlugins = [
+      nodeResolve({
+        preferBuiltins: false,
+      }),
+      commonjs(),
+      rollupBabel({
+        babelHelpers: "bundled",
+        presets: [
+          [
+            "@babel/preset-env",
+            {
+              targets: "> 0.25%, not dead",
+            },
           ],
-          exclude: "node_modules/**",
-        }),
-      ],
+        ],
+        exclude: "node_modules/**",
+      }),
+    ];
+
+    // Bundle createPreinstalledProxy
+    const proxyBundle = await rollup({
+      input: proxyInputFile,
+      plugins: rollupPlugins,
     });
 
-    const { output } = await bundle.generate({
+    const { output: proxyOutput } = await proxyBundle.generate({
       format: "iife",
       name: "AlloyPreinstalledUtils",
     });
 
-    const bundledCode = output[0].code;
+    const proxyBundledCode = proxyOutput[0].code;
+
+    // Bundle deepAssign
+    const deepAssignBundle = await rollup({
+      input: deepAssignInputFile,
+      plugins: rollupPlugins,
+    });
+
+    const { output: deepAssignOutput } = await deepAssignBundle.generate({
+      format: "iife",
+      name: "DeepAssignUtils",
+    });
+
+    const deepAssignBundledCode = deepAssignOutput[0].code;
 
     // Wrap the bundled code with the createCustomInstance implementation
     const alloyContent = `/*
@@ -111,7 +134,9 @@ governing permissions and limitations under the License.
 // This is a generated file for preinstalled library mode.
 // It provides a proxy implementation that waits for external alloy instances.
 
-${bundledCode}
+${proxyBundledCode}
+
+${deepAssignBundledCode}
 
 // Create the createCustomInstance implementation for preinstalled mode
 const createCustomInstance = ({ name }) => {
@@ -134,11 +159,8 @@ const createEventMergeId = () => {
   );
 };
 
-const deepAssign = () => {
-  throw new Error(
-    "deepAssign should not be called directly in preinstalled mode"
-  );
-};
+// deepAssign is needed for Update Variable actions even in preinstalled mode
+const deepAssign = DeepAssignUtils.deepAssign;
 
 // Export for CommonJS (used by the extension runtime)
 if (typeof module !== "undefined" && module.exports) {
