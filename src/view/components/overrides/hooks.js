@@ -14,8 +14,7 @@ import { useEffect, useState } from "react";
 import fetchConfig from "../../configuration/utils/fetchConfig";
 import deepGet from "../../utils/deepGet";
 import {
-  ENABLED_FIELD_VALUES,
-  ENABLED_MATCH_FIELD_VALUES,
+  ENABLED_DISABLED_MATCH_FIELD_VALUES,
   FIELD_NAMES,
   overridesKeys,
 } from "./utils";
@@ -184,8 +183,8 @@ export const useFormikContextWithOverrides = ({
       const value = deepGet(values, `${prefixWithEnv}.${shortPropName}`);
       return (
         !serviceIsEnabled ||
-        value === ENABLED_FIELD_VALUES.disabled ||
-        value === ENABLED_MATCH_FIELD_VALUES.disabled
+        value === ENABLED_DISABLED_MATCH_FIELD_VALUES.disabled ||
+        value === ENABLED_DISABLED_MATCH_FIELD_VALUES.match
       );
     };
 
@@ -196,7 +195,7 @@ export const useFormikContextWithOverrides = ({
     /** @type {HTMLInputElement} */
     const target = e.target;
     const newValue = target.value;
-    if (newValue !== ENABLED_FIELD_VALUES.disabled) {
+    if (newValue !== ENABLED_DISABLED_MATCH_FIELD_VALUES.disabled) {
       return;
     }
     const fieldName = target.getAttribute("name");
@@ -205,7 +204,7 @@ export const useFormikContextWithOverrides = ({
       defaults,
       parentFieldName.replace(prefix, "edgeConfigOverrides"),
     );
-    fieldDefaults.enabled = ENABLED_FIELD_VALUES.disabled;
+    fieldDefaults.enabled = ENABLED_DISABLED_MATCH_FIELD_VALUES.disabled;
     setFieldValue(parentFieldName, fieldDefaults, true);
     setFieldTouched(parentFieldName, true, true);
   };
@@ -217,7 +216,13 @@ export const useFormikContextWithOverrides = ({
    * @param {"production" | "staging" | "development"} destination
    */
   const onCopy = (source, destination) => {
-    [FIELD_NAMES.sandbox, FIELD_NAMES.datastreamId, "enabled", ...overridesKeys]
+    [
+      FIELD_NAMES.sandbox,
+      FIELD_NAMES.datastreamId,
+      "enabled",
+      ...overridesKeys,
+      "com_adobe_identity",
+    ]
       .filter(
         (field) =>
           deepGet(edgeConfigOverrides[source], field) !==
