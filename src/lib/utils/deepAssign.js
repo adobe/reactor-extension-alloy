@@ -14,8 +14,16 @@ const isNil = (value) => value == null;
 const isObject = (value) =>
   !isNil(value) && !Array.isArray(value) && typeof value === "object";
 
+// Keys that should never be copied to prevent prototype pollution
+const DANGEROUS_KEYS = ["__proto__", "constructor", "prototype"];
+
 const deepAssignObject = (target, source) => {
   Object.keys(source).forEach((key) => {
+    // Guard against prototype pollution
+    if (DANGEROUS_KEYS.includes(key)) {
+      return;
+    }
+
     if (isObject(target[key]) && isObject(source[key])) {
       deepAssignObject(target[key], source[key]);
       return;

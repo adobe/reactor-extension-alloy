@@ -398,5 +398,46 @@ describe("Generated alloy.js (preinstalled mode)", () => {
         },
       });
     });
+
+    it("protects against prototype pollution via __proto__", () => {
+      const target = {};
+      const maliciousSource = JSON.parse('{"__proto__":{"polluted":"yes"}}');
+
+      alloyExports.deepAssign(target, maliciousSource);
+
+      // Should not pollute Object.prototype
+      expect({}.polluted).toBeUndefined();
+      expect(Object.prototype.polluted).toBeUndefined();
+    });
+
+    it("protects against prototype pollution via constructor", () => {
+      const target = {};
+      const maliciousSource = {
+        constructor: {
+          prototype: {
+            polluted: "yes",
+          },
+        },
+      };
+
+      alloyExports.deepAssign(target, maliciousSource);
+
+      // Should not pollute Object.prototype
+      expect({}.polluted).toBeUndefined();
+    });
+
+    it("protects against prototype pollution via prototype", () => {
+      const target = {};
+      const maliciousSource = {
+        prototype: {
+          polluted: "yes",
+        },
+      };
+
+      alloyExports.deepAssign(target, maliciousSource);
+
+      // Should not add prototype property
+      expect(target.prototype).toBeUndefined();
+    });
   });
 });
