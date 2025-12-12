@@ -20,8 +20,8 @@ export const resourceUsageDialog = {
   confirmDeleteInstanceButton: spectrum.button("confirmDeleteInstanceButton"),
 };
 
-export const components = {
-  heading: spectrum.button("customBuildHeading"),
+export const buildOptions = {
+  heading: spectrum.button("buildOptionsHeading"),
   pushNotifications: spectrum.checkbox("pushNotificationsComponentCheckbox"),
 };
 

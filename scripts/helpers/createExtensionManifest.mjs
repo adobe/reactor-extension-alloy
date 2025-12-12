@@ -14,12 +14,20 @@ import alloyComponents, {
   isDefaultComponent,
 } from "../../src/view/utils/alloyComponents.mjs";
 
-const createPreprocessingVariables = () =>
-  Object.keys(alloyComponents).map((n) => ({
+const createPreprocessingVariables = () => [
+  // Alloy component variables
+  ...Object.keys(alloyComponents).map((n) => ({
     key: `ALLOY_${n.toUpperCase()}`,
     path: `components.${n}`,
     default: isDefaultComponent(n),
-  }));
+  })),
+  // Library loading mode variable (string: "managed" or "preinstalled")
+  {
+    key: "ALLOY_LIBRARY_TYPE",
+    path: "libraryCode.type",
+    default: false,
+  },
+];
 
 /**
  * @typedef {object} ExtensionManifest
@@ -281,6 +289,17 @@ const createExtensionManifest = ({ version }) => {
         $schema: "http://json-schema.org/draft-04/schema#",
         type: "object",
         properties: {
+          libraryCode: {
+            type: "object",
+            properties: {
+              type: {
+                type: "string",
+                enum: ["managed", "preinstalled"],
+              },
+            },
+            required: ["type"],
+            additionalProperties: false,
+          },
           instances: {
             type: "array",
             minItems: 1,
@@ -491,7 +510,7 @@ const createExtensionManifest = ({ version }) => {
                   additionalProperties: false,
                 },
               },
-              required: ["edgeConfigId", "name"],
+              required: ["name"],
               additionalProperties: false,
             },
           },

@@ -24,6 +24,7 @@ import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
  * @param {string} props.title The title of the component.
  * @param {boolean} props.whole Is the component required for this whole form? If so, do not allow the form to create new items.
  * @param {boolean} props.deprecated Whether the component is deprecated.
+ * @param {boolean} props.isPreinstalled Whether the library is in preinstalled mode.
  * @param {React.ReactNode} props.children The children to render.
  * @returns {React.ReactNode} The rendered component.
  */
@@ -33,10 +34,56 @@ const RequiredComponent = ({
   title,
   whole = false,
   deprecated = false,
+  isPreinstalled = false,
   children,
 }) => {
   const components = initInfo?.extensionSettings?.components || {};
   const isComponentDisabled = components[requiredComponent] === false;
+
+  // Check for preinstalled mode for eventMerge component
+  if (requiredComponent === "eventMerge" && isPreinstalled) {
+    const isNew = initInfo?.settings == null;
+
+    if (whole && isNew) {
+      // This is returned when in preinstalled mode and the item is new.
+      return (
+        <InlineAlert
+          variant="negative"
+          width="size-5000"
+          data-test-id="preinstalledModeError"
+        >
+          <Heading>Not available in preinstalled mode</Heading>
+          <Content>
+            You cannot create {title} when using the preinstalled library type.
+            To use this, change the extension configuration to use the
+            &quot;Managed by Launc&quot; library type instead.
+          </Content>
+        </InlineAlert>
+      );
+    }
+
+    if (whole && !isNew) {
+      // This is returned when in preinstalled mode and the item exists.
+      return (
+        <>
+          <InlineAlert
+            variant="notice"
+            width="size-5000"
+            data-test-id="preinstalledModeWarning"
+          >
+            <Heading>Not available in preinstalled mode</Heading>
+            <Content>
+              Warning, {title} will not function correctly when using the
+              preinstalled library type. To fix this, change the extension
+              configuration to use the &quot;Managed by Launch&quot; library
+              type instead.
+            </Content>
+          </InlineAlert>
+          {children}
+        </>
+      );
+    }
+  }
 
   if (!isComponentDisabled) {
     return children;
@@ -110,6 +157,7 @@ RequiredComponent.propTypes = {
   title: PropTypes.string,
   whole: PropTypes.bool,
   deprecated: PropTypes.bool,
+  isPreinstalled: PropTypes.bool,
   children: PropTypes.node,
 };
 
