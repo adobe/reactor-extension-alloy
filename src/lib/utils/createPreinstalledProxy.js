@@ -32,8 +32,6 @@ export const createPreinstalledProxy = (name, options = {}) => {
     timeout = 1000,
     interval = 100,
     configTimeout = 5000,
-    // eslint-disable-next-line no-console
-    onWarn = console.warn,
     onError = console.error,
   } = options;
 
@@ -41,12 +39,10 @@ export const createPreinstalledProxy = (name, options = {}) => {
   let realInstance = null;
 
   const getRealInstance = async () => {
-    // Verify that the instance is loaded on the window
     try {
       await poll(() => typeof window[name] === "function", timeout, interval);
-      // eslint-disable-next-line no-unused-vars, unused-imports/no-unused-vars
-    } catch (err) {
-      onWarn(
+    } catch {
+      onError(
         `Alloy instance "${name}" not found on window after ${timeout}ms. ` +
           `Make sure the instance is loaded before the Launch library.`,
       );
@@ -59,17 +55,15 @@ export const createPreinstalledProxy = (name, options = {}) => {
     try {
       await Promise.race([
         instance("getLibraryInfo"),
-        new Promise((_, reject) =>
-          // eslint-disable-next-line no-promise-executor-return
+        new Promise((_, reject) => {
           setTimeout(
             () => reject(new Error("Configuration check timeout")),
             configTimeout,
-          ),
-        ),
+          );
+        }),
       ]);
-      // eslint-disable-next-line no-unused-vars, unused-imports/no-unused-vars
-    } catch (err) {
-      onWarn(
+    } catch {
+      onError(
         `Alloy instance "${name}" failed configuration check. ` +
           `Make sure the instance is configured before loading the Launch library.`,
       );

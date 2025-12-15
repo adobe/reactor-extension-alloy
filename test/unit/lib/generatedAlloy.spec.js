@@ -70,7 +70,6 @@ describe("Generated alloy.js (preinstalled mode)", () => {
     mockWindow = {};
     global.window = mockWindow;
     global.console = {
-      warn: vi.fn(),
       error: vi.fn(),
       // eslint-disable-next-line no-console
       log: console.log, // Keep real log for debugging
@@ -152,7 +151,7 @@ describe("Generated alloy.js (preinstalled mode)", () => {
       expect(mockAlloyInstance).toHaveBeenCalledWith("getLibraryInfo");
     });
 
-    it("proxy logs warning if instance not found", async () => {
+    it("proxy logs error if instance not found", async () => {
       const proxy = alloyExports.createCustomInstance({ name: "missingAlloy" });
       const commandPromise = proxy("test").catch((err) => err);
 
@@ -163,14 +162,14 @@ describe("Generated alloy.js (preinstalled mode)", () => {
       expect(result.message).toBe(
         'Alloy instance "missingAlloy" not available',
       );
-      expect(global.console.warn).toHaveBeenCalledWith(
+      expect(global.console.error).toHaveBeenCalledWith(
         expect.stringContaining(
           'Alloy instance "missingAlloy" not found on window',
         ),
       );
     });
 
-    it("proxy logs warning if instance not configured", async () => {
+    it("proxy logs error if instance not configured", async () => {
       mockAlloyInstance.mockImplementation((cmd) => {
         if (cmd === "getLibraryInfo") {
           return Promise.reject(new Error("Not configured"));
@@ -187,7 +186,7 @@ describe("Generated alloy.js (preinstalled mode)", () => {
       const result = await commandPromise;
 
       expect(result).toBeInstanceOf(Error);
-      expect(global.console.warn).toHaveBeenCalledWith(
+      expect(global.console.error).toHaveBeenCalledWith(
         expect.stringContaining("failed configuration check"),
       );
     });

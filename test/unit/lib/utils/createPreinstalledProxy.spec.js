@@ -15,7 +15,6 @@ import { createPreinstalledProxy } from "../../../../src/lib/utils/createPreinst
 
 describe("createPreinstalledProxy", () => {
   let mockWindow;
-  let onWarn;
   let onError;
   let mockAlloy;
 
@@ -23,7 +22,6 @@ describe("createPreinstalledProxy", () => {
     vi.useFakeTimers();
     mockWindow = {};
     global.window = mockWindow;
-    onWarn = vi.fn();
     onError = vi.fn();
     mockAlloy = vi.fn();
   });
@@ -40,7 +38,7 @@ describe("createPreinstalledProxy", () => {
         return Promise.resolve("result");
       });
 
-      const proxy = createPreinstalledProxy("alloy", { onWarn, onError });
+      const proxy = createPreinstalledProxy("alloy", { onError });
       const commandPromise = proxy("sendEvent", { xdm: {} });
 
       // Instance not available yet
@@ -55,7 +53,6 @@ describe("createPreinstalledProxy", () => {
       expect(result).toBe("result");
       expect(mockAlloy).toHaveBeenCalledWith("sendEvent", { xdm: {} });
       expect(mockAlloy).toHaveBeenCalledWith("getLibraryInfo");
-      expect(onWarn).not.toHaveBeenCalled();
       expect(onError).not.toHaveBeenCalled();
     });
 
@@ -67,14 +64,13 @@ describe("createPreinstalledProxy", () => {
 
       mockWindow.alloy = mockAlloy;
 
-      const proxy = createPreinstalledProxy("alloy", { onWarn, onError });
+      const proxy = createPreinstalledProxy("alloy", { onError });
       const result = await proxy("getIdentity");
 
       await vi.runAllTimersAsync();
 
       expect(result).toBe("result");
       expect(mockAlloy).toHaveBeenCalledWith("getIdentity");
-      expect(onWarn).not.toHaveBeenCalled();
     });
 
     it("handles multiple commands before instance is available", async () => {
@@ -83,7 +79,7 @@ describe("createPreinstalledProxy", () => {
         return Promise.resolve(`result-${cmd}`);
       });
 
-      const proxy = createPreinstalledProxy("alloy", { onWarn, onError });
+      const proxy = createPreinstalledProxy("alloy", { onError });
 
       // Queue multiple commands
       const cmd1 = proxy("sendEvent", { xdm: { test: 1 } });
@@ -117,7 +113,7 @@ describe("createPreinstalledProxy", () => {
 
       mockWindow.alloy = mockAlloy;
 
-      const proxy = createPreinstalledProxy("alloy", { onWarn, onError });
+      const proxy = createPreinstalledProxy("alloy", { onError });
 
       // First command triggers lookup
       await proxy("cmd1");
@@ -140,7 +136,7 @@ describe("createPreinstalledProxy", () => {
 
       mockWindow.alloy = mockAlloy;
 
-      const proxy = createPreinstalledProxy("alloy", { onWarn, onError });
+      const proxy = createPreinstalledProxy("alloy", { onError });
 
       await proxy("initial");
       await vi.runAllTimersAsync();
@@ -167,7 +163,6 @@ describe("createPreinstalledProxy", () => {
 
       const proxy = createPreinstalledProxy("alloy", {
         timeout: 500,
-        onWarn,
         onError,
       });
 
@@ -178,7 +173,7 @@ describe("createPreinstalledProxy", () => {
 
       expect(result1).toBeInstanceOf(Error);
       expect(result1.message).toBe('Alloy instance "alloy" not available');
-      expect(onWarn).toHaveBeenCalledWith(
+      expect(onError).toHaveBeenCalledWith(
         expect.stringContaining("not found on window after 500ms"),
       );
       expect(onError).toHaveBeenCalledWith(
@@ -187,7 +182,6 @@ describe("createPreinstalledProxy", () => {
 
       // Instance appears
       mockWindow.alloy = mockAlloy;
-      onWarn.mockClear();
       onError.mockClear();
 
       // Second command should retry and succeed
@@ -204,7 +198,6 @@ describe("createPreinstalledProxy", () => {
       const proxy = createPreinstalledProxy("alloy", {
         timeout: 300,
         interval: 50,
-        onWarn,
         onError,
       });
 
@@ -213,7 +206,7 @@ describe("createPreinstalledProxy", () => {
       const result = await cmd;
 
       expect(result).toBeInstanceOf(Error);
-      expect(onWarn).toHaveBeenCalledWith(
+      expect(onError).toHaveBeenCalledWith(
         expect.stringContaining("not found on window after 300ms"),
       );
     });
@@ -227,7 +220,6 @@ describe("createPreinstalledProxy", () => {
       const proxy = createPreinstalledProxy("alloy", {
         timeout: 1000,
         interval: 200,
-        onWarn,
         onError,
       });
 
@@ -243,7 +235,7 @@ describe("createPreinstalledProxy", () => {
       await vi.runAllTimersAsync();
       await cmd;
 
-      expect(onWarn).not.toHaveBeenCalled();
+      expect(onError).not.toHaveBeenCalled();
     });
   });
 
@@ -261,7 +253,7 @@ describe("createPreinstalledProxy", () => {
 
       mockWindow.alloy = mockAlloy;
 
-      const proxy = createPreinstalledProxy("alloy", { onWarn, onError });
+      const proxy = createPreinstalledProxy("alloy", { onError });
       const cmdPromise = proxy("test");
 
       await vi.advanceTimersByTimeAsync(200);
@@ -292,14 +284,14 @@ describe("createPreinstalledProxy", () => {
 
       mockWindow.alloy = mockAlloy;
 
-      const proxy = createPreinstalledProxy("alloy", { onWarn, onError });
+      const proxy = createPreinstalledProxy("alloy", { onError });
       const cmd = proxy("test").catch((err) => err);
 
       await vi.runAllTimersAsync();
       const result = await cmd;
 
       expect(result).toBeInstanceOf(Error);
-      expect(onWarn).toHaveBeenCalledWith(
+      expect(onError).toHaveBeenCalledWith(
         expect.stringContaining("failed configuration check"),
       );
     });
@@ -317,7 +309,6 @@ describe("createPreinstalledProxy", () => {
 
       const proxy = createPreinstalledProxy("alloy", {
         configTimeout: 2000,
-        onWarn,
         onError,
       });
 
@@ -328,7 +319,7 @@ describe("createPreinstalledProxy", () => {
       const result = await cmd;
 
       expect(result).toBeInstanceOf(Error);
-      expect(onWarn).toHaveBeenCalledWith(
+      expect(onError).toHaveBeenCalledWith(
         expect.stringContaining("failed configuration check"),
       );
     });
@@ -345,28 +336,10 @@ describe("createPreinstalledProxy", () => {
 
       mockWindow.alloy = mockAlloy;
 
-      const proxy = createPreinstalledProxy("alloy", { onWarn, onError });
+      const proxy = createPreinstalledProxy("alloy", { onError });
 
       await vi.runAllTimersAsync();
       await expect(proxy("sendEvent", {})).rejects.toThrow("Command failed");
-    });
-
-    it("calls custom onWarn callback", async () => {
-      const customWarn = vi.fn();
-
-      const proxy = createPreinstalledProxy("alloy", {
-        timeout: 100,
-        onWarn: customWarn,
-        onError,
-      });
-
-      const cmd = proxy("test").catch((err) => err);
-      await vi.advanceTimersByTimeAsync(150);
-      await cmd;
-
-      expect(customWarn).toHaveBeenCalledWith(
-        expect.stringContaining('Alloy instance "alloy" not found'),
-      );
     });
 
     it("calls custom onError callback", async () => {
@@ -374,7 +347,6 @@ describe("createPreinstalledProxy", () => {
 
       const proxy = createPreinstalledProxy("alloy", {
         timeout: 100,
-        onWarn,
         onError: customError,
       });
 
@@ -397,7 +369,7 @@ describe("createPreinstalledProxy", () => {
 
       mockWindow.alloy = mockAlloy;
 
-      const proxy = createPreinstalledProxy("alloy", { onWarn, onError });
+      const proxy = createPreinstalledProxy("alloy", { onError });
 
       await proxy("cmd1");
       await vi.runAllTimersAsync();
@@ -419,7 +391,7 @@ describe("createPreinstalledProxy", () => {
 
       mockWindow[specialName] = mockAlloy;
 
-      const proxy = createPreinstalledProxy(specialName, { onWarn, onError });
+      const proxy = createPreinstalledProxy(specialName, { onError });
       const result = await proxy("test");
 
       await vi.runAllTimersAsync();
@@ -441,8 +413,8 @@ describe("createPreinstalledProxy", () => {
       mockWindow.alloy1 = alloy1;
       mockWindow.alloy2 = alloy2;
 
-      const proxy1 = createPreinstalledProxy("alloy1", { onWarn, onError });
-      const proxy2 = createPreinstalledProxy("alloy2", { onWarn, onError });
+      const proxy1 = createPreinstalledProxy("alloy1", { onError });
+      const proxy2 = createPreinstalledProxy("alloy2", { onError });
 
       await vi.runAllTimersAsync();
 
