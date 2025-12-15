@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
 // Tags doesn't support ES6 modules, so we need to compile to CommonJS modules here.
 import path, { dirname } from "path";
 import fs from "fs";
-import { spawn } from "child_process";
+import { spawn, execSync } from "child_process";
 import { Command, Option, InvalidOptionArgumentError } from "commander";
 import babel from "@babel/core";
 import { fileURLToPath } from "url";
@@ -32,6 +32,15 @@ const execute = (command, options) => {
       .on("exit", resolve)
       .on("error", reject);
   });
+};
+
+const getPackageManager = () => {
+  try {
+    execSync("pnpm --version", { stdio: "ignore" });
+    return "pnpm";
+  } catch {
+    return "npm";
+  }
 };
 
 const entryPointGeneratorBabelPlugin = (t, includedModules) => ({
@@ -151,7 +160,7 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
       includedModules,
     });
 
-    await execute("npm", [
+    await execute(getPackageManager(), [
       "exec",
       "--",
       "rollup",
