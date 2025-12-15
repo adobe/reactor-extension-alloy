@@ -25,7 +25,7 @@
     "format:check": "prettier --check \"*.{js,jsx,html,mjs,cjs}\" \"{src,test,scripts}/**/*.{js,jsx,html,mjs,cjs}\"",
     "format": "prettier --write \"*.{js,jsx,html,mjs,cjs}\" \"{src,test,scripts}/**/*.{js,jsx,html,mjs,cjs}\"",
     "lint": "eslint \"*.{js,jsx}\" \"{src,test,scripts}/**/*.{js,jsx}\" --cache --fix",
-    "package": "NODE_ENV=production ./scripts/createExtensionPackage.mjs",
+    "package": "pnpm run clean && NODE_ENV=production ./scripts/createExtensionPackage.mjs",
     "precommit-msg": "echo 'Running pre-commit scripts...' && exit 0",
     "prepare": "husky",
     "prepush-msg": "echo 'Running pre-push scripts...' && exit 0",
