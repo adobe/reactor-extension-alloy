@@ -25,7 +25,7 @@ const createPreprocessingVariables = () => [
   {
     key: "ALLOY_LIBRARY_TYPE",
     path: "libraryCode.type",
-    default: false,
+    default: "managed",
   },
 ];
 
@@ -301,218 +301,241 @@ const createExtensionManifest = ({ version }) => {
             additionalProperties: false,
           },
           instances: {
-            type: "array",
-            minItems: 1,
-            items: {
-              type: "object",
-              properties: {
-                name: {
-                  type: "string",
-                  pattern: "\\D+",
-                },
-                edgeConfigId: {
-                  type: "string",
-                  minLength: 1,
-                },
-                stagingEdgeConfigId: {
-                  type: "string",
-                  minLength: 1,
-                },
-                developmentEdgeConfigId: {
-                  type: "string",
-                  minLength: 1,
-                },
-                sandbox: {
-                  type: "string",
-                  minLength: 1,
-                },
-                stagingSandbox: {
-                  type: "string",
-                  minLength: 1,
-                },
-                developmentSandbox: {
-                  type: "string",
-                  minLength: 1,
-                },
-                orgId: {
-                  type: "string",
-                  minLength: 1,
-                },
-                edgeDomain: {
-                  type: "string",
-                  minLength: 1,
-                },
-                edgeBasePath: {
-                  type: "string",
-                  minLength: 1,
-                },
-                defaultConsent: {
-                  anyOf: [
-                    {
-                      type: "string",
-                      pattern: "^%[^%]+%$",
-                    },
-                    {
-                      type: "string",
-                      enum: ["in", "out", "pending"],
-                    },
-                  ],
-                },
-                idMigrationEnabled: {
-                  type: "boolean",
-                },
-                thirdPartyCookiesEnabled: enabledDisabledOrDataElement,
-                prehidingStyle: {
-                  type: "string",
-                  minLength: 1,
-                },
-                targetMigrationEnabled: {
-                  type: "boolean",
-                },
-                clickCollectionEnabled: {
-                  type: "boolean",
-                },
-                clickCollection: {
+            oneOf: [
+              {
+                type: "array",
+                minItems: 1,
+                items: {
                   type: "object",
                   properties: {
-                    internalLinkEnabled: {
-                      type: "boolean",
+                    name: {
+                      type: "string",
+                      pattern: "\\D+",
                     },
-                    externalLinkEnabled: {
-                      type: "boolean",
-                    },
-                    downloadLinkEnabled: {
-                      type: "boolean",
-                    },
-                    sessionStorageEnabled: {
-                      type: "boolean",
-                    },
-                    eventGroupingEnabled: {
-                      type: "boolean",
-                    },
-                    filterClickDetails: {
+                    edgeConfigId: {
                       type: "string",
                       minLength: 1,
                     },
-                  },
-                  additionalProperties: false,
-                },
-                downloadLinkQualifier: {
-                  type: "string",
-                  minLength: 1,
-                },
-                context: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                    enum: [
-                      "web",
-                      "device",
-                      "environment",
-                      "placeContext",
-                      "highEntropyUserAgentHints",
-                      "oneTimeAnalyticsReferrer",
-                    ],
-                  },
-                },
-                onBeforeEventSend: {
-                  type: "string",
-                  minLength: 1,
-                },
-                onBeforeLinkClickSend: {
-                  type: "string",
-                  minLength: 1,
-                },
-                edgeConfigOverrides: createEdgeConfigOverridesSchema(false),
-                streamingMedia: {
-                  type: "object",
-                  properties: {
-                    channel: {
+                    stagingEdgeConfigId: {
                       type: "string",
+                      minLength: 1,
                     },
-                    playerName: {
+                    developmentEdgeConfigId: {
                       type: "string",
+                      minLength: 1,
                     },
-                    appVersion: {
+                    sandbox: {
                       type: "string",
+                      minLength: 1,
                     },
-                    mainPingInterval: {
-                      type: "integer",
+                    stagingSandbox: {
+                      type: "string",
+                      minLength: 1,
                     },
-                    adPingInterval: {
-                      type: "integer",
+                    developmentSandbox: {
+                      type: "string",
+                      minLength: 1,
                     },
-                  },
-                  required: ["channel", "playerName"],
-                  additionalProperties: false,
-                },
-                advertising: {
-                  type: "object",
-                  properties: {
-                    dspEnabled: enabledDisabledOrDataElement,
-                    advertiserSettings: {
+                    orgId: {
+                      type: "string",
+                      minLength: 1,
+                    },
+                    edgeDomain: {
+                      type: "string",
+                      minLength: 1,
+                    },
+                    edgeBasePath: {
+                      type: "string",
+                      minLength: 1,
+                    },
+                    defaultConsent: {
+                      anyOf: [
+                        {
+                          type: "string",
+                          pattern: "^%[^%]+%$",
+                        },
+                        {
+                          type: "string",
+                          enum: ["in", "out", "pending"],
+                        },
+                      ],
+                    },
+                    idMigrationEnabled: {
+                      type: "boolean",
+                    },
+                    thirdPartyCookiesEnabled: enabledDisabledOrDataElement,
+                    prehidingStyle: {
+                      type: "string",
+                      minLength: 1,
+                    },
+                    targetMigrationEnabled: {
+                      type: "boolean",
+                    },
+                    clickCollectionEnabled: {
+                      type: "boolean",
+                    },
+                    clickCollection: {
+                      type: "object",
+                      properties: {
+                        internalLinkEnabled: {
+                          type: "boolean",
+                        },
+                        externalLinkEnabled: {
+                          type: "boolean",
+                        },
+                        downloadLinkEnabled: {
+                          type: "boolean",
+                        },
+                        sessionStorageEnabled: {
+                          type: "boolean",
+                        },
+                        eventGroupingEnabled: {
+                          type: "boolean",
+                        },
+                        filterClickDetails: {
+                          type: "string",
+                          minLength: 1,
+                        },
+                      },
+                      additionalProperties: false,
+                    },
+                    downloadLinkQualifier: {
+                      type: "string",
+                      minLength: 1,
+                    },
+                    context: {
                       type: "array",
                       items: {
-                        type: "object",
-                        properties: {
-                          advertiserId: {
-                            type: "string",
-                          },
-                          enabled: enabledDisabledOrDataElement,
-                        },
-                        required: ["advertiserId", "enabled"],
-                        additionalProperties: false,
+                        type: "string",
+                        enum: [
+                          "web",
+                          "device",
+                          "environment",
+                          "placeContext",
+                          "highEntropyUserAgentHints",
+                          "oneTimeAnalyticsReferrer",
+                        ],
                       },
                     },
-                    id5PartnerId: {
-                      type: "string",
-                    },
-                    rampIdJSPath: {
-                      type: "string",
-                    },
-                  },
-                  additionalProperties: false,
-                },
-                pushNotifications: {
-                  type: "object",
-                  properties: {
-                    vapidPublicKey: {
+                    onBeforeEventSend: {
                       type: "string",
                       minLength: 1,
                     },
-                    appId: {
+                    onBeforeLinkClickSend: {
                       type: "string",
                       minLength: 1,
                     },
-                    trackingDatasetId: {
-                      type: "string",
-                      minLength: 1,
+                    edgeConfigOverrides: createEdgeConfigOverridesSchema(false),
+                    streamingMedia: {
+                      type: "object",
+                      properties: {
+                        channel: {
+                          type: "string",
+                        },
+                        playerName: {
+                          type: "string",
+                        },
+                        appVersion: {
+                          type: "string",
+                        },
+                        mainPingInterval: {
+                          type: "integer",
+                        },
+                        adPingInterval: {
+                          type: "integer",
+                        },
+                      },
+                      required: ["channel", "playerName"],
+                      additionalProperties: false,
+                    },
+                    advertising: {
+                      type: "object",
+                      properties: {
+                        dspEnabled: enabledDisabledOrDataElement,
+                        advertiserSettings: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              advertiserId: {
+                                type: "string",
+                              },
+                              enabled: enabledDisabledOrDataElement,
+                            },
+                            required: ["advertiserId", "enabled"],
+                            additionalProperties: false,
+                          },
+                        },
+                        id5PartnerId: {
+                          type: "string",
+                        },
+                        rampIdJSPath: {
+                          type: "string",
+                        },
+                      },
+                      additionalProperties: false,
+                    },
+                    pushNotifications: {
+                      type: "object",
+                      properties: {
+                        vapidPublicKey: {
+                          type: "string",
+                          minLength: 1,
+                        },
+                        appId: {
+                          type: "string",
+                          minLength: 1,
+                        },
+                        trackingDatasetId: {
+                          type: "string",
+                          minLength: 1,
+                        },
+                      },
+                      required: [
+                        "vapidPublicKey",
+                        "trackingDatasetId",
+                        "appId",
+                      ],
+                      additionalProperties: false,
+                    },
+                    personalizationStorageEnabled: {
+                      type: "boolean",
+                    },
+                    autoCollectPropositionInteractions: {
+                      type: "object",
+                      properties: {
+                        AJO: {
+                          type: "string",
+                          enum: ["always", "decoratedElementsOnly", "never"],
+                        },
+                        TGT: {
+                          type: "string",
+                          enum: ["always", "decoratedElementsOnly", "never"],
+                        },
+                      },
+                      additionalProperties: false,
                     },
                   },
-                  required: ["vapidPublicKey", "trackingDatasetId", "appId"],
-                  additionalProperties: false,
-                },
-                personalizationStorageEnabled: {
-                  type: "boolean",
-                },
-                autoCollectPropositionInteractions: {
-                  type: "object",
-                  properties: {
-                    AJO: {
-                      type: "string",
-                      enum: ["always", "decoratedElementsOnly", "never"],
-                    },
-                    TGT: {
-                      type: "string",
-                      enum: ["always", "decoratedElementsOnly", "never"],
-                    },
-                  },
+                  required: ["edgeConfigId", "name"],
                   additionalProperties: false,
                 },
               },
-              required: ["name"],
-              additionalProperties: false,
-            },
+              {
+                type: "array",
+                minItems: 1,
+                items: {
+                  type: "object",
+                  properties: {
+                    name: {
+                      type: "string",
+                      pattern: "\\D+",
+                    },
+                  },
+                  required: ["name"],
+                  additionalProperties: false,
+                },
+              },
+            ],
           },
           components: {
             type: "object",
