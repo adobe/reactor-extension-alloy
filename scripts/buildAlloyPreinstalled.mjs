@@ -19,7 +19,7 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { Command, Option, InvalidOptionArgumentError } from "commander";
-import { spawn } from "child_process";
+import { spawn, execSync } from "child_process";
 import babel from "@babel/core";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +33,15 @@ const execute = (command, options) => {
       .on("exit", resolve)
       .on("error", reject);
   });
+};
+
+const getPackageManager = () => {
+  try {
+    execSync("pnpm --version", { stdio: "ignore" });
+    return "pnpm";
+  } catch {
+    return "npm";
+  }
 };
 
 const program = new Command();
@@ -59,14 +68,19 @@ program.addOption(
     }),
 );
 
-program.action(async ({ outputDir }) => {
-  const entryFile = path.resolve(__dirname, "../src/lib/alloyPreinstalled.js");
-  const outputFile = path.join(outputDir, "alloy.js");
+program.addOption(
+  new Option(
+    "-f, --filename <name>",
+    "the output filename for the generated build",
+  ).default("alloy.js"),
+);
 
-  console.log("Building empty alloy.js for preinstalled mode...");
+program.action(async ({ outputDir, filename }) => {
+  const entryFile = path.resolve(__dirname, "../src/lib/alloyPreinstalled.js");
+  const outputFile = path.join(outputDir, filename);
 
   try {
-    await execute("npm", [
+    await execute(getPackageManager(), [
       "exec",
       "--",
       "rollup",
