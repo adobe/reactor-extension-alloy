@@ -78,15 +78,17 @@ describe("Generated alloy.js (preinstalled mode)", () => {
 
     // Execute the generated code to get exports (use preloaded code)
     // Create an isolated VM context to avoid variable collisions
+    // In CommonJS, exports is a reference to module.exports
+    const moduleObj = { exports: {} };
     const context = vm.createContext({
-      module: { exports: {} },
+      module: moduleObj,
       console: global.console,
       window: mockWindow,
       setTimeout: global.setTimeout,
       Date: global.Date,
       Promise: global.Promise,
       Error: global.Error,
-      exports: {},
+      exports: moduleObj.exports,
     });
 
     // Execute the code in the isolated context
