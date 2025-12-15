@@ -82,7 +82,7 @@ const getPackageJson = () => {
     },
     scripts: {
       build:
-        '[[ "$ALLOY_LIBRARY_TYPE" == "preinstalled" ]] && node ./scripts/buildEmptyAlloy.mjs -o ./dist/lib || node ./scripts/buildAlloy.mjs -i ./alloy.js -o ./dist/lib',
+        '[[ "$ALLOY_LIBRARY_TYPE" == "preinstalled" ]] && node ./scripts/buildAlloyPreinstalled.mjs -o ./dist/lib || node ./scripts/buildAlloy.mjs -i ./alloy.js -o ./dist/lib',
     },
     license: "Apache-2.0",
     description: "Tool for generating custom alloy build based on user input.",
@@ -182,10 +182,10 @@ const createExtensionPackage = ({ verbose }) => {
   );
   zip.addFile("src/view/utils/alloyComponents.mjs", alloyComponents);
 
-  const buildEmptyScript = fs.readFileSync(
-    path.join(cwd, "scripts", "buildEmptyAlloy.mjs"),
+  const buildPreinstalledScript = fs.readFileSync(
+    path.join(cwd, "scripts", "buildAlloyPreinstalled.mjs"),
   );
-  zip.addFile("scripts/buildEmptyAlloy.mjs", buildEmptyScript);
+  zip.addFile("scripts/buildAlloyPreinstalled.mjs", buildPreinstalledScript);
 
   zip.writeZip(packagePath);
   console.log("Done");

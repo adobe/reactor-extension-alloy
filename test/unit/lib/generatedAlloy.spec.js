@@ -53,7 +53,7 @@ describe("Generated alloy.js (preinstalled mode)", () => {
     // Build using the build script (force preinstalled mode)
     // Use cwd option instead of cd command to avoid shell injection risks
     const repoRoot = path.resolve(__dirname, "../../..");
-    execSync("node ./scripts/buildEmptyAlloy.mjs -o test-dist", {
+    execSync("node ./scripts/buildAlloyPreinstalled.mjs -o test-dist", {
       cwd: repoRoot,
       encoding: "utf-8",
     });
