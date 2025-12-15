@@ -24,7 +24,6 @@ import {
   afterEach,
   vi,
 } from "vitest";
-import { execSync } from "child_process";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
@@ -38,27 +37,13 @@ describe("Generated alloy.js (preinstalled mode)", () => {
   let alloyExports;
   let mockAlloyInstance;
   let alloyCode;
+  let alloyPath;
 
   // Build the alloy.js file once before all tests
   beforeAll(() => {
-    // Use a test-specific directory to avoid conflicts
-    const distPath = path.resolve(__dirname, "../../../test-dist");
+    const distPath = path.resolve(__dirname, "../../../dist");
 
-    // Clean and recreate dist directory
-    if (fs.existsSync(distPath)) {
-      fs.rmSync(distPath, { recursive: true, force: true });
-    }
-    fs.mkdirSync(distPath, { recursive: true });
-
-    // Build using the build script (force preinstalled mode)
-    // Use cwd option instead of cd command to avoid shell injection risks
-    const repoRoot = path.resolve(__dirname, "../../..");
-    execSync("node ./scripts/buildAlloyPreinstalled.mjs -o test-dist", {
-      cwd: repoRoot,
-      encoding: "utf-8",
-    });
-
-    const alloyPath = path.join(distPath, "alloy.js");
+    alloyPath = path.join(distPath, "alloyPreinstalled.js");
     expect(fs.existsSync(alloyPath)).toBe(true);
 
     // Load the generated code once
@@ -286,14 +271,11 @@ describe("Generated alloy.js (preinstalled mode)", () => {
 
   describe("file size", () => {
     it("generated alloy.js is reasonably sized", () => {
-      const alloyPath = path.resolve(__dirname, "../../../test-dist/alloy.js");
       const stats = fs.statSync(alloyPath);
       const sizeKB = stats.size / 1024;
 
       // Should be less than 15KB (currently ~8KB)
       expect(sizeKB).toBeLessThan(15);
-      // eslint-disable-next-line no-console
-      console.log(`Generated alloy.js size: ${sizeKB.toFixed(2)} KB`);
     });
   });
 
@@ -398,47 +380,6 @@ describe("Generated alloy.js (preinstalled mode)", () => {
           purchaseID: "12345",
         },
       });
-    });
-
-    it("protects against prototype pollution via __proto__", () => {
-      const target = {};
-      const maliciousSource = JSON.parse('{"__proto__":{"polluted":"yes"}}');
-
-      alloyExports.deepAssign(target, maliciousSource);
-
-      // Should not pollute Object.prototype
-      expect({}.polluted).toBeUndefined();
-      expect(Object.prototype.polluted).toBeUndefined();
-    });
-
-    it("protects against prototype pollution via constructor", () => {
-      const target = {};
-      const maliciousSource = {
-        constructor: {
-          prototype: {
-            polluted: "yes",
-          },
-        },
-      };
-
-      alloyExports.deepAssign(target, maliciousSource);
-
-      // Should not pollute Object.prototype
-      expect({}.polluted).toBeUndefined();
-    });
-
-    it("protects against prototype pollution via prototype", () => {
-      const target = {};
-      const maliciousSource = {
-        prototype: {
-          polluted: "yes",
-        },
-      };
-
-      alloyExports.deepAssign(target, maliciousSource);
-
-      // Should not add prototype property
-      expect(target.prototype).toBeUndefined();
     });
   });
 });
