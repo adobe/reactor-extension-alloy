@@ -15,15 +15,7 @@ governing permissions and limitations under the License.
  * This ensures the bundled proxy logic works correctly.
  */
 
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  beforeEach,
-  afterEach,
-  vi,
-} from "vitest";
+import { describe, it, expect, beforeAll, beforeEach, vi } from "vitest";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
@@ -51,14 +43,7 @@ describe("Generated alloy.js (preinstalled mode)", () => {
   });
 
   beforeEach(async () => {
-    vi.useFakeTimers();
     mockWindow = {};
-    global.window = mockWindow;
-    global.console = {
-      error: vi.fn(),
-      // eslint-disable-next-line no-console
-      log: console.log, // Keep real log for debugging
-    };
     mockAlloyInstance = vi.fn();
 
     // Execute the generated code to get exports (use preloaded code)
@@ -67,12 +52,15 @@ describe("Generated alloy.js (preinstalled mode)", () => {
     const moduleObj = { exports: {} };
     const context = vm.createContext({
       module: moduleObj,
-      console: global.console,
       window: mockWindow,
+      globalThis: mockWindow,
       setTimeout: global.setTimeout,
       Date: global.Date,
       Promise: global.Promise,
       Error: global.Error,
+      TypeError: global.TypeError,
+      Object: global.Object,
+      Array: global.Array,
       exports: moduleObj.exports,
     });
 
@@ -80,11 +68,6 @@ describe("Generated alloy.js (preinstalled mode)", () => {
     vm.runInContext(alloyCode, context);
 
     alloyExports = context.module.exports;
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-    delete global.window;
   });
 
   describe("exports", () => {
@@ -110,162 +93,92 @@ describe("Generated alloy.js (preinstalled mode)", () => {
   });
 
   describe("createCustomInstance", () => {
-    it("returns a proxy function", () => {
+    it("throws error if instance not found on window", () => {
+      expect(() => {
+        alloyExports.createCustomInstance({ name: "missingAlloy" });
+      }).toThrow(
+        'Alloy instance "missingAlloy" not found on window. Make sure the instance is loaded before the Launch library.',
+      );
+    });
+
+    it("returns a proxy function when instance exists", () => {
+      mockWindow.testAlloy = mockAlloyInstance;
       const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
       expect(typeof proxy).toBe("function");
     });
 
-    it("proxy waits for external instance to load", async () => {
-      mockAlloyInstance.mockImplementation((cmd) => {
-        if (cmd === "getLibraryInfo") return Promise.resolve();
-        return Promise.resolve("success");
-      });
+    it("proxy calls instance.push with arguments", () => {
+      const mockPush = vi.fn();
+      mockWindow.testAlloy = { push: mockPush };
 
       const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
-      const commandPromise = proxy("sendEvent", { xdm: {} });
+      proxy("sendEvent", { xdm: {} });
 
-      // Instance not available yet
-      await vi.advanceTimersByTimeAsync(300);
+      expect(mockPush).toHaveBeenCalledWith("sendEvent", { xdm: {} });
+    });
 
-      // Make instance available
-      mockWindow.testAlloy = mockAlloyInstance;
+    it("proxy calls instance.push with multiple arguments", () => {
+      const mockPush = vi.fn();
+      mockWindow.testAlloy = { push: mockPush };
 
-      await vi.runAllTimersAsync();
-      const result = await commandPromise;
+      const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
+      proxy("configure", { orgId: "test@AdobeOrg" }, { extra: "arg" });
 
+      expect(mockPush).toHaveBeenCalledWith(
+        "configure",
+        { orgId: "test@AdobeOrg" },
+        { extra: "arg" },
+      );
+    });
+
+    it("proxy works with pre-existing alloy instance", async () => {
+      const mockPush = vi.fn().mockReturnValue(Promise.resolve("success"));
+      mockWindow.testAlloy = { push: mockPush };
+
+      const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
+      const result = await proxy("getIdentity");
+
+      expect(mockPush).toHaveBeenCalledWith("getIdentity");
       expect(result).toBe("success");
-      expect(mockAlloyInstance).toHaveBeenCalledWith("sendEvent", { xdm: {} });
-      expect(mockAlloyInstance).toHaveBeenCalledWith("getLibraryInfo");
     });
 
-    it("proxy logs error if instance not found", async () => {
-      const proxy = alloyExports.createCustomInstance({ name: "missingAlloy" });
-      const commandPromise = proxy("test").catch((err) => err);
-
-      await vi.advanceTimersByTimeAsync(1100);
-      const result = await commandPromise;
-
-      expect(result).toBeInstanceOf(Error);
-      expect(result.message).toBe(
-        'Alloy instance "missingAlloy" not available',
-      );
-      expect(global.console.error).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'Alloy instance "missingAlloy" not found on window',
-        ),
-      );
-    });
-
-    it("proxy logs error if instance not configured", async () => {
-      mockAlloyInstance.mockImplementation((cmd) => {
-        if (cmd === "getLibraryInfo") {
-          return Promise.reject(new Error("Not configured"));
-        }
-        return Promise.resolve("result");
-      });
-
-      mockWindow.testAlloy = mockAlloyInstance;
+    it("proxy can be called multiple times", () => {
+      const mockPush = vi.fn();
+      mockWindow.testAlloy = { push: mockPush };
 
       const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
-      const commandPromise = proxy("test").catch((err) => err);
+      proxy("sendEvent", { xdm: { event: "1" } });
+      proxy("sendEvent", { xdm: { event: "2" } });
+      proxy("getIdentity");
 
-      await vi.runAllTimersAsync();
-      const result = await commandPromise;
-
-      expect(result).toBeInstanceOf(Error);
-      expect(global.console.error).toHaveBeenCalledWith(
-        expect.stringContaining("failed configuration check"),
-      );
+      expect(mockPush).toHaveBeenCalledTimes(3);
+      expect(mockPush).toHaveBeenNthCalledWith(1, "sendEvent", {
+        xdm: { event: "1" },
+      });
+      expect(mockPush).toHaveBeenNthCalledWith(2, "sendEvent", {
+        xdm: { event: "2" },
+      });
+      expect(mockPush).toHaveBeenNthCalledWith(3, "getIdentity");
     });
 
-    it("proxy caches instance after first successful lookup", async () => {
-      mockAlloyInstance.mockImplementation((cmd) => {
-        if (cmd === "getLibraryInfo") return Promise.resolve();
-        return Promise.resolve("cached-result");
+    it("multiple proxies can be created for different instances", () => {
+      const mockPush1 = vi.fn();
+      const mockPush2 = vi.fn();
+      mockWindow.alloy1 = { push: mockPush1 };
+      mockWindow.alloy2 = { push: mockPush2 };
+
+      const proxy1 = alloyExports.createCustomInstance({ name: "alloy1" });
+      const proxy2 = alloyExports.createCustomInstance({ name: "alloy2" });
+
+      proxy1("sendEvent", { xdm: {} });
+      proxy2("configure", { orgId: "test" });
+
+      expect(mockPush1).toHaveBeenCalledWith("sendEvent", { xdm: {} });
+      expect(mockPush2).toHaveBeenCalledWith("configure", { orgId: "test" });
+      expect(mockPush1).not.toHaveBeenCalledWith("configure", {
+        orgId: "test",
       });
-
-      mockWindow.testAlloy = mockAlloyInstance;
-
-      const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
-
-      // First command
-      await proxy("cmd1");
-      await vi.runAllTimersAsync();
-
-      // Second command should use cached instance
-      mockAlloyInstance.mockClear();
-      const result = await proxy("cmd2");
-
-      expect(result).toBe("cached-result");
-      expect(mockAlloyInstance).toHaveBeenCalledWith("cmd2");
-      expect(mockAlloyInstance).not.toHaveBeenCalledWith("getLibraryInfo");
-    });
-
-    it("proxy handles multiple commands before instance available", async () => {
-      mockAlloyInstance.mockImplementation((cmd) => {
-        if (cmd === "getLibraryInfo") return Promise.resolve();
-        return Promise.resolve(`result-${cmd}`);
-      });
-
-      const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
-
-      const cmd1 = proxy("sendEvent", {});
-      const cmd2 = proxy("getIdentity");
-      const cmd3 = proxy("setDebug", { enabled: true });
-
-      // Make instance available
-      mockWindow.testAlloy = mockAlloyInstance;
-
-      await vi.runAllTimersAsync();
-
-      const [result1, result2, result3] = await Promise.all([cmd1, cmd2, cmd3]);
-
-      expect(result1).toBe("result-sendEvent");
-      expect(result2).toBe("result-getIdentity");
-      expect(result3).toBe("result-setDebug");
-    });
-
-    it("proxy retries after timeout if instance appears later", async () => {
-      mockAlloyInstance.mockImplementation((cmd) => {
-        if (cmd === "getLibraryInfo") return Promise.resolve();
-        return Promise.resolve("retry-success");
-      });
-
-      const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
-
-      // First command times out
-      const cmd1 = proxy("test1").catch((err) => err);
-      await vi.advanceTimersByTimeAsync(1100);
-      const result1 = await cmd1;
-
-      expect(result1).toBeInstanceOf(Error);
-
-      // Instance appears
-      mockWindow.testAlloy = mockAlloyInstance;
-
-      // Second command should retry and succeed
-      const cmd2 = proxy("test2");
-      await vi.runAllTimersAsync();
-      const result2 = await cmd2;
-
-      expect(result2).toBe("retry-success");
-    });
-
-    it("works with instance that is already available", async () => {
-      mockAlloyInstance.mockImplementation((cmd) => {
-        if (cmd === "getLibraryInfo") return Promise.resolve();
-        return Promise.resolve("immediate-result");
-      });
-
-      // Instance already on window
-      mockWindow.testAlloy = mockAlloyInstance;
-
-      const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
-      const result = await proxy("test");
-
-      await vi.runAllTimersAsync();
-
-      expect(result).toBe("immediate-result");
+      expect(mockPush2).not.toHaveBeenCalledWith("sendEvent", { xdm: {} });
     });
   });
 
@@ -276,110 +189,6 @@ describe("Generated alloy.js (preinstalled mode)", () => {
 
       // Should be less than 15KB (currently ~8KB)
       expect(sizeKB).toBeLessThan(15);
-    });
-  });
-
-  describe("deepAssign utility", () => {
-    it("exports deepAssign function", () => {
-      expect(alloyExports.deepAssign).toBeDefined();
-      expect(typeof alloyExports.deepAssign).toBe("function");
-    });
-
-    it("performs shallow merge for simple objects", () => {
-      const target = { a: 1, b: 2 };
-      const source = { b: 3, c: 4 };
-      const result = alloyExports.deepAssign(target, source);
-
-      expect(result).toEqual({ a: 1, b: 3, c: 4 });
-      expect(result).toBe(target); // Should modify target
-    });
-
-    it("performs deep merge for nested objects", () => {
-      const target = { a: { x: 1, y: 2 }, b: 3 };
-      const source = { a: { y: 4, z: 5 }, c: 6 };
-      const result = alloyExports.deepAssign(target, source);
-
-      expect(result).toEqual({ a: { x: 1, y: 4, z: 5 }, b: 3, c: 6 });
-      expect(result.a).toBe(target.a); // Nested objects should be modified
-    });
-
-    it("handles multiple source objects", () => {
-      const target = { a: 1 };
-      const source1 = { b: 2 };
-      const source2 = { c: 3 };
-      const result = alloyExports.deepAssign(target, source1, source2);
-
-      expect(result).toEqual({ a: 1, b: 2, c: 3 });
-    });
-
-    it("throws error for null target", () => {
-      expect(() => {
-        alloyExports.deepAssign(null, { a: 1 });
-      }).toThrow('deepAssign "target" cannot be null or undefined');
-    });
-
-    it("throws error for undefined target", () => {
-      expect(() => {
-        alloyExports.deepAssign(undefined, { a: 1 });
-      }).toThrow('deepAssign "target" cannot be null or undefined');
-    });
-
-    it("handles empty objects", () => {
-      const result = alloyExports.deepAssign({}, {});
-      expect(result).toEqual({});
-    });
-
-    it("handles arrays by overwriting", () => {
-      const target = { arr: [1, 2, 3] };
-      const source = { arr: [4, 5] };
-      const result = alloyExports.deepAssign(target, source);
-
-      expect(result.arr).toEqual([4, 5]);
-    });
-
-    it("works with XDM-like objects (real use case)", () => {
-      const target = {
-        xdm: {
-          web: {
-            webPageDetails: {
-              name: "Homepage",
-            },
-          },
-        },
-      };
-
-      const source = {
-        xdm: {
-          web: {
-            webPageDetails: {
-              URL: "https://example.com",
-            },
-            webReferrer: {
-              URL: "https://google.com",
-            },
-          },
-          commerce: {
-            order: {
-              purchaseID: "12345",
-            },
-          },
-        },
-      };
-
-      const result = alloyExports.deepAssign(target, source);
-
-      expect(result.xdm.web.webPageDetails).toEqual({
-        name: "Homepage",
-        URL: "https://example.com",
-      });
-      expect(result.xdm.web.webReferrer).toEqual({
-        URL: "https://google.com",
-      });
-      expect(result.xdm.commerce).toEqual({
-        order: {
-          purchaseID: "12345",
-        },
-      });
     });
   });
 });

@@ -10,25 +10,20 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { createPreinstalledProxy } from "./utils/createPreinstalledProxy";
-
-// This is a generated file for preinstalled library mode.
-// It provides a proxy implementation that waits for external alloy instances.
-
-// Create the createCustomInstance implementation for preinstalled mode
 const createCustomInstance = ({ name }) => {
-  return createPreinstalledProxy(name, {
-    timeout: 1000,
-    interval: 100,
-    configTimeout: 5000,
-    onError: console.error,
-  });
+  if (!window[name]) {
+    throw new Error(
+      `Alloy instance "${name}" not found on window. ` +
+        `Make sure the instance is loaded before the Launch library.`,
+    );
+  }
+
+  const instance = window[name];
+  return (...args) => instance.push(...args);
 };
 
-// Empty components object for preinstalled mode
 const components = {};
 
-// Stub utilities - not used in preinstalled mode but required for API compatibility
 const createEventMergeId = () => {
   throw new Error(
     "createEventMergeId should not be called directly in preinstalled mode",
