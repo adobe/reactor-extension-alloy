@@ -9,8 +9,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { variableStore } = require("../../index");
+import { variableStore } from "../../index";
 
-module.exports = (settings) => {
+export default (settings) => {
   return variableStore[settings.dataElementId] || {};
 };

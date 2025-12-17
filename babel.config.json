@@ -1,7 +1,23 @@
 {
   "plugins": ["version"],
+  "overrides": [
+    {
+      "test": "./src/lib/**/*.js",
+      "plugins": [
+        [
+          "@babel/plugin-transform-modules-commonjs",
+          {
+            "importInterop": "babel"
+          }
+        ]
+      ]
+    }
+  ],
   "env": {
     "production": {
+      "assumptions": {
+        "enumerableModuleMeta": true
+      },
       "plugins": [
         "babel-plugin-jsx-remove-data-test-id",
         "@babel/plugin-transform-nullish-coalescing-operator",

@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createIdentityMap = require("./createIdentityMap");
+import createIdentityMap from "./createIdentityMap";
 
 const identityMap = createIdentityMap({ logger: turbine.logger });
 
-module.exports = (settings) => {
+export default (settings) => {
   return identityMap(settings);
 };

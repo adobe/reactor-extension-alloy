@@ -10,12 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createSendEvent = require("./createSendEvent");
-const instanceManager = require("../../instanceManager/index");
-const { sendEventCallbackStorage } = require("../../index");
-const createGetConfigOverrides = require("../../utils/createGetConfigOverrides");
+import createSendEvent from "./createSendEvent";
+import instanceManager from "../../instanceManager/index";
+import { sendEventCallbackStorage } from "../../index";
+import createGetConfigOverrides from "../../utils/createGetConfigOverrides";
 
-module.exports = createSendEvent({
+export default createSendEvent({
   instanceManager,
   sendEventCallbackStorage,
   getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage),

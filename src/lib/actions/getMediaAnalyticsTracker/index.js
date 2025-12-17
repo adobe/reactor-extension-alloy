@@ -10,12 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const getMediaAnalyticsTracker = require("./getMediaAnalyticsTracker");
-const instanceManager = require("../../instanceManager/index");
+import getMediaAnalyticsTracker from "./getMediaAnalyticsTracker";
+import instanceManager from "../../instanceManager/index";
 
 const windowObject = window;
 
-module.exports = getMediaAnalyticsTracker({
+export default getMediaAnalyticsTracker({
   instanceManager,
   windowObject,
 });

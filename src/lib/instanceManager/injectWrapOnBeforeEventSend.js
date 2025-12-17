@@ -10,8 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports =
-  ({ version }) =>
+export default ({ version }) =>
   (onBeforeEventSend) =>
   (content) => {
     content.xdm.implementationDetails.name = `${content.xdm.implementationDetails.name}/reactor`;

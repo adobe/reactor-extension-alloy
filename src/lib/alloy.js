@@ -15,8 +15,9 @@ import {
   createCustomInstance,
 } from "@adobe/alloy";
 
+import createEventMergeId from "@adobe/alloy/libEs6/components/EventMerge/createEventMergeId";
+import deepAssign from "@adobe/alloy/libEs6/utils/deepAssign";
+
 const components = optionalComponents;
 
-export { createCustomInstance, components };
-export { default as createEventMergeId } from "@adobe/alloy/libEs6/components/EventMerge/createEventMergeId";
-export { default as deepAssign } from "@adobe/alloy/libEs6/utils/deepAssign";
+export { createCustomInstance, components, createEventMergeId, deepAssign };
