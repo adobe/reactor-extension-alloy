@@ -365,22 +365,6 @@ describe("Instance Manager", () => {
       // The external instance should already be there
       expect(mockWindow.alloy3).toBeUndefined();
     });
-
-    it("handles command queue in preinstalled mode", () => {
-      // Setup pre-existing queue
-      const resolve1 = vi.fn();
-      const reject1 = vi.fn();
-      mockWindow.alloy3 = {
-        q: [[resolve1, reject1, ["sendEvent", { xdm: {} }]]],
-      };
-
-      alloy3.mockResolvedValue("result");
-
-      build();
-
-      // Queue should be processed
-      expect(alloy3).toHaveBeenCalledWith("sendEvent", { xdm: {} });
-    });
   });
 
   describe("when libraryCode.type is managed", () => {

@@ -89,23 +89,22 @@ module.exports = ({
         turbine.onDebugChanged((enabled) => {
           instance("setDebug", { enabled });
         });
-      }
 
-      // Handle pre-existing command queue - same for both modes
-      if (window[name] && window[name].q) {
-        const instanceFunction = ([resolve, reject, args]) => {
-          instance(...args)
-            .then(resolve)
-            .catch(reject);
-        };
-        const queue = window[name].q;
-        queue.push = instanceFunction;
-        queue.forEach(instanceFunction);
-      } else if (!isPreinstalled) {
-        // Only add to __alloyNS and window if managed mode
-        // In preinstalled mode, the external instance already exists on window
-        window.__alloyNS.push(name);
-        window[name] = instance;
+        if (window[name] && window[name].q) {
+          const instanceFunction = ([resolve, reject, args]) => {
+            instance(...args)
+              .then(resolve)
+              .catch(reject);
+          };
+          const queue = window[name].q;
+          queue.push = instanceFunction;
+          queue.forEach(instanceFunction);
+        } else {
+          // Only add to __alloyNS and window if managed mode
+          // In preinstalled mode, the external instance already exists on window
+          window.__alloyNS.push(name);
+          window[name] = instance;
+        }
       }
       instanceByName[name] = instance;
     },
