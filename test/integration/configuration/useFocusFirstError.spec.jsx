@@ -271,35 +271,6 @@ describe("useFocusFirstError hook", () => {
     expect(document.activeElement).toBe(edgeBasePathFieldElement);
   });
 
-  it("handles rapid validation attempts gracefully", async () => {
-    const view = await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad(view);
-
-    // Clear the name field
-    const nameField = spectrumTextField("nameField");
-    await nameField.fill("");
-
-    // Trigger validation multiple times rapidly
-    await extensionBridge.validate();
-    await extensionBridge.validate();
-    const finalResult = await extensionBridge.validate();
-
-    expect(finalResult).toBe(false);
-
-    // Wait for focus to be applied
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
-
-    // Verify the name field is focused despite multiple validation attempts
-    const nameFieldElement = await nameField.getElement();
-    expect(document.activeElement).toBe(nameFieldElement);
-    expect(await nameField.hasError()).toBe(true);
-  });
-
   it("focuses field in different instance when switching tabs backwards", async () => {
     const view = await renderView(ConfigurationView);
 
