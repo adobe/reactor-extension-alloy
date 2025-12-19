@@ -15,6 +15,7 @@ import spectrum from "../../../helpers/spectrum.mjs";
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
 import runCustomBuildTests from "../../runCustomBuildTests.mjs";
+import { LIBRARY_TYPE_PREINSTALLED } from "../../../../../src/view/constants/libraryType.js";
 
 const eventMergeIdField = spectrum.textField("eventMergeIdTextField");
 const preinstalledModeError = spectrum.alert("preinstalledModeError");
@@ -73,7 +74,7 @@ test("shows error for event merge ID value that is more than one data element", 
 test("shows error when using preinstalled library type and creating new action", async () => {
   await extensionViewController.init({
     extensionSettings: {
-      libraryCode: { type: "preinstalled" },
+      libraryCode: { type: LIBRARY_TYPE_PREINSTALLED },
       instances: [{ name: "alloy" }],
     },
     settings: null,
@@ -87,7 +88,7 @@ test("shows error when using preinstalled library type and creating new action",
 test("shows warning when using preinstalled library type with existing action", async () => {
   await extensionViewController.init({
     extensionSettings: {
-      libraryCode: { type: "preinstalled" },
+      libraryCode: { type: LIBRARY_TYPE_PREINSTALLED },
       instances: [{ name: "alloy" }],
     },
     settings: {

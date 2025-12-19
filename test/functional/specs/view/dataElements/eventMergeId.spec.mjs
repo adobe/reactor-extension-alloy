@@ -14,6 +14,10 @@ import extensionViewController from "../../../helpers/extensionViewController.mj
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
 import spectrum from "../../../helpers/spectrum.mjs";
+import {
+  LIBRARY_TYPE_MANAGED,
+  LIBRARY_TYPE_PREINSTALLED,
+} from "../../../../../src/view/constants/libraryType.js";
 
 const uuidRegex =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
@@ -52,7 +56,7 @@ test("does not modify cacheId if initialized with a cacheId", async () => {
 test("shows error when using preinstalled library type and creating new data element", async () => {
   await extensionViewController.init({
     extensionSettings: {
-      libraryCode: { type: "preinstalled" },
+      libraryCode: { type: LIBRARY_TYPE_PREINSTALLED },
       instances: [{ name: "alloy" }],
     },
     settings: null,
@@ -65,7 +69,7 @@ test("shows error when using preinstalled library type and creating new data ele
 test("shows no error when using managed library type", async () => {
   await extensionViewController.init({
     extensionSettings: {
-      libraryCode: { type: "managed" },
+      libraryCode: { type: LIBRARY_TYPE_MANAGED },
       instances: [{ name: "alloy" }],
     },
     settings: null,

@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const { PREINSTALLED } = require("../constants/libraryType");
+
 module.exports = ({
   turbine,
   window,
@@ -22,7 +24,7 @@ module.exports = ({
 }) => {
   const { instances: instancesSettings, libraryCode } =
     turbine.getExtensionSettings();
-  const isPreinstalled = libraryCode?.type === "preinstalled";
+  const isPreinstalled = libraryCode?.type === PREINSTALLED;
 
   const instanceByName = {};
 

@@ -2,6 +2,10 @@ import { RequestLogger } from "testcafe";
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import extensionViewController from "../../../helpers/extensionViewController.mjs";
 import * as selectors from "../../../helpers/dataTestIdSelectors.mjs";
+import {
+  LIBRARY_TYPE_MANAGED,
+  LIBRARY_TYPE_PREINSTALLED,
+} from "../../../../../src/view/constants/libraryType.js";
 
 // Create selectors for our test data-test-ids
 const libraryCodeField = selectors.createTestIdSelector("libraryCodeField");
@@ -12,7 +16,7 @@ const url = "http://localhost:3000/view/configuration/configuration.html";
 
 const extensionSettings = {
   libraryCode: {
-    type: "managed",
+    type: LIBRARY_TYPE_MANAGED,
   },
   instances: [
     {
@@ -24,7 +28,7 @@ const extensionSettings = {
 
 const preinstalledExtensionSettings = {
   libraryCode: {
-    type: "preinstalled",
+    type: LIBRARY_TYPE_PREINSTALLED,
   },
   instances: [
     {
@@ -60,7 +64,7 @@ test("should hide fields when preinstalled library type is selected", async (t) 
 
   // Switch to preinstalled mode by clicking the second radio button
   const preinstalledRadio = libraryCodeField.find(
-    'input[value="preinstalled"]',
+    `input[value="${LIBRARY_TYPE_PREINSTALLED}"]`,
   );
   await t.click(preinstalledRadio);
 
@@ -74,7 +78,7 @@ test("should save preinstalled type correctly", async (t) => {
 
   // Switch to preinstalled mode
   const preinstalledRadio = libraryCodeField.find(
-    'input[value="preinstalled"]',
+    `input[value="${LIBRARY_TYPE_PREINSTALLED}"]`,
   );
   await t.click(preinstalledRadio);
 
@@ -83,7 +87,7 @@ test("should save preinstalled type correctly", async (t) => {
   const { request } = logger.requests[0];
   const settings = JSON.parse(request.body).data.attributes.settings;
 
-  await t.expect(settings.libraryCode.type).eql("preinstalled");
+  await t.expect(settings.libraryCode.type).eql(LIBRARY_TYPE_PREINSTALLED);
 });
 
 test("should save managed type correctly", async (t) => {
@@ -95,7 +99,7 @@ test("should save managed type correctly", async (t) => {
   const { request } = logger.requests[0];
   const settings = JSON.parse(request.body).data.attributes.settings;
 
-  await t.expect(settings.libraryCode.type).eql("managed");
+  await t.expect(settings.libraryCode.type).eql(LIBRARY_TYPE_MANAGED);
 });
 
 test("should show fields with preinstalled settings", async (t) => {

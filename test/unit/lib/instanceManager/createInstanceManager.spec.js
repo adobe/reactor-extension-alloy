@@ -13,6 +13,10 @@ governing permissions and limitations under the License.
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
+import {
+  MANAGED,
+  PREINSTALLED,
+} from "../../../../src/lib/constants/libraryType";
 
 describe("Instance Manager", () => {
   let instanceManager;
@@ -43,7 +47,7 @@ describe("Instance Manager", () => {
   beforeEach(() => {
     extensionSettings = {
       libraryCode: {
-        type: "managed",
+        type: MANAGED,
       },
       instances: [
         {
@@ -314,7 +318,7 @@ describe("Instance Manager", () => {
   describe("when libraryCode.type is preinstalled", () => {
     beforeEach(() => {
       alloy3 = vi.fn();
-      extensionSettings.libraryCode = { type: "preinstalled" };
+      extensionSettings.libraryCode = { type: PREINSTALLED };
       extensionSettings.instances = [
         {
           name: "alloy3",
@@ -370,7 +374,7 @@ describe("Instance Manager", () => {
   describe("when libraryCode.type is managed", () => {
     beforeEach(() => {
       alloy3 = vi.fn();
-      extensionSettings.libraryCode = { type: "managed" };
+      extensionSettings.libraryCode = { type: MANAGED };
       extensionSettings.instances.push({
         name: "alloy3",
         edgeConfigId: "PR789",

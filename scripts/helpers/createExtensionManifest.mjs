@@ -288,21 +288,42 @@ const createExtensionManifest = ({ version }) => {
       schema: {
         $schema: "http://json-schema.org/draft-04/schema#",
         type: "object",
-        properties: {
-          libraryCode: {
-            type: "object",
+        oneOf: [
+          {
             properties: {
-              type: {
-                type: "string",
-                enum: ["managed", "preinstalled"],
+              libraryCode: {
+                type: "object",
+                properties: {
+                  type: {
+                    type: "string",
+                    enum: ["preinstalled"],
+                  },
+                },
+                required: ["type"],
+                additionalProperties: false,
+              },
+              instances: {
+                type: "array",
+                minItems: 1,
+                items: {
+                  type: "object",
+                  properties: {
+                    name: {
+                      type: "string",
+                      pattern: "\\D+",
+                    },
+                  },
+                  required: ["name"],
+                  additionalProperties: false,
+                },
               },
             },
-            required: ["type"],
+            required: ["libraryCode", "instances"],
             additionalProperties: false,
           },
-          instances: {
-            oneOf: [
-              {
+          {
+            properties: {
+              instances: {
                 type: "array",
                 minItems: 1,
                 items: {
@@ -520,32 +541,17 @@ const createExtensionManifest = ({ version }) => {
                   additionalProperties: false,
                 },
               },
-              {
-                type: "array",
-                minItems: 1,
-                items: {
-                  type: "object",
-                  properties: {
-                    name: {
-                      type: "string",
-                      pattern: "\\D+",
-                    },
-                  },
-                  required: ["name"],
-                  additionalProperties: false,
+              components: {
+                type: "object",
+                patternProperties: {
+                  ".*": { type: "boolean" },
                 },
               },
-            ],
-          },
-          components: {
-            type: "object",
-            patternProperties: {
-              ".*": { type: "boolean" },
             },
+            required: ["instances"],
+            additionalProperties: false,
           },
-        },
-        required: ["instances"],
-        additionalProperties: false,
+        ],
       },
       transforms: [
         {

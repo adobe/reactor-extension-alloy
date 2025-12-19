@@ -17,7 +17,6 @@ import {
   Button,
   ButtonGroup,
   Content,
-  DialogContainer,
   Dialog,
   Flex,
   Heading as HeadingSlot,
@@ -76,6 +75,10 @@ import ComponentsSection, {
 import PushNotificationsSection, {
   bridge as pushNotificationsBridge,
 } from "./pushNotificationsSection";
+import {
+  LIBRARY_TYPE_MANAGED,
+  LIBRARY_TYPE_PREINSTALLED,
+} from "../constants/libraryType";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -144,7 +147,7 @@ const createValidationSchema = () => {
     }),
     instances: array().of(
       object().when("$libraryCode.type", {
-        is: "preinstalled",
+        is: LIBRARY_TYPE_PREINSTALLED,
         then: () => preinstalledInstanceSchema,
         otherwise: () => fullInstanceSchema,
       }),
@@ -177,16 +180,27 @@ const getInitialValues = async ({ initInfo, context }) => {
   return {
     ...componentsBridge.getInitialValues({ initInfo }),
     instances: instancesInitialValues,
-    libraryCode: initInfo.settings?.libraryCode || { type: "managed" },
+    libraryCode: initInfo.settings?.libraryCode || {
+      type: LIBRARY_TYPE_MANAGED,
+    },
   };
 };
 
 const getSettings = async ({ values, initInfo }) => {
+  const isPreinstalled = values.libraryCode?.type === LIBRARY_TYPE_PREINSTALLED;
+
   return {
-    ...componentsBridge.getSettings({ values, initInfo }),
-    libraryCode: values.libraryCode,
+    // Don't emit components when preinstalled
+    ...(isPreinstalled
+      ? { libraryCode: values.libraryCode }
+      : componentsBridge.getSettings({ values, initInfo })),
     instances: await Promise.all(
       values.instances.map((instanceValues) => {
+        // For preinstalled mode, only save the instance name
+        if (isPreinstalled) {
+          return { name: instanceValues.name };
+        }
+
         return getInstanceSettings({
           initInfo,
           instanceValues,
@@ -423,7 +437,7 @@ const Configuration = ({ initInfo, context }) => {
 
   // Focus the first field with an error after validation
   useFocusFirstError();
-  const isPreinstalled = libraryCode?.type === "preinstalled";
+  const isPreinstalled = libraryCode?.type === LIBRARY_TYPE_PREINSTALLED;
 
   return (
     <Flex direction="column" gap="size-200">
@@ -443,8 +457,10 @@ const Configuration = ({ initInfo, context }) => {
                 description="Choose how the Alloy library should be loaded"
                 orientation="horizontal"
               >
-                <Radio value="managed">Managed by Launch (default)</Radio>
-                <Radio value="preinstalled">
+                <Radio value={LIBRARY_TYPE_MANAGED}>
+                  Managed by Launch (default)
+                </Radio>
+                <Radio value={LIBRARY_TYPE_PREINSTALLED}>
                   Use existing alloy.js instance (self-hosted)
                 </Radio>
               </FormikRadioGroup>
