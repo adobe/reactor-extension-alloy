@@ -727,7 +727,11 @@ export const spectrumPicker = (testId) => {
      */
     hasError: async () => {
       const button = page.getByTestId(testId).element();
-      return button.getAttribute("aria-invalid") === "true";
+      // Check if button has invalid class or parent has is-invalid class
+      const hasInvalidClass = button.className.includes("--invalid");
+      const parentHasInvalidClass =
+        button.parentElement?.className.includes("is-invalid");
+      return hasInvalidClass || parentHasInvalidClass || false;
     },
 
     /**

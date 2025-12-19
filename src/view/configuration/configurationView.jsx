@@ -37,6 +37,7 @@ import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import PropTypes from "prop-types";
 import ExtensionView from "../components/extensionView";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
+import useFocusFirstError from "../utils/useFocusFirstError";
 import BasicSection, { bridge as basicSectionBridge } from "./basicSection";
 import EdgeConfigurationsSection, {
   bridge as edgeConfigurationsSectionBridge,
@@ -179,6 +180,10 @@ const InstancesSection = ({ initInfo, context }) => {
       setSelectedTabKey(String(instanceIndexContainingErrors));
     }
   });
+
+  // Focus the first field with an error after validation
+  useFocusFirstError();
+
   return (
     <Flex direction="column" gap="size-50">
       <FieldArray
@@ -365,6 +370,9 @@ const Configuration = ({ initInfo, context }) => {
       setExpandedKeys(new Set(alreadyOpenOrErrorKeys));
     }
   });
+
+  // Focus the first field with an error after validation
+  useFocusFirstError();
 
   return (
     <Accordion
