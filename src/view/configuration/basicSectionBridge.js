@@ -18,18 +18,62 @@ import validateDuplicateValue from "./utils/validateDuplicateValue";
 const DEFAULT_EDGE_DOMAIN_TEMPLATE = "{companyId}.data.adobedc.net";
 const LEGACY_DEFAULT_EDGE_DOMAIN = "edge.adobedc.net";
 
+const createNameValidation = () => {
+  return string()
+    .required("Please specify a name.")
+    .matches(/\D+/, "Please provide a non-numeric name.")
+    .test({
+      name: "notWindowPropertyName",
+      message:
+        "Please provide a name that does not conflict with a property already found on the window object.",
+      test(value) {
+        return !(value in window);
+      },
+    });
+};
+
+const createUniqueNameTest = () => {
+  // eslint-disable-next-line func-names
+  return function (instance, testContext) {
+    const { path: instancePath, parent: instances } = testContext;
+    return validateDuplicateValue({
+      createError: this.createError,
+      instances,
+      instance,
+      instancePath,
+      key: "name",
+      message:
+        "Please provide a name unique from those used for other instances.",
+    });
+  };
+};
+
 export const bridge = {
-  getInstanceDefaults: ({ initInfo }) => ({
-    name: "alloy",
-    persistedName: undefined,
-    orgId: initInfo.company.orgId,
-    edgeDomain: initInfo.company.tenantId
-      ? DEFAULT_EDGE_DOMAIN_TEMPLATE.replace(
-          "{companyId}",
-          initInfo.company.tenantId,
-        )
-      : LEGACY_DEFAULT_EDGE_DOMAIN,
-  }),
+  getInstanceDefaults: ({ initInfo, existingInstances = [] }) => {
+    // Generate a unique instance name
+    let name = "alloy";
+    const existingNames = existingInstances.map((instance) => instance.name);
+
+    if (existingNames.includes(name)) {
+      let counter = 2;
+      while (existingNames.includes(`${name}${counter}`)) {
+        counter += 1;
+      }
+      name = `${name}${counter}`;
+    }
+
+    return {
+      name,
+      persistedName: undefined,
+      orgId: initInfo.company.orgId,
+      edgeDomain: initInfo.company.tenantId
+        ? DEFAULT_EDGE_DOMAIN_TEMPLATE.replace(
+            "{companyId}",
+            initInfo.company.tenantId,
+          )
+        : LEGACY_DEFAULT_EDGE_DOMAIN,
+    };
+  },
   getInitialInstanceValues: ({ initInfo, instanceSettings }) => {
     const instanceValues = {};
 
@@ -68,33 +112,11 @@ export const bridge = {
   },
   instanceValidationSchema: object()
     .shape({
-      name: string()
-        .required("Please specify a name.")
-        .matches(/\D+/, "Please provide a non-numeric name.")
-        .test({
-          name: "notWindowPropertyName",
-          message:
-            "Please provide a name that does not conflict with a property already found on the window object.",
-          test(value) {
-            return !(value in window);
-          },
-        }),
+      name: createNameValidation(),
       orgId: string().required("Please specify an IMS organization ID."),
       edgeDomain: string().required("Please specify an edge domain."),
     })
-    // eslint-disable-next-line func-names
-    .test("uniqueName", function (instance, testContext) {
-      const { path: instancePath, parent: instances } = testContext;
-      return validateDuplicateValue({
-        createError: this.createError,
-        instances,
-        instance,
-        instancePath,
-        key: "name",
-        message:
-          "Please provide a name unique from those used for other instances.",
-      });
-    })
+    .test("uniqueName", createUniqueNameTest())
     // eslint-disable-next-line func-names
     .test("uniqueOrgId", function (instance, testContext) {
       const { path: instancePath, parent: instances } = testContext;
