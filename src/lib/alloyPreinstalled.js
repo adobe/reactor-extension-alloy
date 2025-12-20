@@ -19,7 +19,7 @@ const createCustomInstance = ({ name }) => {
   }
 
   const instance = window[name];
-  return (...args) => instance.push(...args);
+  return (...args) => instance(...args);
 };
 
 const components = {};

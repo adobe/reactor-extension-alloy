@@ -107,24 +107,24 @@ describe("Generated alloy.js (preinstalled mode)", () => {
       expect(typeof proxy).toBe("function");
     });
 
-    it("proxy calls instance.push with arguments", () => {
-      const mockPush = vi.fn();
-      mockWindow.testAlloy = { push: mockPush };
+    it("proxy calls instance function with arguments", () => {
+      mockWindow.testAlloy = vi.fn();
 
       const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
       proxy("sendEvent", { xdm: {} });
 
-      expect(mockPush).toHaveBeenCalledWith("sendEvent", { xdm: {} });
+      expect(mockWindow.testAlloy).toHaveBeenCalledWith("sendEvent", {
+        xdm: {},
+      });
     });
 
-    it("proxy calls instance.push with multiple arguments", () => {
-      const mockPush = vi.fn();
-      mockWindow.testAlloy = { push: mockPush };
+    it("proxy calls instance function with multiple arguments", () => {
+      mockWindow.testAlloy = vi.fn();
 
       const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
       proxy("configure", { orgId: "test@AdobeOrg" }, { extra: "arg" });
 
-      expect(mockPush).toHaveBeenCalledWith(
+      expect(mockWindow.testAlloy).toHaveBeenCalledWith(
         "configure",
         { orgId: "test@AdobeOrg" },
         { extra: "arg" },
@@ -132,40 +132,38 @@ describe("Generated alloy.js (preinstalled mode)", () => {
     });
 
     it("proxy works with pre-existing alloy instance", async () => {
-      const mockPush = vi.fn().mockReturnValue(Promise.resolve("success"));
-      mockWindow.testAlloy = { push: mockPush };
+      mockWindow.testAlloy = vi
+        .fn()
+        .mockReturnValue(Promise.resolve("success"));
 
       const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
       const result = await proxy("getIdentity");
 
-      expect(mockPush).toHaveBeenCalledWith("getIdentity");
+      expect(mockWindow.testAlloy).toHaveBeenCalledWith("getIdentity");
       expect(result).toBe("success");
     });
 
     it("proxy can be called multiple times", () => {
-      const mockPush = vi.fn();
-      mockWindow.testAlloy = { push: mockPush };
+      mockWindow.testAlloy = vi.fn();
 
       const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
       proxy("sendEvent", { xdm: { event: "1" } });
       proxy("sendEvent", { xdm: { event: "2" } });
       proxy("getIdentity");
 
-      expect(mockPush).toHaveBeenCalledTimes(3);
-      expect(mockPush).toHaveBeenNthCalledWith(1, "sendEvent", {
+      expect(mockWindow.testAlloy).toHaveBeenCalledTimes(3);
+      expect(mockWindow.testAlloy).toHaveBeenNthCalledWith(1, "sendEvent", {
         xdm: { event: "1" },
       });
-      expect(mockPush).toHaveBeenNthCalledWith(2, "sendEvent", {
+      expect(mockWindow.testAlloy).toHaveBeenNthCalledWith(2, "sendEvent", {
         xdm: { event: "2" },
       });
-      expect(mockPush).toHaveBeenNthCalledWith(3, "getIdentity");
+      expect(mockWindow.testAlloy).toHaveBeenNthCalledWith(3, "getIdentity");
     });
 
     it("multiple proxies can be created for different instances", () => {
-      const mockPush1 = vi.fn();
-      const mockPush2 = vi.fn();
-      mockWindow.alloy1 = { push: mockPush1 };
-      mockWindow.alloy2 = { push: mockPush2 };
+      mockWindow.alloy1 = vi.fn();
+      mockWindow.alloy2 = vi.fn();
 
       const proxy1 = alloyExports.createCustomInstance({ name: "alloy1" });
       const proxy2 = alloyExports.createCustomInstance({ name: "alloy2" });
@@ -173,12 +171,16 @@ describe("Generated alloy.js (preinstalled mode)", () => {
       proxy1("sendEvent", { xdm: {} });
       proxy2("configure", { orgId: "test" });
 
-      expect(mockPush1).toHaveBeenCalledWith("sendEvent", { xdm: {} });
-      expect(mockPush2).toHaveBeenCalledWith("configure", { orgId: "test" });
-      expect(mockPush1).not.toHaveBeenCalledWith("configure", {
+      expect(mockWindow.alloy1).toHaveBeenCalledWith("sendEvent", { xdm: {} });
+      expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
         orgId: "test",
       });
-      expect(mockPush2).not.toHaveBeenCalledWith("sendEvent", { xdm: {} });
+      expect(mockWindow.alloy1).not.toHaveBeenCalledWith("configure", {
+        orgId: "test",
+      });
+      expect(mockWindow.alloy2).not.toHaveBeenCalledWith("sendEvent", {
+        xdm: {},
+      });
     });
   });
 
