@@ -79,6 +79,10 @@ import {
   LIBRARY_TYPE_MANAGED,
   LIBRARY_TYPE_PREINSTALLED,
 } from "../constants/libraryType";
+import {
+  createNameValidation,
+  createUniqueNameTest,
+} from "./basicSectionBridge";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -127,19 +131,11 @@ const createValidationSchema = () => {
   }, object());
 
   // Create minimal schema for preinstalled mode (only name validation)
-  const preinstalledInstanceSchema = object().shape({
-    name: string()
-      .required("Please specify a name.")
-      .matches(/\D+/, "Please provide a non-numeric name.")
-      .test({
-        name: "notWindowPropertyName",
-        message:
-          "Please provide a name that does not conflict with a property already found on the window object.",
-        test(value) {
-          return !(value in window);
-        },
-      }),
-  });
+  const preinstalledInstanceSchema = object()
+    .shape({
+      name: createNameValidation(),
+    })
+    .test(createUniqueNameTest());
 
   return object().shape({
     libraryCode: object().shape({
