@@ -31,7 +31,7 @@
     "prepush-msg": "echo 'Running pre-push scripts...' && exit 0",
     "sandbox": "./scripts/buildExtensionManifest.mjs && reactor-sandbox",
     "test": "pnpm exec playwright install chromium && vitest run && pnpm run test:functional",
-    "test:coverage": "rimraf coverage && pnpm exec playwright install chromium && vitest run --coverage",
+    "test:coverage": "pnpm run clean && rimraf coverage && pnpm run build:alloy:preinstalled && pnpm exec playwright install chromium && vitest run --coverage",
     "test:unit": "pnpm run build:alloy:preinstalled && pnpm exec playwright install chromium && vitest run --project=unit",
     "test:unit:watch": "pnpm run build:alloy:preinstalled && pnpm exec playwright install chromium && vitest --project=unit",
     "test:integration": "pnpm exec playwright install chromium && vitest run --project=integration",
