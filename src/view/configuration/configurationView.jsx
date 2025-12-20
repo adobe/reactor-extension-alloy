@@ -32,6 +32,8 @@ import {
   DisclosureTitle,
   DisclosurePanel,
   Radio,
+  Heading,
+  InlineAlert,
 } from "@adobe/react-spectrum";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import PropTypes from "prop-types";
@@ -443,29 +445,35 @@ const Configuration = ({ initInfo, context }) => {
         allowsMultipleExpanded
       >
         <Disclosure id="buildOptions" data-test-id="buildOptionsHeading">
-          <DisclosureTitle>Web SDK build options</DisclosureTitle>
+          <DisclosureTitle>Build options</DisclosureTitle>
           <DisclosurePanel>
             <Flex direction="column" gap="size-200">
+              <InlineAlert variant="notice" width="size-6000">
+                <Heading>Warning, advanced settings</Heading>
+                <Content>
+                  Modifying settings here can break your implementation. You can
+                  decrease the size of your Web SDK bundle by disabling
+                  components that you are not using. Each time you change the
+                  list of used components, please test your implementation
+                  thoroughly to verify that all functionalities are working as
+                  expected.
+                </Content>
+              </InlineAlert>
+
               <FormikRadioGroup
+                width="size-6000"
                 data-test-id="libraryCodeField"
                 name="libraryCode.type"
-                label="Alloy library configuration"
-                description="Choose how the Alloy library should be loaded"
+                label="Library management"
+                description="Select whether Launch should bundle and manage the Alloy library, or use your own self-hosted alloy.js file that is already loaded on your page."
                 orientation="horizontal"
               >
-                <Radio value={LIBRARY_TYPE_MANAGED}>
-                  Managed by Launch (default)
-                </Radio>
+                <Radio value={LIBRARY_TYPE_MANAGED}>Managed by Launch</Radio>
                 <Radio value={LIBRARY_TYPE_PREINSTALLED}>
-                  Use existing alloy.js instance (self-hosted)
+                  Use a self-hosted alloy.js instance
                 </Radio>
               </FormikRadioGroup>
-              {!isPreinstalled && (
-                <>
-                  <Divider size="S" />
-                  <ComponentsSection />
-                </>
-              )}
+              {!isPreinstalled && <ComponentsSection />}
             </Flex>
           </DisclosurePanel>
         </Disclosure>
