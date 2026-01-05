@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const createCustomInstance = ({ name }) => {
-  if (!window[name]) {
+  if (!window[name] || typeof window[name] !== "function") {
     throw new Error(
       `Alloy instance "${name}" not found on window. ` +
         `Make sure the instance is loaded before the Launch library.`,
