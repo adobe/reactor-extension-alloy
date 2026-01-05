@@ -81,7 +81,7 @@ describe("Generated alloy.js (preinstalled mode)", () => {
 
     it("throws error when calling createEventMergeId directly", () => {
       expect(() => alloyExports.createEventMergeId()).toThrow(
-        "createEventMergeId should not be called directly in preinstalled mode",
+        "createEventMergeId is not available when using a self-hosted Alloy instance. Use the Alloy library's built-in createEventMergeId function instead.",
       );
     });
 
@@ -97,7 +97,7 @@ describe("Generated alloy.js (preinstalled mode)", () => {
       expect(() => {
         alloyExports.createCustomInstance({ name: "missingAlloy" });
       }).toThrow(
-        'Alloy instance "missingAlloy" not found on window. Make sure the instance is loaded before the Launch library.',
+        'Alloy instance "missingAlloy" was not found on the window object. Ensure the Alloy base code snippet or the Alloy library is loaded before the Tags library. The base code snippet creates a command queue that buffers calls until Alloy fully loads.',
       );
     });
 

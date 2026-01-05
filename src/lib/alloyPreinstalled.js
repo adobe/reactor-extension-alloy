@@ -13,8 +13,9 @@ governing permissions and limitations under the License.
 const createCustomInstance = ({ name }) => {
   if (!window[name] || typeof window[name] !== "function") {
     throw new Error(
-      `Alloy instance "${name}" not found on window. ` +
-        `Make sure the instance is loaded before the Launch library.`,
+      `Alloy instance "${name}" was not found on the window object. ` +
+        `Ensure the Alloy base code snippet or the Alloy library is loaded before the Tags library. ` +
+        `The base code snippet creates a command queue that buffers calls until Alloy fully loads.`,
     );
   }
 
@@ -26,7 +27,8 @@ const components = {};
 
 const createEventMergeId = () => {
   throw new Error(
-    "createEventMergeId should not be called directly in preinstalled mode",
+    "createEventMergeId is not available when using a self-hosted Alloy instance. " +
+      "Use the Alloy library's built-in createEventMergeId function instead.",
   );
 };
 
