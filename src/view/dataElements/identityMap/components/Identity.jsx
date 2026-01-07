@@ -26,6 +26,7 @@ import {
 } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import useNewlyValidatedFormSubmission from "../../../utils/useNewlyValidatedFormSubmission";
+import useFocusFirstError from "../../../utils/useFocusFirstError";
 import Heading from "../../../components/typography/heading";
 import getDefaultIdentity from "../utils/getDefaultIdentity";
 import FormElementContainer from "../../../components/formElementContainer";
@@ -56,6 +57,8 @@ const Identity = ({ context }) => {
       setSelectedTabKey(String(identityIndexContainingErrors));
     }
   });
+
+  useFocusFirstError();
 
   return (
     <FieldArray

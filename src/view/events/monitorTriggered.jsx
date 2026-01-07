@@ -10,7 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import renderForm from "../forms/renderForm";
+import PropTypes from "prop-types";
+import { object } from "yup";
+import ExtensionView from "../components/extensionView";
+import render from "../render";
+import useFocusFirstError from "../utils/useFocusFirstError";
 import form from "../forms/form";
 import notice from "../forms/notice";
 import comboBox from "../forms/comboBox";
@@ -81,4 +85,36 @@ const triggerMonitorForm = form({}, [
   }),
 ]);
 
-renderForm(triggerMonitorForm);
+const FormComponent = (props) => {
+  useFocusFirstError();
+  const { Component } = triggerMonitorForm;
+  return <Component {...props} />;
+};
+
+FormComponent.propTypes = {
+  initInfo: PropTypes.object,
+  formikProps: PropTypes.object,
+  namePrefix: PropTypes.string,
+  horizontal: PropTypes.bool,
+};
+
+const FormExtensionView = () => {
+  const { getInitialValues, getSettings, getValidationShape } =
+    triggerMonitorForm;
+
+  const getValidationSchema = ({ initInfo }) => {
+    const shape = getValidationShape({ initInfo, existingValidationShape: {} });
+    return object().shape(shape);
+  };
+
+  return (
+    <ExtensionView
+      getInitialValues={getInitialValues}
+      getSettings={getSettings}
+      getFormikStateValidationSchema={getValidationSchema}
+      render={(props) => <FormComponent {...props} />}
+    />
+  );
+};
+
+render(FormExtensionView);
