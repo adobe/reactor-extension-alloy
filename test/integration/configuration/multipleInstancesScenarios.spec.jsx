@@ -54,13 +54,15 @@ describe("Config Multiple Instances", () => {
     const addInstanceButton = page.getByTestId("addInstanceButton");
     await addInstanceButton.click();
 
-    const secondTab = tabs("alloy").nth(1);
-    await expect.element(secondTab.element()).toBeVisible();
+    const secondTab = tabs("alloy2");
     await secondTab.click();
+
+    // Change the name back to "alloy" to create a duplicate
+    const nameField = spectrumTextField("nameField");
+    await nameField.fill("alloy");
 
     expect(await extensionBridge.validate()).toBe(false);
 
-    const nameField = spectrumTextField("nameField");
     expect(await nameField.hasError()).toBe(true);
     const errorMessage = await nameField.getErrorMessage();
     expect(errorMessage).toBe(

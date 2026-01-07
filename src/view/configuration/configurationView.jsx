@@ -200,6 +200,7 @@ const InstancesSection = ({ initInfo, context }) => {
                       initInfo,
                       isFirstInstance: false,
                       context,
+                      existingInstances: instances,
                     });
                     arrayHelpers.push(newInstance);
                     setSelectedTabKey(String(instances.length));
