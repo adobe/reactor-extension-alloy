@@ -15,6 +15,7 @@ import { InlineAlert, Content, Heading } from "@adobe/react-spectrum";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
 import { PREINSTALLED } from "../../lib/constants/libraryType";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
+import { isDefaultComponent } from "../utils/alloyComponents.mjs";
 
 /**
  * A component that will render children if the required component is enabled.
@@ -40,7 +41,10 @@ const RequiredComponent = ({
 }) => {
   const componentLabel = camelCaseToTitleCase(requiredComponent);
   const components = initInfo?.extensionSettings?.components || {};
-  const isComponentDisabled = components[requiredComponent] === false;
+  const isComponentDisabled =
+    (Object.keys(components).includes(requiredComponent) &&
+      components[requiredComponent] === false) ||
+    !isDefaultComponent(requiredComponent);
   const isPreinstalled =
     initInfo?.extensionSettings?.libraryCode?.type === PREINSTALLED;
 
@@ -54,7 +58,8 @@ const RequiredComponent = ({
         >
           <Heading>Self-hosted Alloy instance detected</Heading>
           <Content>
-            {title.charAt(0).toUpperCase() + title.slice(1)} requires the &quot;
+            {title && title.charAt(0).toUpperCase() + title.slice(1)} requires
+            the &quot;
             {componentLabel}&quot; component to be included in your self-hosted
             alloy.js build. If this component is missing, {title} will not
             function correctly.{" "}
@@ -85,7 +90,7 @@ const RequiredComponent = ({
             <Heading>Custom build component disabled</Heading>
             <Content>
               You cannot create {title} because a custom build component is
-              disabled on this property. To create this, first enabled the{" "}
+              disabled on this property. To create this, first enable the{" "}
               {componentLabel} component in the custom build section of the Web
               SDK extension configuration.
             </Content>
