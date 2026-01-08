@@ -21,7 +21,7 @@ import { bridge } from "./basicSectionBridge";
 
 export { bridge };
 
-const BasicSection = ({ instanceFieldName, initInfo }) => {
+const BasicSection = ({ instanceFieldName, initInfo, isPreinstalled }) => {
   const [{ value: instanceValues }] = useField(instanceFieldName);
   const instanceDefaults = bridge.getInstanceDefaults({ initInfo });
 
@@ -53,43 +53,47 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
           </Content>
         </InlineAlert>
       ) : null}
-      <Flex>
-        <DataElementSelector>
-          <FormikTextField
-            data-test-id="orgIdField"
-            label="IMS organization ID"
-            name={`${instanceFieldName}.orgId`}
-            description="Your assigned Experience Cloud organization ID."
-            isRequired
-            width="size-5000"
-          />
-        </DataElementSelector>
-        <RestoreDefaultValueButton
-          data-test-id="orgIdRestoreButton"
-          name={`${instanceFieldName}.orgId`}
-          defaultValue={instanceDefaults.orgId}
-        />
-      </Flex>
-      <Flex>
-        <DataElementSelector>
-          <FormikTextField
-            data-test-id="edgeDomainField"
-            label="Edge domain"
-            name={`${instanceFieldName}.edgeDomain`}
-            description="The domain that will be used to interact with
+      {!isPreinstalled && (
+        <>
+          <Flex>
+            <DataElementSelector>
+              <FormikTextField
+                data-test-id="orgIdField"
+                label="IMS organization ID"
+                name={`${instanceFieldName}.orgId`}
+                description="Your assigned Experience Cloud organization ID."
+                isRequired
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <RestoreDefaultValueButton
+              data-test-id="orgIdRestoreButton"
+              name={`${instanceFieldName}.orgId`}
+              defaultValue={instanceDefaults.orgId}
+            />
+          </Flex>
+          <Flex>
+            <DataElementSelector>
+              <FormikTextField
+                data-test-id="edgeDomainField"
+                label="Edge domain"
+                name={`${instanceFieldName}.edgeDomain`}
+                description="The domain that will be used to interact with
                         Adobe services. Update this setting if you have
                         mapped one of your first-party domains (using
                         CNAME) to an Adobe-provisioned domain."
-            isRequired
-            width="size-5000"
-          />
-        </DataElementSelector>
-        <RestoreDefaultValueButton
-          data-test-id="edgeDomainRestoreButton"
-          name={`${instanceFieldName}.edgeDomain`}
-          defaultValue={instanceDefaults.edgeDomain}
-        />
-      </Flex>
+                isRequired
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <RestoreDefaultValueButton
+              data-test-id="edgeDomainRestoreButton"
+              name={`${instanceFieldName}.edgeDomain`}
+              defaultValue={instanceDefaults.edgeDomain}
+            />
+          </Flex>
+        </>
+      )}
     </FormElementContainer>
   );
 };
@@ -97,6 +101,7 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
 BasicSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired,
   initInfo: PropTypes.object.isRequired,
+  isPreinstalled: PropTypes.bool.isRequired,
 };
 
 export default BasicSection;

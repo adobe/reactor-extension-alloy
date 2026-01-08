@@ -262,6 +262,7 @@ const documentUnloadingField = checkbox({
 const mergeIdField = requiredComponent(
   {
     requiredComponent: "eventMerge",
+    title: "the merge ID field",
     deprecated: true,
   },
   [

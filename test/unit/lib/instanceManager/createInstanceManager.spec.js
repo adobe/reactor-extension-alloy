@@ -13,6 +13,10 @@ governing permissions and limitations under the License.
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
+import {
+  MANAGED,
+  PREINSTALLED,
+} from "../../../../src/lib/constants/libraryType";
 
 describe("Instance Manager", () => {
   let instanceManager;
@@ -24,6 +28,7 @@ describe("Instance Manager", () => {
   let onBeforeEventSend;
   let alloy1;
   let alloy2;
+  let alloy3;
   let extensionSettings;
   let getConfigOverrides;
 
@@ -41,6 +46,9 @@ describe("Instance Manager", () => {
 
   beforeEach(() => {
     extensionSettings = {
+      libraryCode: {
+        type: MANAGED,
+      },
       instances: [
         {
           name: "alloy1",
@@ -60,6 +68,10 @@ describe("Instance Manager", () => {
       onDebugChanged: vi.fn(),
       environment: { stage: "production" },
       debugEnabled: false,
+      logger: {
+        warn: vi.fn(),
+        error: vi.fn(),
+      },
     };
     mockWindow = {};
     getConfigOverrides = vi.fn();
@@ -71,6 +83,9 @@ describe("Instance Manager", () => {
       }
       if (name === "alloy2") {
         return alloy2;
+      }
+      if (name === "alloy3") {
+        return alloy3;
       }
       return undefined;
     });
@@ -298,5 +313,98 @@ describe("Instance Manager", () => {
 
     expect(alloy1).toHaveBeenCalledWith("configure", expect.any(Object));
     expect(alloy1).toHaveBeenCalledTimes(1);
+  });
+
+  describe("when libraryCode.type is preinstalled", () => {
+    beforeEach(() => {
+      alloy3 = vi.fn();
+      extensionSettings.libraryCode = { type: PREINSTALLED };
+      extensionSettings.instances = [
+        {
+          name: "alloy3",
+        },
+      ];
+    });
+
+    it("creates instance using createCustomInstance", () => {
+      build();
+
+      // In preinstalled mode, createCustomInstance should be called
+      expect(createCustomInstance).toHaveBeenCalledWith({
+        name: "alloy3",
+        components: undefined,
+      });
+
+      // The instance should be registered
+      const instance = instanceManager.getInstance("alloy3");
+      expect(instance).toBe(alloy3);
+    });
+
+    it("does not configure the instance in preinstalled mode", () => {
+      build();
+
+      // createCustomInstance returns the proxy/instance
+      const instance = instanceManager.getInstance("alloy3");
+      expect(instance).toBe(alloy3);
+
+      // Should NOT call configure since it's preinstalled
+      expect(alloy3).not.toHaveBeenCalledWith("configure", expect.any(Object));
+    });
+
+    it("does not add instance to window.__alloyNS in preinstalled mode", () => {
+      build();
+
+      // In preinstalled mode, we don't add instance name to __alloyNS
+      // The external instance already exists on window
+      // eslint-disable-next-line no-underscore-dangle
+      expect(mockWindow.__alloyNS).toBeDefined();
+      // eslint-disable-next-line no-underscore-dangle
+      expect(mockWindow.__alloyNS).not.toContain("alloy3");
+    });
+
+    it("does not set instance on window in preinstalled mode", () => {
+      build();
+
+      // In preinstalled mode, we don't overwrite window[name]
+      // The external instance should already be there
+      expect(mockWindow.alloy3).toBeUndefined();
+    });
+  });
+
+  describe("when libraryCode.type is managed", () => {
+    beforeEach(() => {
+      alloy3 = vi.fn();
+      extensionSettings.libraryCode = { type: MANAGED };
+      extensionSettings.instances.push({
+        name: "alloy3",
+        edgeConfigId: "PR789",
+      });
+    });
+
+    it("creates and configures instance in managed mode", () => {
+      build();
+
+      expect(createCustomInstance).toHaveBeenCalledWith({
+        name: "alloy3",
+        components: undefined,
+      });
+      expect(alloy3).toHaveBeenCalledWith("configure", expect.any(Object));
+
+      const instance = instanceManager.getInstance("alloy3");
+      expect(instance).toBe(alloy3);
+    });
+
+    it("adds instance to window.__alloyNS in managed mode", () => {
+      build();
+
+      // eslint-disable-next-line no-underscore-dangle
+      expect(mockWindow.__alloyNS).toContain("alloy3");
+    });
+
+    it("sets instance on window in managed mode", () => {
+      build();
+
+      expect(mockWindow.alloy3).toBe(alloy3);
+    });
   });
 });

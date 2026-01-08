@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { useState, useRef } from "react";
-import { object, array } from "yup";
+import { object, array, string } from "yup";
 import { FieldArray, useField } from "formik";
 import {
   Button,
@@ -32,12 +32,16 @@ import {
   Disclosure,
   DisclosureTitle,
   DisclosurePanel,
+  Radio,
+  Heading,
+  InlineAlert,
 } from "@adobe/react-spectrum";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import PropTypes from "prop-types";
 import ExtensionView from "../components/extensionView";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
 import useFocusFirstError from "../utils/useFocusFirstError";
+import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import BasicSection, { bridge as basicSectionBridge } from "./basicSection";
 import EdgeConfigurationsSection, {
   bridge as edgeConfigurationsSectionBridge,
@@ -74,6 +78,14 @@ import ComponentsSection, {
 import PushNotificationsSection, {
   bridge as pushNotificationsBridge,
 } from "./pushNotificationsSection";
+import {
+  LIBRARY_TYPE_MANAGED,
+  LIBRARY_TYPE_PREINSTALLED,
+} from "../constants/libraryType";
+import {
+  createNameValidation,
+  createUniqueNameTest,
+} from "./basicSectionBridge";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -110,6 +122,38 @@ const getInitialInstanceValues = getMergedBridgeMethod(
 );
 const getInstanceSettings = getMergedBridgeMethod("getInstanceSettings");
 
+/**
+ * Creates the validation schema based on library type
+ */
+const createValidationSchema = () => {
+  // Create full validation schema by merging all bridge schemas
+  const fullInstanceSchema = sectionBridges.reduce((instanceSchema, bridge) => {
+    return bridge.instanceValidationSchema
+      ? instanceSchema.concat(bridge.instanceValidationSchema)
+      : instanceSchema;
+  }, object());
+
+  // Create minimal schema for preinstalled mode (only name validation)
+  const preinstalledInstanceSchema = object()
+    .shape({
+      name: createNameValidation(),
+    })
+    .test(createUniqueNameTest());
+
+  return object().shape({
+    libraryCode: object().shape({
+      type: string().required(),
+    }),
+    instances: array().of(
+      object().when("$libraryCode.type", {
+        is: LIBRARY_TYPE_PREINSTALLED,
+        then: () => preinstalledInstanceSchema,
+        otherwise: () => fullInstanceSchema,
+      }),
+    ),
+  });
+};
+
 const getInitialValues = async ({ initInfo, context }) => {
   const { instances: instancesSettings } = initInfo.settings || {};
 
@@ -135,14 +179,27 @@ const getInitialValues = async ({ initInfo, context }) => {
   return {
     ...componentsBridge.getInitialValues({ initInfo }),
     instances: instancesInitialValues,
+    libraryCode: initInfo.settings?.libraryCode || {
+      type: LIBRARY_TYPE_MANAGED,
+    },
   };
 };
 
 const getSettings = async ({ values, initInfo }) => {
+  const isPreinstalled = values.libraryCode?.type === LIBRARY_TYPE_PREINSTALLED;
+
   return {
-    ...componentsBridge.getSettings({ values, initInfo }),
+    // Don't emit components when preinstalled
+    ...(isPreinstalled
+      ? { libraryCode: values.libraryCode }
+      : componentsBridge.getSettings({ values, initInfo })),
     instances: await Promise.all(
       values.instances.map((instanceValues) => {
+        // For preinstalled mode, only save the instance name
+        if (isPreinstalled) {
+          return { name: instanceValues.name };
+        }
+
         return getInstanceSettings({
           initInfo,
           instanceValues,
@@ -153,17 +210,7 @@ const getSettings = async ({ values, initInfo }) => {
   };
 };
 
-const validationSchema = object().shape({
-  instances: array().of(
-    sectionBridges.reduce((instanceSchema, bridge) => {
-      return bridge.instanceValidationSchema
-        ? instanceSchema.concat(bridge.instanceValidationSchema)
-        : instanceSchema;
-    }, object()),
-  ),
-});
-
-const InstancesSection = ({ initInfo, context }) => {
+const InstancesSection = ({ initInfo, context, isPreinstalled }) => {
   const [{ value: instances }] = useField("instances");
   const [selectedTabKey, setSelectedTabKey] = useState("0");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -236,43 +283,50 @@ const InstancesSection = ({ initInfo, context }) => {
                         <BasicSection
                           instanceFieldName={instanceFieldName}
                           initInfo={initInfo}
+                          isPreinstalled={isPreinstalled}
                         />
-                        <EdgeConfigurationsSection
-                          instanceFieldName={instanceFieldName}
-                          instanceIndex={index}
-                          initInfo={initInfo}
-                          context={context}
-                        />
-                        <PrivacySection instanceFieldName={instanceFieldName} />
-                        <IdentitySection
-                          instanceFieldName={instanceFieldName}
-                        />
-                        <PersonalizationSection
-                          instanceFieldName={instanceFieldName}
-                        />
-                        <DataCollectionSection
-                          instanceFieldName={instanceFieldName}
-                        />
-                        <StreamingMediaSection
-                          instanceFieldName={instanceFieldName}
-                        />
-                        <PushNotificationsSection
-                          instanceFieldName={instanceFieldName}
-                        />
-                        <AdvertisingSection
-                          instanceFieldName={instanceFieldName}
-                          initInfo={initInfo}
-                        />
-                        <OverridesSection
-                          initInfo={initInfo}
-                          instanceFieldName={instanceFieldName}
-                          edgeConfigIds={edgeConfigIds}
-                          configOrgId={instance.orgId}
-                          hideFields={[FIELD_NAMES.datastreamId]}
-                        />
-                        <AdvancedSection
-                          instanceFieldName={instanceFieldName}
-                        />
+                        {!isPreinstalled && (
+                          <>
+                            <EdgeConfigurationsSection
+                              instanceFieldName={instanceFieldName}
+                              instanceIndex={index}
+                              initInfo={initInfo}
+                              context={context}
+                            />
+                            <PrivacySection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <IdentitySection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <PersonalizationSection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <DataCollectionSection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <StreamingMediaSection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <PushNotificationsSection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <AdvertisingSection
+                              instanceFieldName={instanceFieldName}
+                              initInfo={initInfo}
+                            />
+                            <OverridesSection
+                              initInfo={initInfo}
+                              instanceFieldName={instanceFieldName}
+                              edgeConfigIds={edgeConfigIds}
+                              configOrgId={instance.orgId}
+                              hideFields={[FIELD_NAMES.datastreamId]}
+                            />
+                            <AdvancedSection
+                              instanceFieldName={instanceFieldName}
+                            />
+                          </>
+                        )}
                         {instances.length > 1 && (
                           <View marginTop="size-300">
                             <Button
@@ -288,7 +342,7 @@ const InstancesSection = ({ initInfo, context }) => {
                               Delete instance
                             </Button>
                           </View>
-                        )}
+                        )}{" "}
                       </Item>
                     );
                   })}
@@ -344,7 +398,7 @@ const InstancesSection = ({ initInfo, context }) => {
                     </ButtonGroup>
                   </Dialog>
                 )}
-              </DialogContainer>
+              </DialogContainer>{" "}
             </div>
           );
         }}
@@ -356,14 +410,16 @@ const InstancesSection = ({ initInfo, context }) => {
 InstancesSection.propTypes = {
   initInfo: PropTypes.object.isRequired,
   context: PropTypes.object.isRequired,
+  isPreinstalled: PropTypes.bool.isRequired,
 };
 
 const Configuration = ({ initInfo, context }) => {
   const [expandedKeys, setExpandedKeys] = useState(new Set(["instances"]));
+  const [{ value: libraryCode }] = useField("libraryCode");
 
   useNewlyValidatedFormSubmission((errors) => {
     if (errors) {
-      const alreadyOpenOrErrorKeys = ["components", "instances"].filter(
+      const alreadyOpenOrErrorKeys = ["buildOptions", "instances"].filter(
         (key) => {
           return !!errors[key] || expandedKeys.has(key);
         },
@@ -374,26 +430,60 @@ const Configuration = ({ initInfo, context }) => {
 
   // Focus the first field with an error after validation
   useFocusFirstError();
+  const isPreinstalled = libraryCode?.type === LIBRARY_TYPE_PREINSTALLED;
 
   return (
-    <Accordion
-      expandedKeys={expandedKeys}
-      onExpandedChange={setExpandedKeys}
-      allowsMultipleExpanded
-    >
-      <Disclosure id="components" data-test-id="customBuildHeading">
-        <DisclosureTitle>Custom build components</DisclosureTitle>
-        <DisclosurePanel>
-          <ComponentsSection />
-        </DisclosurePanel>
-      </Disclosure>
-      <Disclosure id="instances" data-test-id="instancesHeading">
-        <DisclosureTitle>SDK instances</DisclosureTitle>
-        <DisclosurePanel>
-          <InstancesSection initInfo={initInfo} context={context} />
-        </DisclosurePanel>
-      </Disclosure>
-    </Accordion>
+    <Flex direction="column" gap="size-200">
+      <Accordion
+        expandedKeys={expandedKeys}
+        onExpandedChange={setExpandedKeys}
+        allowsMultipleExpanded
+      >
+        <Disclosure id="buildOptions" data-test-id="buildOptionsHeading">
+          <DisclosureTitle>Build options</DisclosureTitle>
+          <DisclosurePanel>
+            <Flex direction="column" gap="size-200">
+              <InlineAlert variant="notice" width="size-6000">
+                <Heading>Warning, advanced settings</Heading>
+                <Content>
+                  Modifying settings here can break your implementation. You can
+                  decrease the size of your Web SDK bundle by disabling
+                  components that you are not using. Each time you change the
+                  list of used components, please test your implementation
+                  thoroughly to verify that all functionalities are working as
+                  expected.
+                </Content>
+              </InlineAlert>
+
+              <FormikRadioGroup
+                width="size-6000"
+                data-test-id="libraryCodeField"
+                name="libraryCode.type"
+                label="Library management"
+                description="Select whether Launch should bundle and manage the Alloy library, or use your own self-hosted alloy.js file that is already loaded on your page."
+                orientation="horizontal"
+              >
+                <Radio value={LIBRARY_TYPE_MANAGED}>Managed by Launch</Radio>
+                <Radio value={LIBRARY_TYPE_PREINSTALLED}>
+                  Use a self-hosted alloy.js instance
+                </Radio>
+              </FormikRadioGroup>
+              {!isPreinstalled && <ComponentsSection />}
+            </Flex>
+          </DisclosurePanel>
+        </Disclosure>
+        <Disclosure id="instances" data-test-id="instancesHeading">
+          <DisclosureTitle>SDK instances</DisclosureTitle>
+          <DisclosurePanel>
+            <InstancesSection
+              initInfo={initInfo}
+              context={context}
+              isPreinstalled={isPreinstalled}
+            />
+          </DisclosurePanel>
+        </Disclosure>
+      </Accordion>
+    </Flex>
   );
 };
 
@@ -404,13 +494,14 @@ Configuration.propTypes = {
 
 const ConfigurationView = () => {
   const context = useRef();
+
   return (
     <ExtensionView
       getInitialValues={({ initInfo }) =>
         getInitialValues({ initInfo, context })
       }
       getSettings={getSettings}
-      formikStateValidationSchema={validationSchema}
+      formikStateValidationSchema={createValidationSchema()}
       render={({ initInfo }) => {
         return <Configuration initInfo={initInfo} context={context} />;
       }}

@@ -33,7 +33,7 @@ export const expandAccordion = async (name) => {
 };
 
 export const toggleComponent = async (component) => {
-  await expandAccordion("Custom build components");
+  await expandAccordion("Build options");
   const pushNotificationsCheckbox = spectrumCheckbox(
     `${component}ComponentCheckbox`,
   );

@@ -18,7 +18,7 @@ import validateDuplicateValue from "./utils/validateDuplicateValue";
 const DEFAULT_EDGE_DOMAIN_TEMPLATE = "{companyId}.data.adobedc.net";
 const LEGACY_DEFAULT_EDGE_DOMAIN = "edge.adobedc.net";
 
-const createNameValidation = () => {
+export const createNameValidation = () => {
   return string()
     .required("Please specify a name.")
     .matches(/\D+/, "Please provide a non-numeric name.")
@@ -32,7 +32,7 @@ const createNameValidation = () => {
     });
 };
 
-const createUniqueNameTest = () => {
+export const createUniqueNameTest = () => {
   // eslint-disable-next-line func-names
   return function (instance, testContext) {
     const { path: instancePath, parent: instances } = testContext;
