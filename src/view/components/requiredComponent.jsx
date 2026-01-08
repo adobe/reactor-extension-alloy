@@ -13,6 +13,8 @@ governing permissions and limitations under the License.
 import PropTypes from "prop-types";
 import { InlineAlert, Content, Heading } from "@adobe/react-spectrum";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
+import { PREINSTALLED } from "../../lib/constants/libraryType";
+import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 
 /**
  * A component that will render children if the required component is enabled.
@@ -34,62 +36,38 @@ const RequiredComponent = ({
   title,
   whole = false,
   deprecated = false,
-  isPreinstalled = false,
   children,
 }) => {
+  const componentLabel = camelCaseToTitleCase(requiredComponent);
   const components = initInfo?.extensionSettings?.components || {};
   const isComponentDisabled = components[requiredComponent] === false;
+  const isPreinstalled =
+    initInfo?.extensionSettings?.libraryCode?.type === PREINSTALLED;
 
-  // Check for preinstalled mode for eventMerge component
-  if (requiredComponent === "eventMerge" && isPreinstalled) {
-    const isNew = initInfo?.settings == null;
-
-    if (whole && isNew) {
-      // This is returned when in preinstalled mode and the item is new.
-      return (
+  if (isPreinstalled) {
+    return (
+      <>
         <InlineAlert
-          variant="negative"
+          variant="notice"
           width="size-5000"
-          data-test-id="preinstalledModeError"
+          data-test-id="preinstalledModeWarning"
         >
-          <Heading>Not available in preinstalled mode</Heading>
+          <Heading>Self-hosted Alloy instance detected</Heading>
           <Content>
-            You cannot create {title} when using the preinstalled library type.
-            To use this, change the extension configuration to use the
-            &quot;Managed by Launc&quot; library type instead.
+            {title.charAt(0).toUpperCase() + title.slice(1)} requires the &quot;
+            {componentLabel}&quot; component to be included in your self-hosted
+            alloy.js build. If this component is missing, {title} will not
+            function correctly.{" "}
           </Content>
         </InlineAlert>
-      );
-    }
-
-    if (whole && !isNew) {
-      // This is returned when in preinstalled mode and the item exists.
-      return (
-        <>
-          <InlineAlert
-            variant="notice"
-            width="size-5000"
-            data-test-id="preinstalledModeWarning"
-          >
-            <Heading>Not available in preinstalled mode</Heading>
-            <Content>
-              Warning, {title} will not function correctly when using the
-              preinstalled library type. To fix this, change the extension
-              configuration to use the &quot;Managed by Launch&quot; library
-              type instead.
-            </Content>
-          </InlineAlert>
-          {children}
-        </>
-      );
-    }
+        {children}
+      </>
+    );
   }
 
   if (!isComponentDisabled) {
     return children;
   }
-
-  const componentLabel = camelCaseToTitleCase(requiredComponent);
 
   if (whole) {
     const isNew = initInfo?.settings == null;
@@ -98,19 +76,21 @@ const RequiredComponent = ({
       // This is returned when the component is disabled and the item is new. We want
       // to only show the error.
       return (
-        <InlineAlert
-          variant="negative"
-          width="size-5000"
-          data-test-id="requiredComponentError"
-        >
-          <Heading>Custom build component disabled</Heading>
-          <Content>
-            You cannot create {title} because a custom build component is
-            disabled on this property. To create this, first enabled the{" "}
-            {componentLabel} component in the custom build section of the Web
-            SDK extension configuration.
-          </Content>
-        </InlineAlert>
+        <FillParentAndCenterChildren>
+          <InlineAlert
+            width="size-5000"
+            variant="negative"
+            data-test-id="requiredComponentError"
+          >
+            <Heading>Custom build component disabled</Heading>
+            <Content>
+              You cannot create {title} because a custom build component is
+              disabled on this property. To create this, first enabled the{" "}
+              {componentLabel} component in the custom build section of the Web
+              SDK extension configuration.
+            </Content>
+          </InlineAlert>
+        </FillParentAndCenterChildren>
       );
     }
     // This is returned when the component is diabled and the item is existing. We want
@@ -134,6 +114,7 @@ const RequiredComponent = ({
       </>
     );
   }
+
   if (!deprecated) {
     return (
       <InlineAlert width="size-5000">
@@ -157,7 +138,6 @@ RequiredComponent.propTypes = {
   title: PropTypes.string,
   whole: PropTypes.bool,
   deprecated: PropTypes.bool,
-  isPreinstalled: PropTypes.bool,
   children: PropTypes.node,
 };
 

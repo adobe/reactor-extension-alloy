@@ -10,13 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import PropTypes from "prop-types";
 import { InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 import Body from "../components/typography/body";
 import RequiredComponent from "../components/requiredComponent";
+import { PREINSTALLED } from "../../lib/constants/libraryType";
 
 const getInitialValues = ({ initInfo }) => {
   const { cacheId = crypto.randomUUID() } = initInfo.settings || {};
@@ -29,57 +29,69 @@ const getInitialValues = ({ initInfo }) => {
 const getSettings = ({ values }) => {
   return values;
 };
+let initInfoCache;
 
-const EventMergeId = ({ initInfo }) => {
-  const isPreinstalled =
-    initInfo?.extensionSettings?.libraryCode?.type === "preinstalled";
+const EventMergeId = () => (
+  <ExtensionView
+    getInitialValues={getInitialValues}
+    getSettings={getSettings}
+    validateNonFormikState={() => {
+      const isNew = initInfoCache?.settings == null;
+      if (
+        isNew &&
+        (initInfoCache?.extensionSettings?.libraryCode?.type === PREINSTALLED ||
+          initInfoCache?.extensionSettings?.components?.eventMerge === false)
+      ) {
+        return false;
+      }
 
-  return (
-    <ExtensionView
-      getInitialValues={getInitialValues}
-      getSettings={getSettings}
-      render={() => (
+      return true;
+    }}
+    render={({ initInfo }) => {
+      initInfoCache = initInfo;
+      const isPreinstalled =
+        initInfo?.extensionSettings?.libraryCode?.type === PREINSTALLED;
+
+      return isPreinstalled ? (
         <FillParentAndCenterChildren>
-          {isPreinstalled ? (
-            <InlineAlert variant="negative" width="size-6000">
-              <Heading>Not available in preinstalled mode</Heading>
-              <Content>
-                The event merge ID data element is not available when using the
-                preinstalled library type. To use this data element, change the
-                extension configuration to use the &quot;Managed by Launch&quot;
-                library type instead.
-              </Content>
-            </InlineAlert>
-          ) : (
-            <RequiredComponent
-              initInfo={initInfo}
-              requiredComponent="eventMerge"
-              title="the event merge ID data element"
-            >
-              <InlineAlert variant="info" width="size-6000">
-                <Heading size="XXS">Event merge ID caching</Heading>
-                <Content>
-                  This data element will provide an event merge ID. Regardless
-                  of what you choose for the data element storage duration in
-                  Launch, the value of this data element will remain the same
-                  until either the visitor to your website leaves the current
-                  page or the event merge ID is reset using the{" "}
-                  <b>Reset event merge ID</b> action.
-                </Content>
-              </InlineAlert>
-              <Body size="L" marginTop="size-200">
-                No configuration necessary.
-              </Body>
-            </RequiredComponent>
-          )}
+          <InlineAlert variant="negative" width="size-6000">
+            <Heading>
+              Not available when using a self-hosted Alloy instance
+            </Heading>
+            <Content>
+              Event merge data elements will not function correctly when using a
+              self-hosted Alloy instance. To use this component, go to the
+              extension configuration view and select the &quot;Managed by
+              Launch&quot; option in the Build Options section.
+            </Content>
+          </InlineAlert>
         </FillParentAndCenterChildren>
-      )}
-    />
-  );
-};
+      ) : (
+        <RequiredComponent
+          initInfo={initInfo}
+          requiredComponent="eventMerge"
+          title="the event merge ID data element"
+          whole
+        >
+          <InlineAlert variant="info" width="size-6000">
+            <Heading size="XXS">Event merge ID caching</Heading>
+            <Content>
+              This data element will provide an event merge ID. Regardless of
+              what you choose for the data element storage duration in Launch,
+              the value of this data element will remain the same until either
+              the visitor to your website leaves the current page or the event
+              merge ID is reset using the <b>Reset event merge ID</b> action.
+            </Content>
+          </InlineAlert>
+          <Body size="L" marginTop="size-200">
+            No configuration necessary.
+          </Body>
+        </RequiredComponent>
+      );
+    }}
+  />
+);
 
-EventMergeId.propTypes = {
-  initInfo: PropTypes.object.isRequired,
-};
+EventMergeId.propTypes = {};
 
 render(EventMergeId);

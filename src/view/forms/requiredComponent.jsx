@@ -46,32 +46,12 @@ const RequiredComponent = (
     (wrapped) =>
     ({ initInfo, existingValidationShape }) => {
       const { components = {} } = initInfo?.extensionSettings || {};
-      const isPreinstalled =
-        initInfo?.extensionSettings?.libraryCode?.type === "preinstalled";
-
       componentEnabled = valueOrDefault(
         components[requiredComponent],
         isDefaultComponent(requiredComponent),
       );
 
       const isNew = initInfo?.settings == null;
-
-      // Check for preinstalled mode for eventMerge component
-      if (
-        requiredComponent === "eventMerge" &&
-        isPreinstalled &&
-        isNew &&
-        whole
-      ) {
-        return {
-          ...existingValidationShape,
-          requiredComponent: mixed().test(
-            "requiredComponent",
-            `The ${requiredComponent} component is not available in preinstalled mode.`,
-            () => false,
-          ),
-        };
-      }
 
       if (!componentEnabled && isNew && whole) {
         return {
