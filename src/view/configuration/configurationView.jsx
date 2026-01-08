@@ -17,6 +17,7 @@ import {
   Button,
   ButtonGroup,
   Content,
+  DialogContainer,
   Dialog,
   Flex,
   Heading as HeadingSlot,
@@ -324,86 +325,80 @@ const InstancesSection = ({ initInfo, context, isPreinstalled }) => {
                             <AdvancedSection
                               instanceFieldName={instanceFieldName}
                             />
-                            {instances.length > 1 && (
-                              <View marginTop="size-300">
-                                <DialogTrigger>
-                                  <Button
-                                    data-test-id="deleteInstanceButton"
-                                    icon={<DeleteIcon />}
-                                    variant="secondary"
-                                    disabled={instances.length === 1}
-                                  >
-                                    Delete instance
-                                  </Button>
-                                  {(close) => (
-                                    <Dialog data-test-id="resourceUsageDialog">
-                                      <HeadingSlot>Resource Usage</HeadingSlot>
-                                      <Divider />
-                                      <Content>
-                                        <Text>
-                                          Any rule components or data elements
-                                          using this instance will no longer
-                                          function as expected when running on
-                                          your website. We recommend removing
-                                          these resources or switching them to
-                                          use a different instance before
-                                          publishing your next library. Would
-                                          you like to proceed?
-                                        </Text>
-                                      </Content>
-                                      <ButtonGroup>
-                                        <Button
-                                          data-test-id="cancelDeleteInstanceButton"
-                                          variant="secondary"
-                                          onPress={close}
-                                        >
-                                          Cancel
-                                        </Button>
-                                        <Button
-                                          data-test-id="confirmDeleteInstanceButton"
-                                          variant="cta"
-                                          onPress={() => {
-                                            arrayHelpers.remove(index);
-                                            setSelectedTabKey(String(index));
-                                          }}
-                                          autoFocus
-                                        >
-                                          Delete
-                                        </Button>
-                                      </ButtonGroup>
-                                    </Dialog>
-                                  )}
-                                </DialogTrigger>
-                              </View>
-                            )}
                           </>
                         )}
+                        {instances.length > 1 && (
+                          <View marginTop="size-300">
+                            <Button
+                              data-test-id="deleteInstanceButton"
+                              icon={<DeleteIcon />}
+                              variant="secondary"
+                              disabled={instances.length === 1}
+                              onPress={() => {
+                                setInstanceToDelete(index);
+                                setDeleteDialogOpen(true);
+                              }}
+                            >
+                              Delete instance
+                            </Button>
+                          </View>
+                        )}{" "}
                       </Item>
                     );
                   })}
                 </TabPanels>
               </Tabs>
-              {instances.length > 1 && (
-                <View marginTop="size-300">
-                  <Button
-                    data-test-id="deleteInstanceButton"
-                    variant="negative"
-                    onPress={() => {
-                      arrayHelpers.remove(Number(selectedTabKey));
-
-                      const newSelectedTabKey = Math.max(
-                        0,
-                        Number(selectedTabKey) - 1,
-                      ).toString();
-
-                      setSelectedTabKey(newSelectedTabKey);
-                    }}
-                    icon={<DeleteIcon />}
-                  >
-                    Delete instance
-                  </Button>
-                </View>
-              )}
+              <DialogContainer
+                onDismiss={() => {
+                  setDeleteDialogOpen(false);
+                  setInstanceToDelete(null);
+                }}
+              >
+                {deleteDialogOpen && (
+                  <Dialog data-test-id="resourceUsageDialog">
+                    <HeadingSlot>Resource Usage</HeadingSlot>
+                    <Divider />
+                    <Content>
+                      <Text>
+                        Any rule components or data elements using this instance
+                        will no longer function as expected when running on your
+                        website. We recommend removing these resources or
+                        switching them to use a different instance before
+                        publishing your next library. Would you like to proceed?
+                      </Text>
+                    </Content>
+                    <ButtonGroup>
+                      <Button
+                        data-test-id="cancelDeleteInstanceButton"
+                        variant="secondary"
+                        onPress={() => {
+                          setDeleteDialogOpen(false);
+                          setInstanceToDelete(null);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        data-test-id="confirmDeleteInstanceButton"
+                        variant="cta"
+                        onPress={() => {
+                          arrayHelpers.remove(instanceToDelete);
+                          setSelectedTabKey(
+                            String(
+                              instanceToDelete > 0 ? instanceToDelete - 1 : 0,
+                            ),
+                          );
+                          setDeleteDialogOpen(false);
+                          setInstanceToDelete(null);
+                        }}
+                        autoFocus
+                      >
+                        Delete
+                      </Button>
+                    </ButtonGroup>
+                  </Dialog>
+                )}
+              </DialogContainer>{" "}
             </div>
           );
         }}
