@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import { Link, InlineAlert, Content, Heading } from "@adobe/react-spectrum";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
@@ -72,14 +71,12 @@ const RedirectWithIdentity = () => {
                 Use this action to share identities from the current page to
                 other domains. This action is designed to be used with a click
                 event type and a value comparison condition. See{" "}
-                <Link>
-                  <a
-                    href="https://experienceleague.adobe.com/docs/experience-platform/edge/identity/id-sharing.html#tags-extension"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    cross-domain ID sharing
-                  </a>
+                <Link
+                  href="https://experienceleague.adobe.com/docs/experience-platform/edge/identity/id-sharing.html#tags-extension"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  cross-domain ID sharing
                 </Link>{" "}
                 for more information.
               </Content>

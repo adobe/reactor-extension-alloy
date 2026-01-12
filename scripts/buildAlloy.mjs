@@ -11,13 +11,18 @@ governing permissions and limitations under the License.
 */
 
 // This file will be used by Tags in order to generate a custom Alloy build based on user options.
-// Tags doesn't support ES6 modules, so we need to use CommonJS modules here.
+// Tags doesn't support ES6 modules, so we need to compile to CommonJS modules here.
+import path, { dirname } from "path";
+import fs from "fs";
+import { spawn } from "child_process";
+import { Command, Option, InvalidOptionArgumentError } from "commander";
+import babel from "@babel/core";
+import { fileURLToPath } from "url";
+import alloyComponents, {
+  isDefaultComponent,
+} from "../src/view/utils/alloyComponents.mjs";
 
-const path = require("path");
-const fs = require("fs");
-const { spawn } = require("child_process");
-const { Command, Option, InvalidOptionArgumentError } = require("commander");
-const babel = require("@babel/core");
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const execute = (command, options) => {
   return new Promise((resolve, reject) => {
@@ -70,24 +75,6 @@ const addAlloyModulesToEntryFile = ({
   return outputPath;
 };
 
-const getAlloyComponents = (() => {
-  const components = [];
-  const filePath = path.resolve(
-    `${__dirname}/../node_modules/@adobe/alloy/libEs6/core/componentCreators.js`,
-  );
-  const code = fs.readFileSync(filePath, "utf-8");
-
-  babel.traverse(babel.parse(code), {
-    Identifier(p) {
-      if (p.node.name !== "default") {
-        components.push(p.node.name);
-      }
-    },
-  });
-
-  return () => components;
-})();
-
 const program = new Command();
 
 program
@@ -125,13 +112,12 @@ program.addOption(
     }),
 );
 
-const alloyComponents = getAlloyComponents();
-
-alloyComponents.forEach((component) => {
+Object.keys(alloyComponents).forEach((component) => {
+  const isDefault = isDefaultComponent(component);
   program.addOption(
     new Option(`--${component} <bool>`, `enable ${component} module`)
       .env(`ALLOY_${component.toUpperCase()}`)
-      .default(true, "true")
+      .default(isDefault, Boolean(isDefault).toString())
       .argParser((val) => {
         if (val === "0" || val === "false") {
           return false;
@@ -154,6 +140,9 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
     [],
   );
 
+  // eslint-disable-next-line no-console
+  console.log("Generating build with modules: ", includedModules.join(", "));
+
   let entryFile;
   try {
     entryFile = addAlloyModulesToEntryFile({
@@ -162,7 +151,9 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
       includedModules,
     });
 
-    await execute("npx", [
+    await execute("npm", [
+      "exec",
+      "--",
       "rollup",
       "-c",
       path.join(__dirname, "../rollup.config.mjs"),

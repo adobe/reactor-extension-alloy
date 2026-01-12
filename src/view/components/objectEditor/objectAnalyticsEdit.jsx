@@ -9,16 +9,22 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import React from "react";
 import PropTypes from "prop-types";
 import analyticsForm from "./helpers/object-analytics/analyticsForm";
 
-const ObjectAnalyticsEdit = ({ fieldName, ...otherProps }) => {
+const ObjectAnalyticsEdit = ({ fieldName, nodeDescription, ...otherProps }) => {
   return (
-    <analyticsForm.Component namePrefix={`${fieldName}.`} {...otherProps} />
+    <div>
+      <analyticsForm.Component
+        namePrefix={`${fieldName}.`}
+        contextualHelp={nodeDescription}
+        {...otherProps}
+      />
+    </div>
   );
 };
 ObjectAnalyticsEdit.propTypes = {
   fieldName: PropTypes.string.isRequired,
+  nodeDescription: PropTypes.node,
 };
 export default ObjectAnalyticsEdit;

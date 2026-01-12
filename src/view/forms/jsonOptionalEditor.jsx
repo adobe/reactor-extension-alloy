@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import React, { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { string, object } from "yup";
 import { Radio } from "@adobe/react-spectrum";
 import { useField, useFormikContext } from "formik";
@@ -128,7 +128,7 @@ export default function jsonOptionalEditor(
       const [{ value: wholeValue }, , { setValue: setWholeValue }] = useField(
         `${namePrefix}${name}Whole`,
       );
-      const lastOptionValue = React.useRef(optionValue);
+      const lastOptionValue = useRef(optionValue);
       useEffect(() => {
         if (optionValue === PARTS && lastOptionValue.current === WHOLE) {
           Promise.resolve()

@@ -9,7 +9,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import React from "react";
 import { array, string, object } from "yup";
 import { FieldArray, useField } from "formik";
 import { Flex, Radio, Button, Well, ActionButton } from "@adobe/react-spectrum";
@@ -87,6 +86,7 @@ export default function objectArray(
   {
     name,
     label,
+    ariaLabel,
     singularLabel,
     dataElementDescription,
     objectKey,
@@ -261,6 +261,7 @@ export default function objectArray(
               name={`${namePrefix}${name}InputMethod`}
               orientation="horizontal"
               label={label}
+              aria-label={ariaLabel}
             >
               <Radio
                 data-test-id={`${namePrefix}${name}FormOption`}

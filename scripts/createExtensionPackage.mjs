@@ -81,7 +81,7 @@ const getPackageJson = () => {
       email: "reactor@adobe.com",
     },
     scripts: {
-      build: "node ./scripts/buildAlloy.js -i ./alloy.js -o ./dist/lib",
+      build: "node ./scripts/buildAlloy.mjs -i ./alloy.js -o ./dist/lib",
     },
     license: "Apache-2.0",
     description: "Tool for generating custom alloy build based on user input.",
@@ -115,6 +115,7 @@ const getPackageLockJson = (packageJson) => {
   fs.writeFileSync(path.join(cwd, "temp", "package.json"), packageJson);
 
   try {
+    // Because this will be run by forgebuilder, use npm instead of pnpm
     console.log("Install dependencies (`npm i`)...");
     execute("npm", ["i"], { cwd: path.join(cwd, "temp") });
 
@@ -132,16 +133,16 @@ const getPackageLockJson = (packageJson) => {
 };
 
 const createExtensionPackage = ({ verbose }) => {
-  console.log("Running the clean process (`npm run clean`)...");
-  execute("npm", ["run", "clean"], { verbose });
+  console.log("Running the clean process (`pnpm run clean`)...");
+  execute("pnpm", ["run", "clean"], { verbose });
 
-  console.log("Running the build process (`npm run build`)...");
-  execute("npm", ["run", "build"], { verbose });
+  console.log("Running the build process (`pnpm run build`)...");
+  execute("pnpm", ["run", "build"], { verbose });
 
   console.log(
     "Generating the initial extension package...(`npx @adobe/reactor-packager`)",
   );
-  execute("npx", ["@adobe/reactor-packager"], { verbose });
+  execute("pnpx", ["@adobe/reactor-packager@latest"], { verbose });
 
   const extensionDescriptor = getExtensionJson();
   const packagePath = getExtensionPath(extensionDescriptor);
@@ -171,9 +172,14 @@ const createExtensionPackage = ({ verbose }) => {
   zip.addFile(".browserslistrc", browsersListRcFile);
 
   const buildScript = fs.readFileSync(
-    path.join(cwd, "scripts", "buildAlloy.cjs"),
+    path.join(cwd, "scripts", "buildAlloy.mjs"),
   );
-  zip.addFile("scripts/buildAlloy.js", buildScript);
+  zip.addFile("scripts/buildAlloy.mjs", buildScript);
+
+  const alloyComponents = fs.readFileSync(
+    path.join(cwd, "src", "view", "utils", "alloyComponents.mjs"),
+  );
+  zip.addFile("src/view/utils/alloyComponents.mjs", alloyComponents);
 
   zip.writeZip(packagePath);
   console.log("Done");

@@ -74,7 +74,7 @@ const getDestination = (repoRoot) => {
  * Stringify and format the object as JSON.
  * @param {Object} obj
  * @param {boolean=} prettyPrint Whether to pretty print the JSON.
- * @returns {string}
+ * @returns {Promise<string>}
  */
 const stringify = async (obj, prettyPrint = true) => {
   const result = JSON.stringify(obj);
@@ -113,7 +113,7 @@ const build = async () => {
   if (error) {
     throw new Error(`Invalid extension manifest: ${error}`);
   }
-  const writePath = getDestination(env.npm_config_local_prefix);
+  const writePath = getDestination(process.cwd());
   await write(writePath, manifest);
 
   // eslint-disable-next-line no-console

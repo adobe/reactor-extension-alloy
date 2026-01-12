@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import { InlineAlert, Content, Heading } from "@adobe/react-spectrum";
 import { ALWAYS, COMMAND, CONTEXT } from "./constants/autoPopulationSource";
 import { OBJECT } from "./constants/schemaType";
@@ -23,7 +22,11 @@ const AutoPopulationAlert = ({ formStateNode }) => {
   const { autoPopulationSource, contextKey, schema } = formStateNode;
 
   return (
-    <InlineAlert variant="info" width="size-5000">
+    <InlineAlert
+      data-test-id="autoPopulationAlert"
+      variant="info"
+      width="size-5000"
+    >
       <Heading size="XXS">Auto-populated field</Heading>
       <Content>
         {autoPopulationSource === ALWAYS && (

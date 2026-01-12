@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import { Checkbox } from "@adobe/react-spectrum";
 import FormikCheckboxGroup from "../../../components/formikReactSpectrum3/formikCheckboxGroup";
 import FieldSubset from "../../../components/fieldSubset";

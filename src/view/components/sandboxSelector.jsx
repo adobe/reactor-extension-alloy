@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import { useAsyncList } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import fetchSandboxes from "../utils/fetchSandboxes";
 import FormikPicker from "./formikReactSpectrum3/formikPicker";
 import sandboxItems from "./sandboxItems";

@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import { Item } from "@adobe/react-spectrum";
-import React from "react";
 
 /**
  * Map a sandbox item to a JSX element to be used inside a Picker.

@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { object } from "yup";
 import {
   Item,
@@ -21,6 +21,7 @@ import {
   Text,
   InlineAlert,
   Content,
+  Link,
 } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -358,7 +359,7 @@ const UpdateVariable = ({
 
   const {
     propertySettings: { id: propertyId } = {},
-    company: { orgId },
+    company: { id: companyId, orgId },
     tokens: { imsAccess },
   } = initInfo;
 
@@ -431,27 +432,43 @@ const UpdateVariable = ({
         >
           <Heading size="XXS">Error</Heading>
           <Content>
-            No `variable` type data elements are available. Create a variable
-            type data element first.
+            No `variable` type data elements are available.{" "}
+            <Link
+              href={`https://experience.adobe.com/#/data-collection/tags/companies/${companyId}/properties/${propertyId}/dataElements/new`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Create a `variable` type data element first
+            </Link>
+            .
           </Content>
         </InlineAlert>
       )}
       {dataElementsFirstPage.length > 0 && (
-        <FormikPagedComboBox
-          data-test-id="dataElementField"
-          name="dataElement"
-          label="Data element"
-          description="Please specify the data element you would like to update. Only `variable` type data elements are available."
-          width="size-5000"
-          isRequired
-          loadItems={loadItems}
-          getKey={(item) => item?.name}
-          getLabel={(item) => item?.name}
-          firstPage={dataElementsFirstPage}
-          firstPageCursor={dataElementsFirstPageCursor}
-        >
-          {(item) => <Item key={item.name}>{item.name}</Item>}
-        </FormikPagedComboBox>
+        <>
+          <Link
+            href="https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/action-types#update-variable"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn more about the Update Variable action
+          </Link>
+          <FormikPagedComboBox
+            data-test-id="dataElementField"
+            name="dataElement"
+            label="Data element"
+            description="Please specify the data element you would like to update. Only `variable` type data elements are available."
+            width="size-5000"
+            isRequired
+            loadItems={loadItems}
+            getKey={(item) => item?.name}
+            getLabel={(item) => item?.name}
+            firstPage={dataElementsFirstPage}
+            firstPageCursor={dataElementsFirstPageCursor}
+          >
+            {(item) => <Item key={item.name}>{item.name}</Item>}
+          </FormikPagedComboBox>
+        </>
       )}
       {context.schemaLoadFailed && dataElement && (
         <InlineAlert

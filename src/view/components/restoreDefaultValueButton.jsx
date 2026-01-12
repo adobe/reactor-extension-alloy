@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import { ActionButton } from "@adobe/react-spectrum";
-import React from "react";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 

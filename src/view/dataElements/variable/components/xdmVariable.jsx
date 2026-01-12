@@ -10,9 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
-import { Item, InlineAlert, Heading, Content } from "@adobe/react-spectrum";
+import {
+  Item,
+  InlineAlert,
+  Heading,
+  Content,
+  Link,
+  Flex,
+  View,
+} from "@adobe/react-spectrum";
 import { useField } from "formik";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import UserReportableError from "../../../errors/userReportableError";
 import fetchSandboxes from "../../../utils/fetchSandboxes";
@@ -23,6 +31,7 @@ import FormikPagedComboBox from "../../../components/formikReactSpectrum3/formik
 import FieldSubset from "../../../components/fieldSubset";
 import FormElementContainer from "../../../components/formElementContainer";
 import useReportAsyncError from "../../../utils/useReportAsyncError";
+import RefreshButton from "../../../components/refreshButton";
 import { DATA } from "../constants/variableTypes";
 
 const initializeSandboxes = async ({
@@ -196,6 +205,11 @@ const XdmVariable = ({
   const reportAsyncError = useReportAsyncError();
 
   const [{ value: sandbox }] = useField("sandbox");
+  const [schemasData, setSchemasData] = useState({
+    firstPage: schemasFirstPage,
+    firstPageCursor: schemasFirstPageCursor,
+  });
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadItems = async ({ filterText, cursor, signal }) => {
     let results;
@@ -213,9 +227,9 @@ const XdmVariable = ({
       if (e.name !== "AbortError") {
         reportAsyncError(e);
       }
-      // usePagedComboBox expects us to throw an error
-      // if we can't produce a valid return object.
       throw e;
+    } finally {
+      setIsRefreshing(false);
     }
     return {
       items: results,
@@ -223,9 +237,36 @@ const XdmVariable = ({
     };
   };
 
+  const handleRefreshSchemas = () => {
+    setIsRefreshing(true);
+    setSchemasData({
+      firstPage: [],
+      firstPageCursor: null,
+    });
+  };
+
   return (
     <FieldSubset>
       <FormElementContainer>
+        <Content>
+          <Link
+            href="https://experience.adobe.com/#/data-collection/platform/workflow/schema-create"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Create a schema
+          </Link>
+          {" ("}
+          <Link
+            href="https://experience.adobe.com/#/data-collection/platform/workflow/ml-schema-create"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            with ML assistance
+          </Link>
+          {") "}
+          first, or choose an existing one below.
+        </Content>
         {(missingSavedSandbox || missingSavedSchema) && (
           <InlineAlert
             variant="notice"
@@ -258,21 +299,33 @@ const XdmVariable = ({
         </FormikPicker>
 
         {sandbox && (
-          <FormikPagedComboBox
-            data-test-id="schemaField"
-            name="schema"
-            label="Schema"
-            width="size-5000"
-            description="Choose an XDM schema for this variable."
-            loadItems={loadItems}
-            getKey={getKey}
-            getLabel={getLabel}
-            dependencies={[sandbox]}
-            firstPage={schemasFirstPage}
-            firstPageCursor={schemasFirstPageCursor}
-            alertTitle="No schemas found"
-            alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
-          />
+          <Flex direction="row" gap="size-100">
+            <View>
+              <FormikPagedComboBox
+                data-test-id="schemaField"
+                name="schema"
+                label="Schema"
+                width="size-5000"
+                description="Choose an XDM schema for this variable."
+                loadItems={loadItems}
+                getKey={getKey}
+                getLabel={getLabel}
+                dependencies={[sandbox, isRefreshing]}
+                firstPage={schemasData.firstPage}
+                firstPageCursor={schemasData.firstPageCursor}
+                alertTitle="No schemas found"
+                alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
+              />
+            </View>
+            <Flex direction="row" marginTop="size-300">
+              <RefreshButton
+                onPress={handleRefreshSchemas}
+                isDisabled={isRefreshing}
+                tooltipText="Refresh schema list"
+                ariaLabel="Refresh schemas"
+              />
+            </Flex>
+          </Flex>
         )}
       </FormElementContainer>
     </FieldSubset>

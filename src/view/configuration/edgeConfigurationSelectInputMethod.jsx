@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import PropTypes from "prop-types";
 import { Link, InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import EdgeConfigEnvironment from "./edgeConfigEnvironment";
@@ -33,14 +32,12 @@ const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
         </Heading>
         <Content>
           See the documentation for{" "}
-          <Link>
-            <a
-              href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              data collection permission management
-            </a>
+          <Link
+            href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            data collection permission management
           </Link>{" "}
           for more information.
         </Content>

@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import copyToClipboard from "clipboard-copy";
-import React from "react";
 import PropTypes from "prop-types";
 import {
   Content,

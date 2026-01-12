@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
+import { createElement, Fragment } from "react";
 
 /**
  * This error class should be used to report a specific error
@@ -22,8 +22,8 @@ class UserReportableError extends Error {
   constructor(message, { originatingError, additionalInfoUrl } = {}) {
     let newMessage = message;
     if (originatingError instanceof UserReportableError) {
-      newMessage = React.createElement(
-        React.Fragment,
+      newMessage = createElement(
+        Fragment,
         null,
         message,
         " ",

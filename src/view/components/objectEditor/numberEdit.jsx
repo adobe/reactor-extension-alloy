@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import PropTypes from "prop-types";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
 import DataElementSelector from "../dataElementSelector";
@@ -19,16 +18,18 @@ import DataElementSelector from "../dataElementSelector";
  * The form for editing a number or integer field.
  */
 const NumberOrIntegerEdit = (props) => {
-  const { fieldName } = props;
+  const { displayName, fieldName, nodeDescription } = props;
 
   return (
     <div>
-      <DataElementSelector>
+      <DataElementSelector clearable>
         <FormikTextField
           data-test-id="valueField"
           name={`${fieldName}.value`}
-          label="Value"
+          label={displayName}
           width="size-5000"
+          description="Data element should resolve to a number."
+          contextualHelp={nodeDescription}
         />
       </DataElementSelector>
     </div>
@@ -36,7 +37,9 @@ const NumberOrIntegerEdit = (props) => {
 };
 
 NumberOrIntegerEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  nodeDescription: PropTypes.node,
 };
 
 export default NumberOrIntegerEdit;

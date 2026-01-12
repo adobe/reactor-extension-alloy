@@ -9,15 +9,21 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const DEFAULT_COMPONENTS = new Set([
-  "activityCollector",
-  "audiences",
-  "consent",
-  "eventMerge",
-  "mediaAnalyticsBridge",
-  "personalization",
-  "rulesEngine",
-  "streamingMedia",
-]);
 
-export default (component) => DEFAULT_COMPONENTS.has(component);
+import computePopulationAmount from "../computePopulationAmount";
+import computePopulationNote from "../computePopulationNote";
+
+export default ({
+  treeNode,
+  formStateNode,
+  isAncestorUsingWholePopulationStrategy,
+}) => {
+  treeNode.populationAmount = computePopulationAmount({
+    formStateNode,
+    isAncestorUsingWholePopulationStrategy,
+  });
+  treeNode.infoTip = computePopulationNote({
+    formStateNode,
+    isAncestorUsingWholePopulationStrategy,
+  });
+};

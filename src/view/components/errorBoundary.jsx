@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "@adobe/react-spectrum";
 import ErrorMessage from "./errorMessage";
@@ -47,14 +47,12 @@ export default class ErrorBoundary extends Component {
             <span>
               {" "}
               Click{" "}
-              <Link>
-                <a
-                  href={error.additionalInfoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  here
-                </a>
+              <Link
+                href={error.additionalInfoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                here
               </Link>{" "}
               for more information.
             </span>

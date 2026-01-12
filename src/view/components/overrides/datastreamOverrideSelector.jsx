@@ -18,7 +18,7 @@ import {
 } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Delete from "@spectrum-icons/workflow/Delete";
 import fetchConfigs from "../../configuration/utils/fetchConfigs";
 import usePrevious from "../../utils/usePrevious";

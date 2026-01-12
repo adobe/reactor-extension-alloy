@@ -113,7 +113,7 @@ const getInitialFormStateNode = ({
   //  - populationStrategy
   //  - value
   //  - anything else needed for the specific type (e.g., "items" for array or "children" for object)
-  getTypeSpecificHelpers(schema.type).populateInitialFormStateNode({
+  getTypeSpecificHelpers(schema).populateInitialFormStateNode({
     formStateNode,
     value,
     nodePath,
@@ -139,11 +139,12 @@ export default ({
   updateMode = false,
   transforms = {},
   existingFormStateNode,
+  nodePath = "",
 }) => {
   return getInitialFormStateNode({
     schema,
     value,
-    nodePath: "",
+    nodePath,
     updateMode,
     transforms,
     existingFormStateNode,

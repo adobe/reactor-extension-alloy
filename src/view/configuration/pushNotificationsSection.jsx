@@ -10,11 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import PropTypes from "prop-types";
 import { object, string } from "yup";
 import { useField } from "formik";
-import { View, InlineAlert, Content } from "@adobe/react-spectrum";
+import { View, InlineAlert, Content, Link } from "@adobe/react-spectrum";
 import SectionHeader from "../components/sectionHeader";
 import FormElementContainer from "../components/formElementContainer";
 import DataElementSelector from "../components/dataElementSelector";
@@ -26,6 +25,8 @@ import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfV
 
 const getDefaultSettings = () => ({
   vapidPublicKey: "",
+  appId: "",
+  trackingDatasetId: "",
 });
 
 export const bridge = {
@@ -39,7 +40,7 @@ export const bridge = {
       toObj: pushNotifications,
       fromObj: instanceSettings.pushNotifications || {},
       defaultsObj: getDefaultSettings(),
-      keys: ["vapidPublicKey"],
+      keys: ["vapidPublicKey", "appId", "trackingDatasetId"],
     });
 
     return { pushNotifications };
@@ -56,7 +57,7 @@ export const bridge = {
         toObj: pushNotificationsSettings,
         fromObj: pushNotifications,
         defaultsObj: getDefaultSettings(),
-        keys: ["vapidPublicKey"],
+        keys: ["vapidPublicKey", "appId", "trackingDatasetId"],
       });
 
       if (Object.keys(pushNotificationsSettings).length > 0) {
@@ -73,7 +74,11 @@ export const bridge = {
       then: (schema) =>
         schema.shape({
           vapidPublicKey: string().required(
-            "Please provide a VAPID public key for push notification authentication.",
+            "Please provide a VAPID public key.",
+          ),
+          appId: string().required("Please provide an Application ID."),
+          trackingDatasetId: string().required(
+            "Please provide a Tracking Dataset ID.",
           ),
         }),
     }),
@@ -109,6 +114,19 @@ const PushNotificationsSection = ({ instanceFieldName }) => {
       <SectionHeader>
         Push Notifications <BetaBadge />
       </SectionHeader>
+      <Content width="size-5000" marginBottom="size-200">
+        Push notifications require a service worker to function when your site
+        isn&lsquo;t actively open. The service worker runs in the background and
+        handles incoming notifications. See the documentation for{" "}
+        <Link
+          href="https://experienceleague.adobe.com/en/docs/experience-platform/web-sdk/commands/configure/pushnotifications#install-the-service-worker-javascript"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          installing the service worker JavaScript
+        </Link>
+        .
+      </Content>
       <FormElementContainer>
         <DataElementSelector>
           <FormikTextField
@@ -116,6 +134,30 @@ const PushNotificationsSection = ({ instanceFieldName }) => {
             label="VAPID Public Key"
             name={`${instanceFieldName}.pushNotifications.vapidPublicKey`}
             description="The VAPID public key for push notification authentication."
+            width="size-5000"
+            isRequired
+          />
+        </DataElementSelector>
+      </FormElementContainer>
+      <FormElementContainer>
+        <DataElementSelector>
+          <FormikTextField
+            data-test-id="appIdField"
+            label="Application ID"
+            name={`${instanceFieldName}.pushNotifications.appId`}
+            description="The App ID for push notification identification."
+            width="size-5000"
+            isRequired
+          />
+        </DataElementSelector>
+      </FormElementContainer>
+      <FormElementContainer>
+        <DataElementSelector>
+          <FormikTextField
+            data-test-id="trackingDatasetIdField"
+            label="Tracking Dataset ID"
+            name={`${instanceFieldName}.pushNotifications.trackingDatasetId`}
+            description="The Dataset ID for push notification tracking and analytics."
             width="size-5000"
             isRequired
           />

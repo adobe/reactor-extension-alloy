@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
+import { Children } from "react";
 import PropTypes from "prop-types";
 import "./fieldDescriptionAndError.css";
 import { Flex, Link, View } from "@adobe/react-spectrum";
@@ -26,7 +26,7 @@ const FieldDescriptionAndError = ({
   messagePaddingStart,
   learnMoreLink,
 }) => {
-  const child = React.Children.only(children);
+  const child = Children.only(children);
   const width = child.props.width;
 
   let className;
@@ -60,10 +60,12 @@ const FieldDescriptionAndError = ({
         >
           {message}
           {learnMoreLink && (
-            <Link>
-              <a href={learnMoreLink} target="_blank" rel="noopener noreferrer">
-                Learn more
-              </a>
+            <Link
+              href={learnMoreLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn more
             </Link>
           )}
         </View>

@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useField, FieldArray } from "formik";
 import {
@@ -420,8 +420,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
           response?.items || response?.data || response || [];
 
         setAdvertisers(advertisersList);
-      } catch (e) {
-        console.error("Failed to fetch advertisers:", e);
+      } catch {
         setError(
           "Unable to retrieve advertiser data. Please contact your system administrator for assistance.",
         );
@@ -514,11 +513,6 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                           isDisabled={loading || !!error}
                           isRequired
                           allowsCustomValue={false}
-                          placeholder={
-                            loading
-                              ? "Loading advertisers..."
-                              : "Select an advertiser"
-                          }
                         >
                           {(advertiser) => (
                             <Item
@@ -540,7 +534,6 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                             marginTop="size-0"
                             isRequired
                             allowsCustomValue
-                            placeholder="Select status"
                           >
                             <Item key={ENABLED}>{ENABLED}</Item>
                             <Item key={DISABLED}>{DISABLED}</Item>
@@ -618,7 +611,6 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
               width="size-5000"
               isRequired
               allowsCustomValue
-              placeholder="Select status"
             >
               <Item key={ENABLED}>{ENABLED}</Item>
               <Item key={DISABLED}>{DISABLED}</Item>
@@ -671,7 +663,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
 
   return (
     <>
-      <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html">
+      <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/web-sdk-extension-configuration#general">
         Adobe Advertising <BetaBadge />
       </SectionHeader>
       {renderContent()}

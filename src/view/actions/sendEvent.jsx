@@ -9,7 +9,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import React from "react";
 import { Link } from "@adobe/react-spectrum";
 
 import { string } from "yup";
@@ -54,25 +53,21 @@ const xdmFieldDescription = (
   <>
     Provide a data element which returns an object matching your XDM schema. You
     may want to use the{" "}
-    <Link>
-      <a
-        href="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/data-element-types.html?lang=en#xdm-object"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        XDM Object
-      </a>
+    <Link
+      href="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/data-element-types.html?lang=en#xdm-object"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      XDM Object
     </Link>{" "}
     data element type to build this object. You can also combine objects using
     the{" "}
-    <Link>
-      <a
-        href="https://experienceleague.adobe.com/docs/experience-platform/tags/extensions/adobe/core/overview.html?lang=en#merged-objects"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Merged Objects
-      </a>
+    <Link
+      href="https://experienceleague.adobe.com/docs/experience-platform/tags/extensions/adobe/core/overview.html?lang=en#merged-objects"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Merged Objects
     </Link>{" "}
     data element type from the Core extension.
   </>
@@ -476,7 +471,7 @@ const sendEventForm = form(
             label: "Advertising",
             beta: true,
             learnMoreUrl:
-              "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
+              "https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/action-types#advertising",
           },
           [
             requiredComponent(
@@ -556,7 +551,7 @@ const sendEventForm = form(
                 label: "Advertising",
                 beta: true,
                 learnMoreUrl:
-                  "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
+                  "https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/action-types#advertising",
               },
               [
                 requiredComponent(
@@ -588,7 +583,7 @@ const sendEventForm = form(
                 label: "Advertising",
                 beta: true,
                 learnMoreUrl:
-                  "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
+                  "https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/action-types#advertising",
               },
               [
                 requiredComponent(

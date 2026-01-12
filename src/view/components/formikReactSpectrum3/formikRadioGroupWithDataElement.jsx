@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { createRef } from "react";
+import { createRef, Children, cloneElement } from "react";
 import PropTypes from "prop-types";
 import { RadioGroup, Radio, TextField } from "@adobe/react-spectrum";
 import { useField } from "formik";
@@ -37,7 +37,7 @@ const FormikRadioGroupWithDataElement = ({
   dataTestIdPrefix = name,
   ...otherProps
 }) => {
-  const options = React.Children.map(children, (child) => {
+  const options = Children.map(children, (child) => {
     const { value } = child.props;
     return value;
   });
@@ -63,8 +63,8 @@ const FormikRadioGroupWithDataElement = ({
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for RadioGroup, so we wire up Formik's
   // onBlur to every radio.
-  const childrenWithOnBlur = React.Children.map(children, (child) => {
-    return React.cloneElement(child, {
+  const childrenWithOnBlur = Children.map(children, (child) => {
+    return cloneElement(child, {
       onBlur: radioOnBlur,
     });
   });

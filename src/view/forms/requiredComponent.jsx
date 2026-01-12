@@ -10,12 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import PropTypes from "prop-types";
 import { mixed } from "yup";
 import ComponentDependency from "../components/requiredComponent";
 import form from "./form";
-import componentDefault from "../utils/componentDefault.mjs";
+import { isDefaultComponent } from "../utils/alloyComponents.mjs";
+
 import valueOrDefault from "../utils/valueOrDefault";
 
 /** @typedef {import("./form").Form} Form */
@@ -48,7 +48,7 @@ const RequiredComponent = (
       const { components = {} } = initInfo?.extensionSettings || {};
       componentEnabled = valueOrDefault(
         components[requiredComponent],
-        componentDefault(requiredComponent),
+        isDefaultComponent(requiredComponent),
       );
 
       const isNew = initInfo?.settings == null;
@@ -76,7 +76,9 @@ const RequiredComponent = (
     if (!componentEnabled) {
       return {};
     }
-    return wrapped(params);
+    return formOptions.wrapGetSettings
+      ? formOptions.wrapGetSettings(wrapped)(params)
+      : wrapped(params);
   };
 
   const {

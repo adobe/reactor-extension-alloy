@@ -19,6 +19,15 @@ import {
 const xdmTree = createTestIdSelector("xdmTree");
 const displayNamesSwitch = createTestIdSelector("displayNamesSwitch");
 
+const escapeRegex = (value) => value.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+const buildTitlePattern = (title) => {
+  const normalized = escapeRegex(title.trim()).replace(
+    /\s+/g,
+    "[\\s\\u200B-\\u200D\\uFEFF]*",
+  );
+  return new RegExp(`^${normalized}$`, "i");
+};
+
 const getIsElementInViewport = (selector) => {
   return ClientFunction(
     () => {
@@ -53,12 +62,14 @@ const create = (node) => {
     .find(".ant-tree-switcher");
   return {
     click: async () => {
+      await t.expect(node.exists).ok();
       await t.click(node);
     },
     toggleExpansion: async () => {
+      await t.expect(expansionToggle.exists).ok();
       await t.click(expansionToggle);
       // wait for animation to finish
-      await t.wait(100);
+      await t.wait(300);
     },
     expectInViewport: async () => {
       const isElementInViewport = await getIsElementInViewport(node);
@@ -114,7 +125,7 @@ export default {
   node: (title) => {
     const titleSelector = xdmTree
       .find(createTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
-      .withText(new RegExp(`^${title}$|^${title.toLowerCase()}$`, "i"))
+      .withText(buildTitlePattern(title))
       .parent(createTestIdSelectorString("xdmTreeNodeTitle"))
       .nth(0);
 

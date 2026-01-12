@@ -199,7 +199,7 @@ export const createValidateItemIsInArray = (
 export const combineValidatorWithContainsDataElements =
   (validator, multiple = true) =>
   (value) => {
-    if (!value.includes("%")) {
+    if (!value?.includes("%")) {
       return validator(value);
     }
     if (multiple) {

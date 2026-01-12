@@ -13,7 +13,6 @@ governing permissions and limitations under the License.
 import { Picker } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
-import React from "react";
 
 const FormikPicker = ({ name, width, validate, onChange, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField({

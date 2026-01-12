@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import { Item, Link } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import { useField } from "formik";
@@ -32,10 +31,8 @@ const getNamespacesMissingDescription = (link) => {
     <>
       The namespace you have entered is missing from one or more of your
       sandboxes. Make sure to create this namespace by following{" "}
-      <Link>
-        <a href={link} target="_blank" rel="noopener noreferrer">
-          the guide.
-        </a>
+      <Link href={link} target="_blank" rel="noopener noreferrer">
+        the guide.
       </Link>
     </>
   );

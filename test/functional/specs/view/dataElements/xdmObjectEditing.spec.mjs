@@ -10,10 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { t } from "testcafe";
+import { t, Selector } from "testcafe";
 import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
 import arrayEdit from "../../../helpers/objectEditor/arrayEdit.mjs";
 import booleanEdit from "../../../helpers/objectEditor/booleanEdit.mjs";
+import enumEdit from "../../../helpers/objectEditor/enumEdit.mjs";
 import integerEdit from "../../../helpers/objectEditor/integerEdit.mjs";
 import numberEdit from "../../../helpers/objectEditor/numberEdit.mjs";
 import objectEdit from "../../../helpers/objectEditor/objectEdit.mjs";
@@ -70,7 +71,9 @@ test("allows user to provide individual object attribute values", async () => {
   const extensionViewController = await initializeExtensionView();
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("_unifiedjsqeonly").expectExists();
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await xdmTree.node("vendor").expectExists();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("name").click();
   await stringEdit.enterValue("Adobe");
@@ -397,7 +400,6 @@ test("allows user to select true constant value for property with boolean type",
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
-  await booleanEdit.selectConstantInputMethod();
   await booleanEdit.selectConstantTrueValueField();
 
   await extensionViewController.expectIsValid();
@@ -436,7 +438,6 @@ test("allows user to select false constant value for property with boolean type"
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
-  await booleanEdit.selectConstantInputMethod();
   await booleanEdit.selectConstantFalseValueField();
 
   await extensionViewController.expectIsValid();
@@ -468,18 +469,79 @@ test("initializes form fields with boolean constant value of false", async () =>
   await booleanEdit.expectConstantFalseValue();
 });
 
-test("allows user to select no constant value for property with boolean type", async () => {
+test("allows user to select enum value for property with enum type", async () => {
   const extensionViewController = await initializeExtensionView();
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
-  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
-  await xdmTree.node("vendor").toggleExpansion();
-  await xdmTree.node("isLicensed").click();
-  await booleanEdit.selectConstantInputMethod();
-  await booleanEdit.selectConstantNoValueField();
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").click();
+  await enumEdit.selectEnumValue("Browser");
 
   await extensionViewController.expectIsValid();
-  await extensionViewController.expectSettingsToContainData({});
+  await extensionViewController.expectSettingsToContainData({
+    environment: {
+      type: "browser",
+    },
+  });
+});
+
+test("initializes form fields with enum value", async () => {
+  await initializeExtensionView({
+    settings: {
+      schema,
+      data: {
+        environment: {
+          type: "application",
+        },
+      },
+    },
+  });
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").click();
+  await enumEdit.expectEnumValue("Application");
+});
+
+test("invalidates enum property with custom value", async () => {
+  const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").click();
+  await enumEdit.enterCustomValue("custom type");
+
+  await extensionViewController.expectIsNotValid();
+});
+
+test("allows user to enter data element for enum property", async () => {
+  const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").click();
+  await enumEdit.enterCustomValue("%dataElement%");
+
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettingsToContainData({
+    environment: {
+      type: "%dataElement%",
+    },
+  });
+});
+
+test("initializes form fields with custom enum value", async () => {
+  await initializeExtensionView({
+    settings: {
+      schema,
+      data: {
+        environment: {
+          type: "%customType%",
+        },
+      },
+    },
+  });
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").click();
+  await enumEdit.expectValue("%customType%");
 });
 
 test("disables auto-populated fields", async () => {
@@ -514,8 +576,6 @@ test("clicking a breadcrumb item selects the item", async () => {
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
-  await xdmTree.node("vendor").toggleExpansion();
-  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await moveUnifiedjsqeonlyTreeNodeOutOfViewport();
   await nodeEdit.breadcrumb.item("vendor").click();
   // When the vendor breadcrumb item is clicked in the form area, the
@@ -527,7 +587,6 @@ test("clicking a breadcrumb item selects the item", async () => {
   await xdmTree.node("vendor").expectInViewport();
   // It should be expanded, too.
   await xdmTree.node("industries").expectExists();
-  await nodeEdit.heading.expectText("Vendor");
 });
 
 test("clicking a tree node should select and expand the node", async () => {
@@ -535,7 +594,6 @@ test("clicking a tree node should select and expand the node", async () => {
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").click();
-  await nodeEdit.heading.expectText("_unifiedjsqeonly");
   await xdmTree.node("vendor").expectExists();
 });
 
@@ -549,4 +607,84 @@ test("eVars are ordered numerically", async () => {
   await xdmTree.node("eVars").toggleExpansion();
   // before fixing the sorting function, eVar10 followed eVar1
   await xdmTree.node("eVar1").next().expectTitleEquals("eVar2");
+});
+
+test("shows information icon for fields with descriptions", async () => {
+  await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("device").toggleExpansion();
+  await xdmTree.node("colorDepth").click();
+
+  const informationIcon = spectrum.button("nodeDescription");
+  await informationIcon.expectExists();
+  await informationIcon.click();
+
+  const popover = Selector('[role="dialog"]');
+  await t.expect(popover.exists).ok("Expected popover to appear");
+  await t
+    .expect(popover.withText("Color depth").exists)
+    .ok("Expected popover to contain field title");
+  await t
+    .expect(
+      popover.withText("The number of colors the display is able to represent.")
+        .exists,
+    )
+    .ok("Expected popover to contain field description");
+
+  await t.pressKey("esc");
+  await t.expect(popover.exists).notOk("Expected popover to close");
+});
+
+test("node description popver shows field name when no display name is provided", async () => {
+  await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("_experience").toggleExpansion();
+  await xdmTree.node("decisioning").toggleExpansion();
+  await xdmTree.node("propositionAction").toggleExpansion();
+  await xdmTree.node("label").click();
+
+  const informationIcon = spectrum.button("nodeDescription");
+  await informationIcon.expectExists();
+  await informationIcon.click();
+
+  const popover = Selector('[role="dialog"]');
+  await t.expect(popover.exists).ok("Expected popover to appear");
+  await t
+    .expect(popover.withText("label").exists)
+    .ok("Expected popover to contain field title");
+});
+
+test("does not show information icon for fields without descriptions", async () => {
+  await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await xdmTree.node("vendor").toggleExpansion();
+  await xdmTree.node("name").click();
+
+  const informationIcon = spectrum.button("nodeDescription");
+  await informationIcon.expectNotExists();
+});
+
+test("shows clear button for string input fields and clears value when clicked", async () => {
+  await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await xdmTree.node("vendor").toggleExpansion();
+  await xdmTree.node("name").click();
+
+  await stringEdit.enterValue("Adobe");
+  await stringEdit.expectValue("Adobe");
+
+  const clearButton = spectrum.button("clearButton");
+  await clearButton.expectExists();
+  await clearButton.expectEnabled();
+  await clearButton.click();
+
+  await stringEdit.expectValue("");
+
+  await clearButton.expectDisabled();
 });

@@ -10,65 +10,21 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import { InlineAlert, Content, Flex } from "@adobe/react-spectrum";
-import * as webSdkComponentsExports from "@adobe/alloy/libEs6/core/componentCreators";
 import Heading from "../components/typography/heading";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import BetaBadge from "../components/betaBadge";
-import componentDefault from "../utils/componentDefault.mjs";
 import valueOrDefault from "../utils/valueOrDefault";
+import alloyComponents, {
+  isDefaultComponent,
+} from "../utils/alloyComponents.mjs";
 
-const componentProperties = {
-  activityCollector: {
-    description:
-      "This component enables automatic link collection and ActivityMap tracking.",
-  },
-  advertising: {
-    beta: true,
-    description:
-      "This component enables Adobe Advertising integration with CJA.",
-  },
-  audiences: {
-    description:
-      "This component supports Audience Manager integration including running URL and cookie destination and id syncs.",
-  },
-  rulesEngine: {
-    description:
-      "This component enables Adobe Journey Optimizer on device decisioning. You must include this component if you are using the Evaluate rulesets action or the Subcribe ruleset items event.",
-  },
-  eventMerge: {
-    deprecated: true,
-    description:
-      "This component is deprecated. You must include this component if you are using the Event merge ID data element or Reset event merge ID action.",
-  },
-  mediaAnalyticsBridge: {
-    description:
-      "This component enables Edge streaming media using the media analytics interface. You must include this component if you are using the Get media analytics tracker action.",
-  },
-  personalization: {
-    description:
-      "This component enables Adobe Target and Adobe Journey Optimizer integrations.",
-  },
-  consent: {
-    description:
-      "This component supports consent integrations. You must include this component if you are using the Set consent action.",
-  },
-  streamingMedia: {
-    description:
-      "This component enables Edge streaming media. You must include this component if you are using the Send media event action.",
-  },
-  pushNotifications: {
-    beta: true,
-    description: "This component enables web push notifications for AJO.",
-  },
-};
-const webSdkComponents = Object.keys(webSdkComponentsExports)
+const webSdkComponents = Object.keys(alloyComponents)
   .map((v) => ({
     label: camelCaseToTitleCase(v),
     value: v,
-    ...(componentProperties[v] || {}),
+    ...(alloyComponents[v] || {}),
   }))
   .sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
 
@@ -79,7 +35,7 @@ export const bridge = {
     if (isNew) {
       // If this is a newly added extension, default to deprecated components being disabled.
       components = webSdkComponents
-        .filter((value) => value.deprecated || componentDefault(value))
+        .filter((value) => value.deprecated || isDefaultComponent(value))
         .reduce((acc, value) => {
           acc[value.value] = false;
           return acc;
@@ -90,7 +46,10 @@ export const bridge = {
 
     const initialValues = {
       components: webSdkComponents.reduce((acc, { value }) => {
-        acc[value] = valueOrDefault(components[value], componentDefault(value));
+        acc[value] = valueOrDefault(
+          components[value],
+          isDefaultComponent(value),
+        );
         return acc;
       }, {}),
     };
@@ -99,7 +58,7 @@ export const bridge = {
   getSettings: ({ values: { components } }) => {
     const nonDefaultComponents = webSdkComponents
       .map(({ value }) => value)
-      .filter((v) => components[v] !== componentDefault(v))
+      .filter((v) => components[v] !== isDefaultComponent(v))
       .reduce((acc, v) => {
         acc[v] = components[v];
         return acc;

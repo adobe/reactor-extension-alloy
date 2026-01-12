@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useField, useFormikContext } from "formik";
 import { object, string } from "yup";
 import {
@@ -92,6 +92,14 @@ const contextOptions = [
     testId: "contextHighEntropyUserAgentHintsField",
     description:
       "Provides more detailed information about the client device, such as platform version, architecture, model, bitness (64 bit or 32 bit platforms), or full operating system version",
+    default: false,
+  },
+  {
+    label: "Send referrer to Adobe Analytics only once per page view",
+    value: "oneTimeAnalyticsReferrer",
+    testId: "contextOneTimeAnalyticsReferrerField",
+    description:
+      "Enable this setting to prevent duplicate referrer data from being sent to Adobe Analytics.",
     default: false,
   },
 ];

@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useAsyncList } from "@react-stately/data";
 import {
   Flex,
@@ -29,6 +29,7 @@ import { useField } from "formik";
 import Copy from "@spectrum-icons/workflow/Copy";
 import Delete from "@spectrum-icons/workflow/Delete";
 import copyToClipboard from "clipboard-copy";
+import RefreshButton from "./refreshButton";
 import fetchConfigs from "../configuration/utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
 import {
@@ -125,14 +126,12 @@ const DatastreamSelector = ({
   const errorLoadingDatastreamsDescription = (
     <>
       {`You do not have enough permissions to fetch the ${selectedSandbox.title} sandbox configurations. See the documentation for `}
-      <Link>
-        <a
-          href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          data collection permission management
-        </a>
+      <Link
+        href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        data collection permission management
       </Link>{" "}
       for more information.
     </>
@@ -196,14 +195,12 @@ const DatastreamSelector = ({
         <Heading size="XXS">No datastreams</Heading>
         <Content>
           No datastreams exist for the selected sandbox. See{" "}
-          <Link>
-            <a
-              href="https://adobe.ly/3dt95he"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Configuring a datastream
-            </a>
+          <Link
+            href="https://adobe.ly/3dt95he"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Configuring a datastream
           </Link>{" "}
           for more information.
         </Content>
@@ -237,8 +234,16 @@ const DatastreamSelector = ({
 
       <Flex
         direction="row"
-        marginTop={defaultSandboxOnly ? "size-250" : "size-150"}
+        marginTop={defaultSandboxOnly ? "size-300" : "size-200"}
       >
+        <RefreshButton
+          onPress={() => {
+            datastreamList.reload();
+          }}
+          isDisabled={datastreamList.isLoading}
+          tooltipText="Refresh datastreams list"
+          ariaLabel="Refresh datastreams"
+        />
         <TooltipTrigger>
           <ActionButton
             isQuiet

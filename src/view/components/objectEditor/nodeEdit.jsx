@@ -10,55 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import PropTypes from "prop-types";
 import { useFormikContext } from "formik";
-import { Breadcrumbs, Checkbox, Flex, Item, View } from "@adobe/react-spectrum";
+import { Breadcrumbs, Checkbox, Item, Flex, View } from "@adobe/react-spectrum";
 import getNodeEditData from "./helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
-import {
-  ARRAY,
-  BOOLEAN,
-  INTEGER,
-  NUMBER,
-  OBJECT,
-  OBJECT_JSON,
-  OBJECT_ANALYTICS,
-} from "./constants/schemaType";
-import ArrayEdit from "./arrayEdit";
-import BooleanEdit from "./booleanEdit";
-import IntegerEdit from "./integerEdit";
-import ObjectJsonEdit from "./objectJsonEdit";
-import ObjectAnalyticsEdit from "./objectAnalyticsEdit";
-import NumberEdit from "./numberEdit";
-import ObjectEdit from "./objectEdit";
-import StringEdit from "./stringEdit";
-import Heading from "../typography/heading";
 import { ALWAYS, NONE } from "./constants/autoPopulationSource";
 import "./nodeEdit.css";
 import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
-
-const getViewBySchemaType = (schemaType) => {
-  switch (schemaType) {
-    case ARRAY:
-      return ArrayEdit;
-    case BOOLEAN:
-      return BooleanEdit;
-    case INTEGER:
-      return IntegerEdit;
-    case NUMBER:
-      return NumberEdit;
-    case OBJECT:
-      return ObjectEdit;
-    case OBJECT_JSON:
-      return ObjectJsonEdit;
-    case OBJECT_ANALYTICS:
-      return ObjectAnalyticsEdit;
-    default:
-      return StringEdit;
-  }
-};
+import getTypeSpecificView from "./helpers/getTypeSpecificView";
+import NodeDescription from "./nodeDescriptionPopover";
 
 /**
  * The form for editing a node in the XDM object. The form fields
@@ -73,13 +35,35 @@ const NodeEdit = (props) => {
     fieldName,
     breadcrumb,
     displayName,
+    description,
     hasClearedAncestor,
   } = getNodeEditData({
     formState,
     nodeId: selectedNodeId,
   });
 
-  const TypeSpecificNodeEdit = getViewBySchemaType(formStateNode.schema.type);
+  const TypeSpecificNodeEdit = getTypeSpecificView(formStateNode.schema);
+
+  const nodeDescription = (
+    <NodeDescription
+      title={displayName || fieldName}
+      description={description}
+    />
+  );
+
+  const typeSpecificNodeEditProps = {
+    displayName: displayName || fieldName,
+    fieldName,
+    nodeDescription,
+    onNodeSelect,
+    verticalLayout,
+  };
+
+  if (formStateNode.schema["meta:enum"]) {
+    typeSpecificNodeEditProps.possibleValues = Object.entries(
+      formStateNode.schema["meta:enum"] || {},
+    ).map(([key, value]) => ({ value: key, label: value }));
+  }
 
   return (
     <Flex
@@ -89,39 +73,27 @@ const NodeEdit = (props) => {
       direction="column"
     >
       {!verticalLayout && (
-        <>
-          <View
-            data-test-id="breadcrumb"
-            UNSAFE_className="NodeEdit-breadcrumbs"
-          >
-            {
-              // There's currently a known error that occurs when Breadcrumbs
-              // is unmounted, but it doesn't seem to affect the UX.
-              // https://github.com/adobe/react-spectrum/issues/1979
-            }
-            {breadcrumb.length > 1 && (
-              <Breadcrumbs onAction={(nodeId) => onNodeSelect(nodeId)}>
-                {breadcrumb.map((item) => (
-                  <Item key={item.nodeId}>{item.label}</Item>
-                ))}
-              </Breadcrumbs>
-            )}
-          </View>
-          <Heading data-test-id="heading" size="S">
-            {displayName}
-          </Heading>
-        </>
+        <View data-test-id="breadcrumb" UNSAFE_className="NodeEdit-breadcrumbs">
+          {
+            // There's currently a known error that occurs when Breadcrumbs
+            // is unmounted, but it doesn't seem to affect the UX.
+            // https://github.com/adobe/react-spectrum/issues/1979
+          }
+          {breadcrumb.length > 1 && (
+            <Breadcrumbs onAction={(nodeId) => onNodeSelect(nodeId)}>
+              {breadcrumb.map((item) => (
+                <Item key={item.nodeId}>{item.label}</Item>
+              ))}
+            </Breadcrumbs>
+          )}
+        </View>
       )}
       {formStateNode.autoPopulationSource !== NONE && (
         <AutoPopulationAlert formStateNode={formStateNode} />
       )}
       {formStateNode.autoPopulationSource !== ALWAYS && (
         <>
-          <TypeSpecificNodeEdit
-            fieldName={fieldName}
-            onNodeSelect={onNodeSelect}
-            verticalLayout={verticalLayout}
-          />
+          <TypeSpecificNodeEdit {...typeSpecificNodeEditProps} />
           {formStateNode.updateMode && hasClearedAncestor && (
             <FieldDescriptionAndError
               description="Checking this box will cause this field to be deleted before setting any values. A field further up in the object is already cleared. Fields that are cleared appear with a delete icon in the tree."
@@ -142,7 +114,7 @@ const NodeEdit = (props) => {
             <FormikCheckbox
               data-test-id="clearField"
               name={`${fieldName}.transform.clear`}
-              description="Checking this box will cause this field to be deleted before setting any values. Fields that are cleared appear with a delet icon in the tree."
+              description="Checking this box will cause this field to be deleted before setting any values. Fields that are cleared appear with a delete icon in the tree."
               width="size-5000"
               isDisabled={hasClearedAncestor}
             >

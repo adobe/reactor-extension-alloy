@@ -10,111 +10,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import { useField } from "formik";
-import { object, string } from "yup";
 import { Flex, InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import RestoreDefaultValueButton from "../components/restoreDefaultValueButton";
-import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
-import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
-import validateDuplicateValue from "./utils/validateDuplicateValue";
 import FormElementContainer from "../components/formElementContainer";
+import { bridge } from "./basicSectionBridge";
 
-export const bridge = {
-  getInstanceDefaults: ({ initInfo }) => ({
-    name: "alloy",
-    persistedName: undefined,
-    orgId: initInfo.company.orgId,
-    edgeDomain: "edge.adobedc.net",
-  }),
-  getInitialInstanceValues: ({ initInfo, instanceSettings }) => {
-    const instanceValues = {};
-
-    copyPropertiesWithDefaultFallback({
-      toObj: instanceValues,
-      fromObj: instanceSettings,
-      defaultsObj: bridge.getInstanceDefaults({ initInfo }),
-      keys: ["name", "orgId", "edgeDomain"],
-    });
-
-    instanceValues.persistedName = instanceValues.name;
-
-    return instanceValues;
-  },
-  getInstanceSettings: ({ initInfo, instanceValues }) => {
-    const { name } = instanceValues;
-    const instanceSettings = {
-      name,
-    };
-
-    // Note that orgId isn't saved to the settings object if it's the same
-    // as the default, even though an orgId is required by the Alloy library.
-    // This is doable because if no orgId is saved to the settings object, the library
-    // portion of the extension will use the orgId listed on the Launch library (the Launch
-    // library exposes it to extensions at runtime), which will match the default
-    // org ID here.
-    copyPropertiesIfValueDifferentThanDefault({
-      toObj: instanceSettings,
-      fromObj: instanceValues,
-      defaultsObj: bridge.getInstanceDefaults({ initInfo }),
-      keys: ["orgId", "edgeDomain"],
-    });
-
-    return instanceSettings;
-  },
-  instanceValidationSchema: object()
-    .shape({
-      name: string()
-        .required("Please specify a name.")
-        // Under strict mode, setting window["123"], where the key is all
-        // digits, throws a "Failed to set an indexed property on 'Window'" error.
-        // This regex ensure there's at least one non-digit.
-        .matches(/\D+/, "Please provide a non-numeric name.")
-        .test({
-          name: "notWindowPropertyName",
-          message:
-            "Please provide a name that does not conflict with a property already found on the window object.",
-          test(value) {
-            return !(value in window);
-          },
-        }),
-      orgId: string().required("Please specify an IMS organization ID."),
-      edgeDomain: string().required("Please specify an edge domain."),
-    })
-    // TestCafe doesn't allow this to be an arrow function because of
-    // how it scopes "this".
-    // eslint-disable-next-line func-names
-    .test("uniqueName", function (instance, testContext) {
-      const { path: instancePath, parent: instances } = testContext;
-      return validateDuplicateValue({
-        createError: this.createError,
-        instances,
-        instance,
-        instancePath,
-        key: "name",
-        message:
-          "Please provide a name unique from those used for other instances.",
-      });
-    })
-    // TestCafe doesn't allow this to be an arrow function because of
-    // how it scopes "this".
-    // eslint-disable-next-line func-names
-    .test("uniqueOrgId", function (instance, testContext) {
-      const { path: instancePath, parent: instances } = testContext;
-      return validateDuplicateValue({
-        createError: this.createError,
-        instances,
-        instance,
-        instancePath,
-        key: "orgId",
-        message:
-          "Please provide an IMS Organization ID unique from those used for other instances.",
-      });
-    }),
-};
+export { bridge };
 
 const BasicSection = ({ instanceFieldName, initInfo }) => {
   const [{ value: instanceValues }] = useField(instanceFieldName);

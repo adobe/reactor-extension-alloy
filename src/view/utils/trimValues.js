@@ -58,4 +58,4 @@ function trimValue(value) {
   });
   return Object.keys(value).length === 0 ? undefined : value;
 }
-module.exports = trimValue;
+export default trimValue;

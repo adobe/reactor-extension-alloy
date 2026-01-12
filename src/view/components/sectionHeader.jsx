@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import { Divider, Link, View } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import Heading from "./typography/heading";
@@ -28,10 +27,8 @@ const SectionHeader = ({
       </Heading>
       <Divider margin={0} size="M" />
       {learnMoreUrl && (
-        <Link>
-          <a href={learnMoreUrl} target="_blank" rel="noopener noreferrer">
-            Learn more
-          </a>
+        <Link href={learnMoreUrl} target="_blank" rel="noopener noreferrer">
+          Learn more
         </Link>
       )}
     </View>

@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import {
   ProgressCircle,
