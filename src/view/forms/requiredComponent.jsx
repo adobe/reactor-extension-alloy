@@ -97,24 +97,6 @@ const RequiredComponent = (
 
   const Component = (props) => {
     const { initInfo } = props;
-    const isPreinstalled =
-      initInfo?.extensionSettings?.libraryCode?.type === "preinstalled";
-
-    // For eventMerge in preinstalled mode, show specific message
-    if (requiredComponent === "eventMerge" && isPreinstalled) {
-      return (
-        <ComponentDependency
-          initInfo={initInfo}
-          requiredComponent={requiredComponent}
-          title={title}
-          whole={whole}
-          deprecated={deprecated}
-          isPreinstalled={isPreinstalled}
-        >
-          <ChildComponent {...props} />
-        </ComponentDependency>
-      );
-    }
 
     return (
       <ComponentDependency
