@@ -59,6 +59,7 @@ const getNodeEditData = ({
       fieldName: candidateFieldName,
       breadcrumb,
       displayName: candidateDisplayName,
+      description: candidateFormStateNode.schema.description,
       hasClearedAncestor: false,
     };
   }

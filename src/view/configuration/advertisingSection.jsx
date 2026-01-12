@@ -420,8 +420,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
           response?.items || response?.data || response || [];
 
         setAdvertisers(advertisersList);
-      } catch (e) {
-        console.error("Failed to fetch advertisers:", e);
+      } catch {
         setError(
           "Unable to retrieve advertiser data. Please contact your system administrator for assistance.",
         );
@@ -514,11 +513,6 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                           isDisabled={loading || !!error}
                           isRequired
                           allowsCustomValue={false}
-                          placeholder={
-                            loading
-                              ? "Loading advertisers..."
-                              : "Select an advertiser"
-                          }
                         >
                           {(advertiser) => (
                             <Item
@@ -540,7 +534,6 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                             marginTop="size-0"
                             isRequired
                             allowsCustomValue
-                            placeholder="Select status"
                           >
                             <Item key={ENABLED}>{ENABLED}</Item>
                             <Item key={DISABLED}>{DISABLED}</Item>
@@ -618,7 +611,6 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
               width="size-5000"
               isRequired
               allowsCustomValue
-              placeholder="Select status"
             >
               <Item key={ENABLED}>{ENABLED}</Item>
               <Item key={DISABLED}>{DISABLED}</Item>

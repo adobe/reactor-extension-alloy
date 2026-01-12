@@ -20,8 +20,12 @@ export default ({
   const { value } = formStateNode;
 
   if (isFormStateValuePopulated(value)) {
-    if (!singleDataElementRegex.test(value) && typeof value !== "boolean") {
-      return { value: "Value must be a data element." };
+    if (
+      !singleDataElementRegex.test(value) &&
+      value !== "true" &&
+      value !== "false"
+    ) {
+      return { value: "Value must be True, False, or a data element." };
     }
 
     confirmDataPopulatedAtCurrentOrDescendantNode();

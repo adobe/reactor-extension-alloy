@@ -32,11 +32,16 @@ const getEmptyItem = () => ({ key: "", value: "" });
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
-const WholePopulationStrategyForm = ({ fieldName }) => {
+const WholePopulationStrategyForm = ({
+  displayName,
+  fieldName,
+  nodeDescription,
+}) => {
   return (
-    <DataElementSelector>
+    <DataElementSelector clearable>
       <FormikTextArea
         data-test-id="valueField"
+        label={displayName}
         name={`${fieldName}.value`}
         aria-label="Value"
         description={
@@ -45,13 +50,16 @@ const WholePopulationStrategyForm = ({ fieldName }) => {
         }
         width="size-6000"
         marginStart="size-300"
+        contextualHelp={nodeDescription}
       />
     </DataElementSelector>
   );
 };
 
 WholePopulationStrategyForm.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  nodeDescription: PropTypes.node,
 };
 
 /**
@@ -81,7 +89,7 @@ const PartsPopulationStrategyForm = ({ fieldName, items }) => (
                     width="size-3000"
                   />
 
-                  <DataElementSelector>
+                  <DataElementSelector clearable>
                     <FormikTextField
                       data-test-id={`valueField${index}`}
                       name={`${fieldName}.items.${index}.value`}
@@ -189,7 +197,7 @@ const updateRows = ({
  */
 const ObjectJsonEdit = (props) => {
   const { submitForm } = useFormikContext();
-  const { fieldName } = props;
+  const { displayName, fieldName, nodeDescription } = props;
   const [{ value: formStateNode }] = useField(fieldName);
   const [, , { setValue }] = useField(`${fieldName}.value`);
   const [, , { setValue: setItemsValue }] = useField(`${fieldName}.items`);
@@ -213,8 +221,10 @@ const ObjectJsonEdit = (props) => {
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
           aria-label="Population strategy"
+          label={displayName}
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
+          contextualHelp={nodeDescription}
           onChange={strategyOnChange}
         >
           <Radio data-test-id="partsPopulationStrategyField" value={PARTS}>
@@ -226,7 +236,13 @@ const ObjectJsonEdit = (props) => {
         </FormikRadioGroup>
       )}
       {populationStrategy === WHOLE ? (
-        <WholePopulationStrategyForm fieldName={fieldName} />
+        <WholePopulationStrategyForm
+          displayName={isPartsPopulationStrategySupported ? "" : displayName}
+          fieldName={fieldName}
+          nodeDescription={
+            isPartsPopulationStrategySupported ? undefined : nodeDescription
+          }
+        />
       ) : (
         <PartsPopulationStrategyForm fieldName={fieldName} items={items} />
       )}
@@ -235,7 +251,9 @@ const ObjectJsonEdit = (props) => {
 };
 
 ObjectJsonEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  nodeDescription: PropTypes.node,
 };
 
 export default ObjectJsonEdit;

@@ -12,12 +12,19 @@ governing permissions and limitations under the License.
 import PropTypes from "prop-types";
 import analyticsForm from "./helpers/object-analytics/analyticsForm";
 
-const ObjectAnalyticsEdit = ({ fieldName, ...otherProps }) => {
+const ObjectAnalyticsEdit = ({ fieldName, nodeDescription, ...otherProps }) => {
   return (
-    <analyticsForm.Component namePrefix={`${fieldName}.`} {...otherProps} />
+    <div>
+      <analyticsForm.Component
+        namePrefix={`${fieldName}.`}
+        contextualHelp={nodeDescription}
+        {...otherProps}
+      />
+    </div>
   );
 };
 ObjectAnalyticsEdit.propTypes = {
   fieldName: PropTypes.string.isRequired,
+  nodeDescription: PropTypes.node,
 };
 export default ObjectAnalyticsEdit;

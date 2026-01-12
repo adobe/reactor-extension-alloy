@@ -156,6 +156,8 @@ describe("overrides/utils.js", () => {
       expect(typeof combinedValidator("%my data element")).toBe("string");
       expect(combinedValidator("%my data element%")).toBe(undefined);
       expect(combinedValidator("abc")).toBe(undefined);
+      expect(combinedValidator(undefined)).toBe(undefined);
+      expect(combinedValidator(null)).toBe(undefined);
     });
 
     it("should support validating multiple data elements in a string", () => {

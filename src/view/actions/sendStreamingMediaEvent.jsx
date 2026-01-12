@@ -9,12 +9,15 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { string } from "yup";
+import PropTypes from "prop-types";
+import { object, string } from "yup";
 import { isEmptyArray } from "formik";
 import comboBox from "../forms/comboBox";
 import instancePicker from "../forms/instancePicker";
 import conditional from "../forms/conditional";
-import renderForm from "../forms/renderForm";
+import ExtensionView from "../components/extensionView";
+import render from "../render";
+import useFocusFirstError from "../utils/useFocusFirstError";
 import textField from "../forms/textField";
 import mediaEventTypes from "./constants/mediaEventTypes";
 import numberField from "../forms/numberField";
@@ -848,4 +851,35 @@ const sendEventForm = requiredComponent(
   ],
 );
 
-renderForm(sendEventForm);
+const FormComponent = (props) => {
+  useFocusFirstError();
+  const { Component } = sendEventForm;
+  return <Component {...props} />;
+};
+
+FormComponent.propTypes = {
+  initInfo: PropTypes.object,
+  formikProps: PropTypes.object,
+  namePrefix: PropTypes.string,
+  horizontal: PropTypes.bool,
+};
+
+const FormExtensionView = () => {
+  const { getInitialValues, getSettings, getValidationShape } = sendEventForm;
+
+  const getValidationSchema = ({ initInfo }) => {
+    const shape = getValidationShape({ initInfo, existingValidationShape: {} });
+    return object().shape(shape);
+  };
+
+  return (
+    <ExtensionView
+      getInitialValues={getInitialValues}
+      getSettings={getSettings}
+      getFormikStateValidationSchema={getValidationSchema}
+      render={(props) => <FormComponent {...props} />}
+    />
+  );
+};
+
+render(FormExtensionView);

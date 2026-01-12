@@ -20,6 +20,7 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 import unusedImports from "eslint-plugin-unused-imports";
 import vitestPlugin from "eslint-plugin-vitest";
 import react from "eslint-plugin-react";
+import testingLibrary from "eslint-plugin-testing-library";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,7 +35,7 @@ const compat = new FlatCompat({
 export default [
   js.configs.recommended,
   ...compat.extends("airbnb", "plugin:testcafe/recommended"),
-  ...compat.plugins("ban", "testcafe"),
+  ...compat.plugins("testcafe"),
   {
     ignores: ["dist/**", "src/lib/runAlloy.js"],
   },
@@ -55,31 +56,12 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
-        fixture: true,
-        test: true,
-        describe: true,
-        it: true,
-        expect: true,
-        beforeEach: true,
-        afterEach: true,
-        beforeAll: true,
-        afterAll: true,
-        vi: true,
       },
     },
     rules: {
+      "no-restricted-syntax": "off",
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-      "ban/ban": [
-        "error",
-        { name: ["describe", "only"], message: "don't focus tests" },
-        { name: "fdescribe", message: "don't focus tests" },
-        { name: ["it", "only"], message: "don't focus tests" },
-        { name: "fit", message: "don't focus tests" },
-        { name: ["fixture", "only"], message: "don't focus tests" },
-        { name: ["test", "only"], message: "don't focus tests" },
-        { name: "ftest", message: "don't focus tests" },
-      ],
       "no-param-reassign": "off",
       "prettier/prettier": "error",
       "react/require-default-props": "off",
@@ -150,7 +132,11 @@ export default [
     },
   },
   {
-    files: ["src/view/**/*.{js,jsx}", "test/functional/**/*.{js,jsx}"],
+    files: [
+      "src/view/**/*.{js,jsx}",
+      "test/functional/**/*.{js,jsx}",
+      "test/integration/**/*.{js,jsx}",
+    ],
     rules: {
       ...react.configs.recommended.rules,
       ...react.configs["jsx-runtime"].rules,
@@ -166,11 +152,19 @@ export default [
     rules: {
       "no-var": "off",
       "func-names": "off",
-      "import/no-default-export": 2,
       "no-underscore-dangle": [
         "error",
         { allow: ["__alloyNS", "__alloyMonitors"] },
       ],
+    },
+  },
+  {
+    files: ["test/integration/**/*.{js,jsx}"],
+    ...testingLibrary.configs["flat/react"],
+    rules: {
+      ...testingLibrary.configs["flat/react"].rules,
+      // page from vitest/browser is equivalent to screen, not a render result
+      "testing-library/prefer-screen-queries": "off",
     },
   },
 
