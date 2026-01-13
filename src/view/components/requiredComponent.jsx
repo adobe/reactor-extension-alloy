@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import PropTypes from "prop-types";
-import { InlineAlert, Content, Heading } from "@adobe/react-spectrum";
+import { InlineAlert, Content, Heading, Well } from "@adobe/react-spectrum";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
 import { PREINSTALLED } from "../../lib/constants/libraryType";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
@@ -49,7 +49,7 @@ const RequiredComponent = ({
     initInfo?.extensionSettings?.libraryCode?.type === PREINSTALLED;
 
   if (isPreinstalled) {
-    return (
+    const content = (
       <>
         <InlineAlert
           variant="notice"
@@ -68,6 +68,8 @@ const RequiredComponent = ({
         {children}
       </>
     );
+
+    return whole ? content : <Well marginBottom="size-200">{content}</Well>;
   }
 
   if (!isComponentDisabled) {
