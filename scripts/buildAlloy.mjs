@@ -96,7 +96,7 @@ program.addOption(
     .argParser((value) => {
       if (!fs.existsSync(path.join(process.cwd(), value))) {
         throw new InvalidOptionArgumentError(
-          `Input file "${value}" doen not exist.`,
+          `Input file "${value}" does not exist.`,
         );
       }
 
