@@ -166,6 +166,11 @@ const createExtensionPackage = ({ verbose }) => {
   const alloy = fs.readFileSync(path.join(cwd, "src", "lib", "alloy.js"));
   zip.addFile("alloy.js", alloy);
 
+  const alloyPreinstalled = fs.readFileSync(
+    path.join(cwd, "src", "lib", "alloyPreinstalled.js"),
+  );
+  zip.addFile("alloyPreinstalled.js", alloyPreinstalled);
+
   const rollupConfig = fs.readFileSync(path.join(cwd, "rollup.config.mjs"));
   zip.addFile("rollup.config.mjs", rollupConfig);
 

@@ -76,7 +76,20 @@ program.addOption(
 );
 
 program.action(async ({ outputDir, filename }) => {
-  const entryFile = path.resolve(__dirname, "../src/lib/alloyPreinstalled.js");
+  // Check if the file exists in src/lib, otherwise use the one from root
+  const srcLibPath = path.resolve(__dirname, "../src/lib/alloyPreinstalled.js");
+  const rootPath = path.resolve(__dirname, "../alloyPreinstalled.js");
+
+  const entryFile = fs.existsSync(srcLibPath) ? srcLibPath : rootPath;
+
+  if (!fs.existsSync(entryFile)) {
+    console.error(
+      `❌ Error: alloyPreinstalled.js not found in either src/lib/ or root directory`,
+    );
+    process.exit(1);
+  }
+
+  console.log(`Using entry file: ${entryFile}`);
   const outputFile = path.join(outputDir, filename);
 
   try {
