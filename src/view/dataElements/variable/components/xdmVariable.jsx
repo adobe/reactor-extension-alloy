@@ -30,7 +30,6 @@ import FormikPicker from "../../../components/formikReactSpectrum3/formikPicker"
 import FormikPagedComboBox from "../../../components/formikReactSpectrum3/formikPagedComboBox";
 import FieldSubset from "../../../components/fieldSubset";
 import FormElementContainer from "../../../components/formElementContainer";
-import useReportAsyncError from "../../../utils/useReportAsyncError";
 import RefreshButton from "../../../components/refreshButton";
 import { DATA } from "../constants/variableTypes";
 
@@ -44,7 +43,12 @@ const initializeSandboxes = async ({
   const { results: sandboxes } = await fetchSandboxes({ orgId, imsAccess });
 
   if (!(sandboxes && sandboxes.length)) {
-    throw new UserReportableError("You do not have access to any sandboxes.");
+    throw new UserReportableError(
+      "You do not have access to any sandboxes. Please contact your administrator to be assigned appropriate rights.",
+      {
+        additionalInfoUrl: "https://adobe.ly/3gHkqLF",
+      },
+    );
   }
 
   if (sandbox && !sandboxes.find((s) => s.name === sandbox)) {
@@ -202,7 +206,6 @@ const XdmVariable = ({
     company: { orgId },
     tokens: { imsAccess },
   } = initInfo;
-  const reportAsyncError = useReportAsyncError();
 
   const [{ value: sandbox }] = useField("sandbox");
   const [schemasData, setSchemasData] = useState({
@@ -224,12 +227,14 @@ const XdmVariable = ({
         signal,
       }));
     } catch (e) {
-      if (e.name !== "AbortError") {
-        reportAsyncError(e);
+      if (e.name === "AbortError") {
+        throw e;
       }
       throw e;
     } finally {
       setIsRefreshing(false);
+      results = [];
+      nextPage = null;
     }
     return {
       items: results,
