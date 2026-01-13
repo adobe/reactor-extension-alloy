@@ -15,8 +15,11 @@ import spectrum from "../../../helpers/spectrum.mjs";
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
 import runCustomBuildTests from "../../runCustomBuildTests.mjs";
+import { LIBRARY_TYPE_PREINSTALLED } from "../../../../../src/view/constants/libraryType.js";
 
 const eventMergeIdField = spectrum.textField("eventMergeIdTextField");
+const preinstalledModeError = spectrum.alert("preinstalledModeError");
+const preinstalledModeWarning = spectrum.alert("preinstalledModeWarning");
 
 createExtensionViewFixture({
   title: "Reset Event Merge ID View",
@@ -66,4 +69,50 @@ test("shows error for event merge ID value that is more than one data element", 
   await eventMergeIdField.typeText("%foo%%bar%");
   await extensionViewController.expectIsNotValid();
   await eventMergeIdField.expectError();
+});
+
+test("shows error when using preinstalled library type and creating new action", async () => {
+  await extensionViewController.init({
+    extensionSettings: {
+      libraryCode: { type: LIBRARY_TYPE_PREINSTALLED },
+      instances: [{ name: "alloy" }],
+    },
+    settings: null,
+  });
+
+  await preinstalledModeError.expectExists();
+  await preinstalledModeWarning.expectNotExists();
+  await extensionViewController.expectIsNotValid();
+});
+
+test("shows warning when using preinstalled library type with existing action", async () => {
+  await extensionViewController.init({
+    extensionSettings: {
+      libraryCode: { type: LIBRARY_TYPE_PREINSTALLED },
+      instances: [{ name: "alloy" }],
+    },
+    settings: {
+      eventMergeId: "%foo%",
+    },
+  });
+
+  await preinstalledModeError.expectNotExists();
+  await preinstalledModeWarning.expectExists();
+  await extensionViewController.expectIsValid();
+});
+
+test("shows no error when using managed library type", async () => {
+  await extensionViewController.init({
+    extensionSettings: {
+      libraryCode: { type: "managed" },
+      instances: [{ name: "alloy" }],
+    },
+    settings: {
+      eventMergeId: "%foo%",
+    },
+  });
+
+  await preinstalledModeError.expectNotExists();
+  await preinstalledModeWarning.expectNotExists();
+  await extensionViewController.expectIsValid();
 });
