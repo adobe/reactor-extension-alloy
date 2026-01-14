@@ -404,11 +404,11 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
             marginBottom="size-200"
             data-test-id="schemaMissingAlert"
           >
-            <Heading size="XXS">Saved configuration not found</Heading>
+            <Heading size="XXS">Could not load saved configuration</Heading>
             <Content>
-              Could not retrieve the previously saved sandbox or schema. You can
-              cancel to keep this data element configured as before, or choose a
-              new sandbox and schema.
+              The previously saved sandbox or schema could not be retrieved. You
+              can cancel to keep this data element configured as before, or
+              choose a new sandbox and schema.
             </Content>
           </InlineAlert>
         )}
@@ -419,7 +419,11 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
           description="Choose a sandbox containing the schema you wish to use."
           items={sandboxes}
           width="size-5000"
-          placeholder="Select a sandbox"
+          placeholder={
+            context.missingSavedSandbox
+              ? "Saved sandbox unavailable"
+              : "Select a sandbox"
+          }
         >
           {sandboxItems}
         </FormikPicker>
@@ -437,6 +441,11 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
           firstPageCursor={schemasFirstPageCursor}
           alertTitle="No schemas found"
           alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
+          placeholder={
+            context.missingSavedSchema
+              ? "Saved schema unavailable"
+              : "Select a schema"
+          }
         />
       </FormElementContainer>
       {editorAreaContent}
