@@ -53,6 +53,20 @@ program
   );
 
 program.addOption(
+  new Option("-i, --inputFile <file>", "the entry point file for the build")
+    .makeOptionMandatory()
+    .argParser((value) => {
+      if (!fs.existsSync(path.join(process.cwd(), value))) {
+        throw new InvalidOptionArgumentError(
+          `Input file "${value}" does not exist.`,
+        );
+      }
+
+      return value;
+    }),
+);
+
+program.addOption(
   new Option(
     "-o, --outputDir <dir>",
     "the output directory for the generated build",
@@ -64,6 +78,7 @@ program.addOption(
           `Output directory "${value}" is not a valid directory path.`,
         );
       }
+
       return value;
     }),
 );
@@ -75,21 +90,8 @@ program.addOption(
   ).default("alloy.js"),
 );
 
-program.action(async ({ outputDir, filename }) => {
-  // Check if the file exists in src/lib, otherwise use the one from root
-  const srcLibPath = path.resolve(__dirname, "../src/lib/alloyPreinstalled.js");
-  const rootPath = path.resolve(__dirname, "../alloyPreinstalled.js");
-
-  const entryFile = fs.existsSync(srcLibPath) ? srcLibPath : rootPath;
-
-  if (!fs.existsSync(entryFile)) {
-    console.error(
-      `❌ Error: alloyPreinstalled.js not found in either src/lib/ or root directory`,
-    );
-    process.exit(1);
-  }
-
-  console.log(`Using entry file: ${entryFile}`);
+program.action(async ({ inputFile, outputDir, filename }) => {
+  console.log(`Using entry file: ${inputFile}`);
   const outputFile = path.join(outputDir, filename);
 
   try {
@@ -100,7 +102,7 @@ program.action(async ({ outputDir, filename }) => {
       "-c",
       path.join(__dirname, "../rollup.config.mjs"),
       "-i",
-      entryFile,
+      inputFile,
       "-o",
       outputFile,
     ]);
