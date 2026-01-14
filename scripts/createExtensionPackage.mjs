@@ -82,7 +82,7 @@ const getPackageJson = () => {
     },
     scripts: {
       build:
-        '[ "$ALLOY_LIBRARY_TYPE" == "\\"preinstalled\\"" ] && node ./scripts/buildAlloyPreinstalled.mjs -i ./alloyPreinstalled.js -o ./dist/lib || node ./scripts/buildAlloy.mjs -i ./alloy.js -o ./dist/lib',
+        '[ "$ALLOY_LIBRARY_TYPE" = "\\"preinstalled\\"" ] && node ./scripts/buildAlloyPreinstalled.mjs -i ./alloyPreinstalled.js -o ./dist/lib || node ./scripts/buildAlloy.mjs -i ./alloy.js -o ./dist/lib',
     },
     license: "Apache-2.0",
     description: "Tool for generating custom alloy build based on user input.",
