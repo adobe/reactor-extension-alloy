@@ -360,12 +360,17 @@ export const bridge = {
 
     // convert idSyncContainerId to a number if it is not a data element
     OVERRIDE_ENVIRONMENTS.map(
-      (env) =>
-        `edgeConfigOverrides.${env}.com_adobe_identity.idSyncContainerId`,
+      (env) => `edgeConfigOverrides.${env}.com_adobe_identity`,
     ).forEach((key) => {
-      const value = deepGet(instanceSettings, key);
+      const idSyncContainerIdKey = `${key}.idSyncContainerId`;
+      const value = deepGet(instanceSettings, idSyncContainerIdKey);
       if (value !== undefined && !isDataElement(value)) {
-        deepSet(instanceSettings, key, parseInt(value, 10));
+        const parsedValue = parseInt(value, 10);
+        if (!Number.isNaN(parsedValue)) {
+          deepSet(instanceSettings, idSyncContainerIdKey, parsedValue);
+        } else {
+          deepDelete(instanceSettings, key);
+        }
       }
     });
 
