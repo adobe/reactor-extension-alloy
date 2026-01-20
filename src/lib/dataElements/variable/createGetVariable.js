@@ -9,7 +9,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { variableStore } = require("../../index");
-const createGetVariable = require("./createGetVariable");
-
-module.exports = createGetVariable({ variableStore });
+module.exports =
+  ({ variableStore }) =>
+  (settings) => {
+    const { dataElementId, dataElementName } = settings;
+    if (dataElementName && variableStore[dataElementName] !== undefined) {
+      return variableStore[dataElementName];
+    }
+    if (dataElementId && variableStore[dataElementId] !== undefined) {
+      return variableStore[dataElementId];
+    }
+    return {};
+  };
