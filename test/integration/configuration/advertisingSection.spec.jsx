@@ -551,15 +551,11 @@ describe("Config advertising section", () => {
 
     // Verify the alert content
     await expect
-      .element(
-        view.getByText(/no advertisers found for this ims org/i),
-      )
+      .element(view.getByText(/no advertisers found for this ims org/i))
       .toBeVisible();
 
     // Verify DSP fields are now visible for manual entry
-    await expect
-      .element(view.getByTestId("addAdvertiserButton"))
-      .toBeVisible();
+    await expect.element(view.getByTestId("addAdvertiserButton")).toBeVisible();
     await expect.element(view.getByTestId("id5PartnerIdField")).toBeVisible();
     await expect.element(view.getByTestId("rampIdJSPathField")).toBeVisible();
 
@@ -597,15 +593,11 @@ describe("Config advertising section", () => {
 
     // Verify the alert content
     await expect
-      .element(
-        view.getByText(/could not retrieve advertiser data from dsp/i),
-      )
+      .element(view.getByText(/could not retrieve advertiser data from dsp/i))
       .toBeVisible();
 
     // Verify DSP fields are now visible for manual entry
-    await expect
-      .element(view.getByTestId("addAdvertiserButton"))
-      .toBeVisible();
+    await expect.element(view.getByTestId("addAdvertiserButton")).toBeVisible();
     await expect.element(view.getByTestId("id5PartnerIdField")).toBeVisible();
     await expect.element(view.getByTestId("rampIdJSPathField")).toBeVisible();
 

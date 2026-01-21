@@ -460,10 +460,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
 
         setAdvertisers(advertisersList);
         // API succeeded - use dropdown mode
-        setFieldValue(
-          `${instanceFieldName}.advertising.useManualEntry`,
-          false,
-        );
+        setFieldValue(`${instanceFieldName}.advertising.useManualEntry`, false);
         // Store valid advertiser IDs for validation
         setFieldValue(
           `${instanceFieldName}.advertising.validAdvertiserIds`,
@@ -508,7 +505,6 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
     </View>
   );
 
-
   const getAdvertisersContent = () => {
     // Show warning if API failed but still allow manual entry
     const apiWarning = error && (
@@ -522,16 +518,18 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
     );
 
     // Show info if no advertisers found but still allow manual entry
-    const noAdvertisersInfo = !loading && !error && advertisers.length === 0 && (
-      <InlineAlert variant="notice" marginBottom="size-200">
-        <Heading>No DSP Advertisers Found</Heading>
-        <Content>
-          No advertisers found for this IMS org in Adobe Advertising DSP. You
-          can manually enter advertiser IDs below, or contact your DSP account
-          manager to add advertisers.
-        </Content>
-      </InlineAlert>
-    );
+    const noAdvertisersInfo = !loading &&
+      !error &&
+      advertisers.length === 0 && (
+        <InlineAlert variant="notice" marginBottom="size-200">
+          <Heading>No DSP Advertisers Found</Heading>
+          <Content>
+            No advertisers found for this IMS org in Adobe Advertising DSP. You
+            can manually enter advertiser IDs below, or contact your DSP account
+            manager to add advertisers.
+          </Content>
+        </InlineAlert>
+      );
 
     return (
       <div>
@@ -569,7 +567,9 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                             marginEnd="size-200"
                             items={advertisers}
                             getKey={(advertiser) => advertiser.advertiser_id}
-                            getLabel={(advertiser) => advertiser.advertiser_name}
+                            getLabel={(advertiser) =>
+                              advertiser.advertiser_name
+                            }
                             isDisabled={loading}
                             isRequired
                             allowsCustomValue
