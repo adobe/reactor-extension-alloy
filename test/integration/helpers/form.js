@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { expect } from "vitest";
 // eslint-disable-next-line import/no-unresolved
 import { page, userEvent } from "vitest/browser";
 
@@ -92,7 +93,10 @@ export const spectrumComboBox = (testId) => {
      * @returns {string} The current value
      */
     getValue: async () => {
-      return page.getByTestId(testId).element().value;
+      const input = page.getByTestId(testId);
+      // Wait for the input to be visible (important when switching tabs)
+      await expect.element(input).toBeVisible();
+      return input.element().value;
     },
 
     /**
@@ -102,16 +106,23 @@ export const spectrumComboBox = (testId) => {
     selectOption: async (optionText) => {
       const input = page.getByTestId(testId);
 
+      // Wait for the input to be visible (important when switching tabs)
+      await expect.element(input).toBeVisible();
+      await expect.element(input).toBeEnabled();
+
+      // If the input value is already the option text, return
+      if (input.element().value === optionText) {
+        return;
+      }
+
       // Click the input to open the dropdown and focus it
       await input.click();
 
       // Type to filter options (this is how ComboBox works - you type to filter)
       await input.fill(optionText);
 
-      // Wait a bit for the listbox to appear and filter
-      await new Promise((resolve) => {
-        setTimeout(resolve, 200);
-      });
+      // Wait for the listbox with options to appear using Vitest's built-in waiting
+      await expect.element(page.getByRole("listbox")).toBeVisible();
 
       // Now find and click the matching option
       // First try exact match
@@ -158,8 +169,13 @@ export const spectrumComboBox = (testId) => {
      * @returns {boolean} True if combobox is disabled
      */
     isDisabled: async () => {
-      const input = page.getByTestId(testId).element();
-      return input.disabled || input.getAttribute("aria-disabled") === "true";
+      const input = page.getByTestId(testId);
+      // Wait for the input to be visible (important when switching tabs)
+      await expect.element(input).toBeVisible();
+      const element = input.element();
+      return (
+        element.disabled || element.getAttribute("aria-disabled") === "true"
+      );
     },
 
     /**
@@ -243,12 +259,7 @@ export const spectrumComboBox = (testId) => {
      * Wait for the combobox to finish loading
      */
     waitForLoad: async () => {
-      while (isLoading()) {
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve) => {
-          setTimeout(resolve, 50);
-        });
-      }
+      await expect.poll(() => !isLoading()).toBeTruthy();
     },
 
     /**
@@ -281,8 +292,11 @@ export const spectrumTextField = (testId) => {
      * @param {string} text - Text to type
      */
     fill: async (text) => {
-      await page.getByTestId(testId).clear();
-      await page.getByTestId(testId).fill(text);
+      const input = page.getByTestId(testId);
+      // Wait for the input to be visible (important when switching tabs)
+      await expect.element(input).toBeVisible();
+      await input.clear();
+      await input.fill(text);
       // Tab away to trigger blur and ensure all handlers complete
       await userEvent.keyboard("{Tab}");
     },
@@ -299,7 +313,10 @@ export const spectrumTextField = (testId) => {
      * @returns {string} The current value
      */
     getValue: async () => {
-      return page.getByTestId(testId).element().value;
+      const input = page.getByTestId(testId);
+      // Wait for the input to be visible (important when switching tabs)
+      await expect.element(input).toBeVisible();
+      return input.element().value;
     },
 
     /**
@@ -671,6 +688,10 @@ export const spectrumPicker = (testId) => {
      */
     selectOption: async (optionText) => {
       const button = page.getByTestId(testId);
+
+      // Wait for the button to be visible (important when switching tabs)
+      await expect.element(button).toBeVisible();
+
       await button.click();
 
       // Get the listbox that was opened by this picker
@@ -806,12 +827,95 @@ export const spectrumPicker = (testId) => {
      * Wait for the picker to finish loading
      */
     waitForLoad: async () => {
-      while (isLoading()) {
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve) => {
-          setTimeout(resolve, 50);
-        });
-      }
+      await expect.poll(() => !isLoading()).toBeTruthy();
+    },
+
+    /**
+     * Get the raw button element
+     * @returns {HTMLElement} The button element
+     */
+    getElement: async () => {
+      return page.getByTestId(testId).element();
+    },
+  };
+};
+
+/**
+ * Helper to interact with Spectrum Tab components
+ * @param {string} testId - The data-test-id attribute value
+ * @returns {Object} Helper methods for Tab interaction
+ */
+export const spectrumTab = (testId) => {
+  return {
+    /**
+     * Click on the tab
+     */
+    click: async () => {
+      await page.getByTestId(testId).click();
+    },
+
+    /**
+     * Check if the tab is selected
+     * @returns {boolean} True if tab is selected
+     */
+    isSelected: async () => {
+      const element = page.getByTestId(testId).element();
+      return element.getAttribute("aria-selected") === "true";
+    },
+
+    /**
+     * Get the raw tab element
+     * @returns {HTMLElement} The tab element
+     */
+    getElement: async () => {
+      return page.getByTestId(testId).element();
+    },
+  };
+};
+
+/**
+ * Helper to interact with Spectrum Button components
+ * @param {string} testId - The data-test-id attribute value
+ * @returns {Object} Helper methods for Button interaction
+ */
+export const spectrumButton = (testId) => {
+  return {
+    /**
+     * Click the button
+     */
+    click: async () => {
+      await page.getByTestId(testId).click();
+    },
+
+    /**
+     * Check if the button is disabled
+     * @returns {boolean} True if button is disabled
+     */
+    isDisabled: async () => {
+      const button = page.getByTestId(testId);
+      // Wait for the button to be visible (important when switching tabs)
+      await expect.element(button).toBeVisible();
+      const element = button.element();
+      return (
+        element.disabled || element.getAttribute("aria-disabled") === "true"
+      );
+    },
+
+    /**
+     * Check if the button is pressed (for toggle buttons)
+     * @returns {boolean} True if button is pressed
+     */
+    isPressed: async () => {
+      const element = page.getByTestId(testId).element();
+      return element.getAttribute("aria-pressed") === "true";
+    },
+
+    /**
+     * Get the button text content
+     * @returns {string} The button text
+     */
+    getText: async () => {
+      return page.getByTestId(testId).element().textContent.trim();
     },
 
     /**
