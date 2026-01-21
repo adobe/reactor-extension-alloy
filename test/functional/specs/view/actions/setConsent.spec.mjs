@@ -428,9 +428,7 @@ test("initializes form fields with no settings", async () => {
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
-  await overrideViewSelectors.comboBoxes.envEnabled.expectText(
-    "No override",
-  );
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("No override");
   await overrideViewSelectors.textFields.eventDatasetOverride.expectNotExists();
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectNotExists();
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectNotExists();
@@ -438,9 +436,7 @@ test("initializes form fields with no settings", async () => {
 
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
-  await overrideViewSelectors.comboBoxes.envEnabled.expectText(
-    "No override",
-  );
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("No override");
   await overrideViewSelectors.textFields.eventDatasetOverride.expectNotExists();
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectNotExists();
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectNotExists();
@@ -448,9 +444,7 @@ test("initializes form fields with no settings", async () => {
 
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
-  await overrideViewSelectors.comboBoxes.envEnabled.expectText(
-    "No override",
-  );
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("No override");
   await overrideViewSelectors.textFields.eventDatasetOverride.expectNotExists();
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectNotExists();
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectNotExists();
@@ -517,7 +511,9 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.clear();
-  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.enterSearch("Enabled");
+  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.enterSearch(
+    "Enabled",
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -530,7 +526,9 @@ test("returns full valid settings", async () => {
     "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.comboBoxes.analyticsEnabled.clear();
-  await overrideViewSelectors.comboBoxes.analyticsEnabled.enterSearch("Enabled");
+  await overrideViewSelectors.comboBoxes.analyticsEnabled.enterSearch(
+    "Enabled",
+  );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
     "unifiedjsqeonly2",
   );
@@ -546,7 +544,9 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.clear();
-  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.enterSearch("Enabled");
+  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.enterSearch(
+    "Enabled",
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -559,7 +559,9 @@ test("returns full valid settings", async () => {
     "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.comboBoxes.analyticsEnabled.clear();
-  await overrideViewSelectors.comboBoxes.analyticsEnabled.enterSearch("Enabled");
+  await overrideViewSelectors.comboBoxes.analyticsEnabled.enterSearch(
+    "Enabled",
+  );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
     "unifiedjsqeonly2",
   );
@@ -575,7 +577,9 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.clear();
-  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.enterSearch("Enabled");
+  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.enterSearch(
+    "Enabled",
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -588,7 +592,9 @@ test("returns full valid settings", async () => {
     "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.comboBoxes.analyticsEnabled.clear();
-  await overrideViewSelectors.comboBoxes.analyticsEnabled.enterSearch("Enabled");
+  await overrideViewSelectors.comboBoxes.analyticsEnabled.enterSearch(
+    "Enabled",
+  );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
     "unifiedjsqeonly2",
   );
@@ -888,7 +894,9 @@ test.requestHooks(
   await overrideViewSelectors.comboBoxes.envEnabled.clear();
   await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.clear();
-  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.enterSearch("Enabled");
+  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.enterSearch(
+    "Enabled",
+  );
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectExists();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.openMenu();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(
@@ -922,7 +930,9 @@ test.requestHooks(
   );
 
   await overrideViewSelectors.comboBoxes.analyticsEnabled.clear();
-  await overrideViewSelectors.comboBoxes.analyticsEnabled.enterSearch("Enabled");
+  await overrideViewSelectors.comboBoxes.analyticsEnabled.enterSearch(
+    "Enabled",
+  );
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].expectExists();
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].openMenu();
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].expectMenuOptionLabels(
