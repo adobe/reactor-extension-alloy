@@ -547,30 +547,43 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                   {advertiserSettings.map((setting, index) => {
                     return (
                       <Flex key={index} alignItems="start">
-                        {/* Advertiser Dropdown - allows manual entry when API fails or no items */}
-                        <FormikKeyedComboBox
-                          data-test-id={`advertiser${index}Field`}
-                          name={`${instanceFieldName}.advertising.advertiserSettings.${index}.advertiserId`}
-                          width="size-4000"
-                          aria-label={`Advertiser ${index + 1}`}
-                          marginTop="size-0"
-                          marginEnd="size-200"
-                          items={advertisers}
-                          getKey={(advertiser) => advertiser.advertiser_id}
-                          getLabel={(advertiser) => advertiser.advertiser_name}
-                          isDisabled={loading}
-                          isRequired
-                          allowsCustomValue
-                        >
-                          {(advertiser) => (
-                            <Item
-                              key={advertiser.advertiser_id}
-                              data-test-id={advertiser.advertiser_id}
-                            >
-                              {advertiser.advertiser_name}
-                            </Item>
-                          )}
-                        </FormikKeyedComboBox>
+                        {/* Show dropdown when API succeeds, text input when API fails */}
+                        {error ? (
+                          <FormikTextField
+                            data-test-id={`advertiser${index}Field`}
+                            name={`${instanceFieldName}.advertising.advertiserSettings.${index}.advertiserId`}
+                            UNSAFE_style={{ width: "224px" }}
+                            aria-label={`Advertiser ${index + 1}`}
+                            placeholder="Enter advertiser ID"
+                            marginTop="size-0"
+                            marginEnd="size-200"
+                            isRequired
+                          />
+                        ) : (
+                          <FormikKeyedComboBox
+                            data-test-id={`advertiser${index}Field`}
+                            name={`${instanceFieldName}.advertising.advertiserSettings.${index}.advertiserId`}
+                            width="size-4000"
+                            aria-label={`Advertiser ${index + 1}`}
+                            marginTop="size-0"
+                            marginEnd="size-200"
+                            items={advertisers}
+                            getKey={(advertiser) => advertiser.advertiser_id}
+                            getLabel={(advertiser) => advertiser.advertiser_name}
+                            isDisabled={loading}
+                            isRequired
+                            allowsCustomValue
+                          >
+                            {(advertiser) => (
+                              <Item
+                                key={advertiser.advertiser_id}
+                                data-test-id={advertiser.advertiser_id}
+                              >
+                                {advertiser.advertiser_name}
+                              </Item>
+                            )}
+                          </FormikKeyedComboBox>
+                        )}
 
                         {/* Status Dropdown - Supports Data Elements */}
                         <DataElementSelector marginEnd="size-100">
