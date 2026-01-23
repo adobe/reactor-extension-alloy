@@ -215,31 +215,30 @@ const XdmVariable = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadItems = async ({ filterText, cursor, signal }) => {
-    let results;
-    let nextPage;
     try {
-      ({ results, nextPage } = await fetchSchemasMeta({
+      const { results, nextPage } = await fetchSchemasMeta({
         orgId,
         imsAccess,
         sandboxName: sandbox,
         search: filterText,
         start: cursor,
         signal,
-      }));
+      });
+      return {
+        items: results,
+        cursor: nextPage,
+      };
     } catch (e) {
       if (e.name === "AbortError") {
         throw e;
       }
-      throw e;
+      return {
+        items: [],
+        cursor: null,
+      };
     } finally {
       setIsRefreshing(false);
-      results = [];
-      nextPage = null;
     }
-    return {
-      items: results,
-      cursor: nextPage,
-    };
   };
 
   const handleRefreshSchemas = () => {
