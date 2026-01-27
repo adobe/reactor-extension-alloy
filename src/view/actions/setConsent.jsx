@@ -55,7 +55,7 @@ const createBlankConsentObject = () => {
 
 const getInitialValues = ({ initInfo }) => {
   const {
-    instanceName = initInfo.extensionSettings.instances[0].name,
+    instanceName = initInfo.extensionSettings?.instances?.[0]?.name,
     identityMap = "",
     consent,
     edgeConfigOverrides,
@@ -355,7 +355,7 @@ const SetConsent = () => {
       getFormikStateValidationSchema={getValidationSchema}
       render={({ initInfo, formikProps: { values } }) => {
         const { instanceName } = values;
-        const instanceSettings = initInfo.extensionSettings.instances.find(
+        const instanceSettings = initInfo.extensionSettings?.instances?.find(
           (instance) => instance.name === instanceName,
         );
         const edgeConfigIds = getEdgeConfigIds(instanceSettings);

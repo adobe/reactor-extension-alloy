@@ -521,7 +521,7 @@ describe("Config advertising section", () => {
       .toBeInTheDocument();
   });
 
-  it("shows error alert when no advertisers are found", async () => {
+  it("shows warning alert when no advertisers are found but allows manual entry", async () => {
     // Override the default handler with no advertisers response
     worker.use(...noAdvertisersHandlers);
 
@@ -540,40 +540,30 @@ describe("Config advertising section", () => {
     const dspEnabledField = spectrumComboBox("dspEnabledField");
     await dspEnabledField.fill("Enabled");
 
-    // Wait for the error alert to appear
+    // Wait for the warning alert to appear
     await expect
       .element(
         view.getByRole("heading", {
-          name: /no dsp advertiser found/i,
+          name: /no dsp advertisers found/i,
         }),
       )
       .toBeVisible({ timeout: 5000 });
 
     // Verify the alert content
     await expect
-      .element(
-        view.getByText(
-          /no advertiser was found corresponding to this ims org/i,
-        ),
-      )
+      .element(view.getByText(/no advertisers found for this ims org/i))
       .toBeVisible();
 
-    // Verify DSP fields are still hidden
-    await expect
-      .element(view.getByTestId("addAdvertiserButton"))
-      .not.toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("id5PartnerIdField"))
-      .not.toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("rampIdJSPathField"))
-      .not.toBeInTheDocument();
+    // Verify DSP fields are now visible for manual entry
+    await expect.element(view.getByTestId("addAdvertiserButton")).toBeVisible();
+    await expect.element(view.getByTestId("id5PartnerIdField")).toBeVisible();
+    await expect.element(view.getByTestId("rampIdJSPathField")).toBeVisible();
 
-    // Verify form is invalid
+    // Verify form is invalid without advertiser ID
     expect(await extensionBridge.validate()).toBe(false);
   });
 
-  it("shows error alert when advertiser API fails due to permissions", async () => {
+  it("shows warning alert when advertiser API fails but allows manual entry", async () => {
     // Override the default handler with unauthorized response
     worker.use(...advertisersUnauthorizedHandlers);
 
@@ -592,32 +582,26 @@ describe("Config advertising section", () => {
     const dspEnabledField = spectrumComboBox("dspEnabledField");
     await dspEnabledField.fill("Enabled");
 
-    // Wait for the error alert to appear
+    // Wait for the warning alert to appear
     await expect
       .element(
         view.getByRole("heading", {
-          name: /failed to load dsp advertiser data/i,
+          name: /unable to load advertisers/i,
         }),
       )
       .toBeVisible({ timeout: 5000 });
 
     // Verify the alert content
     await expect
-      .element(view.getByText(/unable to retrieve advertiser data from dsp/i))
+      .element(view.getByText(/could not retrieve advertiser data from dsp/i))
       .toBeVisible();
 
-    // Verify DSP fields are still hidden
-    await expect
-      .element(view.getByTestId("addAdvertiserButton"))
-      .not.toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("id5PartnerIdField"))
-      .not.toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("rampIdJSPathField"))
-      .not.toBeInTheDocument();
+    // Verify DSP fields are now visible for manual entry
+    await expect.element(view.getByTestId("addAdvertiserButton")).toBeVisible();
+    await expect.element(view.getByTestId("id5PartnerIdField")).toBeVisible();
+    await expect.element(view.getByTestId("rampIdJSPathField")).toBeVisible();
 
-    // Verify form is invalid
+    // Verify form is invalid without advertiser ID
     expect(await extensionBridge.validate()).toBe(false);
   });
 
