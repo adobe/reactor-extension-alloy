@@ -43,6 +43,14 @@ export default async ({ orgId, imsAccess, path, params, headers, signal }) => {
     throw new UserReportableError(NETWORK_ERROR_MESSAGE.RESOURCE_NOT_FOUND);
   }
 
+  if (response.status === HTTP_STATUS.UNAUTHORIZED) {
+    throw new UserReportableError(NETWORK_ERROR_MESSAGE.INVALID_ACCESS_TOKEN);
+  }
+
+  if (response.status === HTTP_STATUS.FORBIDDEN) {
+    throw new UserReportableError(NETWORK_ERROR_MESSAGE.FORBIDDEN_ACCESS);
+  }
+
   let parsedBody;
 
   // Be aware that this can throw an error not only if the response

@@ -30,7 +30,6 @@ import FormikPicker from "../../../components/formikReactSpectrum3/formikPicker"
 import FormikPagedComboBox from "../../../components/formikReactSpectrum3/formikPagedComboBox";
 import FieldSubset from "../../../components/fieldSubset";
 import FormElementContainer from "../../../components/formElementContainer";
-import useReportAsyncError from "../../../utils/useReportAsyncError";
 import RefreshButton from "../../../components/refreshButton";
 import { DATA } from "../constants/variableTypes";
 
@@ -44,7 +43,12 @@ const initializeSandboxes = async ({
   const { results: sandboxes } = await fetchSandboxes({ orgId, imsAccess });
 
   if (!(sandboxes && sandboxes.length)) {
-    throw new UserReportableError("You do not have access to any sandboxes.");
+    throw new UserReportableError(
+      "You do not have access to any sandboxes. Please contact your administrator to be assigned appropriate rights.",
+      {
+        additionalInfoUrl: "https://adobe.ly/3gHkqLF",
+      },
+    );
   }
 
   if (sandbox && !sandboxes.find((s) => s.name === sandbox)) {
@@ -103,17 +107,22 @@ const initializeSchemas = async ({
   imsAccess,
 }) => {
   if (initialValues.sandbox) {
-    const { results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
-      await fetchSchemasMeta({
-        orgId,
-        imsAccess,
-        sandboxName: initialValues.sandbox,
-      });
+    try {
+      const { results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
+        await fetchSchemasMeta({
+          orgId,
+          imsAccess,
+          sandboxName: initialValues.sandbox,
+        });
 
-    context.schemasFirstPage = schemasFirstPage;
-    context.schemasFirstPageCursor = schemasFirstPageCursor;
-    if (!schemaId && schemasFirstPage.length === 1) {
-      initialValues.schema = schemasFirstPage[0];
+      context.schemasFirstPage = schemasFirstPage;
+      context.schemasFirstPageCursor = schemasFirstPageCursor;
+      if (!schemaId && schemasFirstPage.length === 1) {
+        initialValues.schema = schemasFirstPage[0];
+      }
+    } catch {
+      context.schemasFirstPage = [];
+      context.schemasFirstPageCursor = null;
     }
   }
 };
@@ -197,7 +206,6 @@ const XdmVariable = ({
     company: { orgId },
     tokens: { imsAccess },
   } = initInfo;
-  const reportAsyncError = useReportAsyncError();
 
   const [{ value: sandbox }] = useField("sandbox");
   const [schemasData, setSchemasData] = useState({
@@ -207,29 +215,30 @@ const XdmVariable = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadItems = async ({ filterText, cursor, signal }) => {
-    let results;
-    let nextPage;
     try {
-      ({ results, nextPage } = await fetchSchemasMeta({
+      const { results, nextPage } = await fetchSchemasMeta({
         orgId,
         imsAccess,
         sandboxName: sandbox,
         search: filterText,
         start: cursor,
         signal,
-      }));
+      });
+      return {
+        items: results,
+        cursor: nextPage,
+      };
     } catch (e) {
-      if (e.name !== "AbortError") {
-        reportAsyncError(e);
+      if (e.name === "AbortError") {
+        throw e;
       }
-      throw e;
+      return {
+        items: [],
+        cursor: null,
+      };
     } finally {
       setIsRefreshing(false);
     }
-    return {
-      items: results,
-      cursor: nextPage,
-    };
   };
 
   const handleRefreshSchemas = () => {
@@ -269,11 +278,11 @@ const XdmVariable = ({
             marginBottom="size-200"
             data-test-id="schemaMissingAlert"
           >
-            <Heading size="XXS">Saved configuration not found</Heading>
+            <Heading size="XXS">Could not load saved configuration</Heading>
             <Content>
-              Could not retrieve the previously saved sandbox or schema. You can
-              cancel to keep this data element configured as before, or choose a
-              new sandbox and schema.
+              The previously saved sandbox or schema could not be retrieved. You
+              can cancel to keep this data element configured as before, or
+              choose a new sandbox and schema.
             </Content>
           </InlineAlert>
         )}
@@ -284,7 +293,11 @@ const XdmVariable = ({
           items={sandboxes}
           width="size-5000"
           description="Choose a sandbox containing the schema you wish to use."
-          placeholder="Select a sandbox"
+          placeholder={
+            missingSavedSandbox
+              ? "Saved sandbox unavailable"
+              : "Select a sandbox"
+          }
         >
           {(item) => {
             const region = item.region ? ` (${item.region.toUpperCase()})` : "";
@@ -310,6 +323,11 @@ const XdmVariable = ({
                 firstPageCursor={schemasData.firstPageCursor}
                 alertTitle="No schemas found"
                 alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
+                placeholder={
+                  missingSavedSchema
+                    ? "Saved schema unavailable"
+                    : "Select a schema"
+                }
               />
             </View>
             <Flex direction="row" marginTop="size-300">

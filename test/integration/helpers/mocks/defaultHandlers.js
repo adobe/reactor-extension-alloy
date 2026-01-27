@@ -668,3 +668,221 @@ export const datastreamsForbiddenHandlers = [
     },
   ),
 ];
+
+export const sandboxUnauthorizedHandlers = [
+  http.get(
+    "https://platform.adobe.io/data/foundation/sandbox-management/",
+    async () => {
+      return HttpResponse.json(
+        {
+          error_code: "401013",
+          message: "Oauth token is not valid",
+        },
+        { status: 401 },
+      );
+    },
+  ),
+];
+
+export const sandboxServerErrorHandlers = [
+  http.get(
+    "https://platform.adobe.io/data/foundation/sandbox-management/",
+    async () => {
+      return HttpResponse.json(
+        { error: "Internal server error" },
+        { status: 500 },
+      );
+    },
+  ),
+];
+
+export const sandboxEmptyHandlers = [
+  http.get(
+    "https://platform.adobe.io/data/foundation/sandbox-management/",
+    async () => {
+      return HttpResponse.json({
+        sandboxes: [],
+        _page: { limit: 200, count: 0 },
+      });
+    },
+  ),
+];
+
+export const sandboxWithoutProdHandlers = [
+  http.get(
+    "https://platform.adobe.io/data/foundation/sandbox-management/",
+    async () => {
+      return HttpResponse.json({
+        sandboxes: [
+          {
+            name: "testsandbox1",
+            title: "Test Sandbox 1",
+            state: "active",
+            type: "production",
+            region: "VA7",
+            isDefault: false,
+          },
+          {
+            name: "testsandbox2",
+            title: "Test Sandbox 2",
+            state: "active",
+            type: "production",
+            region: "VA7",
+            isDefault: true,
+          },
+        ],
+        _page: { limit: 200, count: 2 },
+      });
+    },
+  ),
+];
+
+export const schemasEmptyHandlers = [
+  http.get(
+    "https://platform.adobe.io/data/foundation/schemaregistry/tenant/schemas",
+    async () => {
+      return HttpResponse.json({
+        results: [],
+        _page: { next: null },
+      });
+    },
+  ),
+];
+
+export const schemasServerErrorHandlers = [
+  http.get(
+    "https://platform.adobe.io/data/foundation/schemaregistry/tenant/schemas",
+    async () => {
+      return HttpResponse.json(
+        { error: "Internal server error" },
+        { status: 500 },
+      );
+    },
+  ),
+];
+
+export const schemaNotFoundHandlers = [
+  http.get(
+    /\/data\/foundation\/schemaregistry\/tenant\/schemas\/.+/,
+    async () => {
+      return HttpResponse.json(
+        {
+          type: "http://ns.adobe.com/aep/errors/REGISTRY-SCHEMA-DOES-NOT-EXIST",
+          title: "Schema does not exist",
+          status: 404,
+        },
+        { status: 404 },
+      );
+    },
+  ),
+];
+
+export const singleSchemaHandlers = [
+  http.get(
+    "https://platform.adobe.io/data/foundation/schemaregistry/tenant/schemas",
+    async () => {
+      return HttpResponse.json({
+        results: [
+          {
+            $id: "https://ns.adobe.com/test/schemas/sch123",
+            version: "1.0",
+            title: "Test Schema 1",
+          },
+        ],
+        _page: { next: null },
+      });
+    },
+  ),
+];
+
+export const schemaDetailsHandlers = [
+  http.get(
+    /\/data\/foundation\/schemaregistry\/tenant\/schemas\/.+/,
+    async () => {
+      return HttpResponse.json({
+        $id: "https://ns.adobe.com/test/schemas/sch123",
+        title: "Test Schema 1",
+        version: "1.0",
+        type: "object",
+        properties: {
+          testField: {
+            title: "Test Field",
+            type: "string",
+          },
+        },
+      });
+    },
+  ),
+];
+
+export const dataElementsUnauthorizedHandlers = [
+  http.get(/\/properties\/.*\/data_elements/, async () => {
+    return HttpResponse.json(
+      {
+        errors: [
+          {
+            code: "unauthorized",
+            detail: "The provided access_token is invalid or expired.",
+          },
+        ],
+      },
+      { status: 401 },
+    );
+  }),
+];
+
+export const dataElementsServerErrorHandlers = [
+  http.get(/\/properties\/.*\/data_elements/, async () => {
+    return HttpResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }),
+];
+
+export const dataElementsEmptyHandlers = [
+  http.get(/\/properties\/.*\/data_elements/, async () => {
+    return HttpResponse.json({
+      data: [],
+      meta: {
+        pagination: {
+          current_page: 1,
+          next_page: null,
+          total_pages: 1,
+          total_count: 0,
+        },
+      },
+    });
+  }),
+];
+
+export const variableDataElementsHandlers = [
+  http.get(/\/properties\/.*\/data_elements/, async () => {
+    return HttpResponse.json({
+      data: [
+        {
+          id: "DE1",
+          attributes: {
+            name: "Test XDM Variable",
+            delegate_descriptor_id: "adobe-alloy::dataElements::variable",
+            settings: JSON.stringify({
+              sandbox: { name: "prod" },
+              schema: {
+                id: "https://ns.adobe.com/test/schemas/sch123",
+                version: "1.0",
+              },
+            }),
+          },
+        },
+      ],
+      meta: {
+        pagination: {
+          current_page: 1,
+          next_page: null,
+          total_pages: 1,
+          total_count: 1,
+        },
+      },
+    });
+  }),
+];
