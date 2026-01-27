@@ -14,6 +14,7 @@ import render from "../render";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
+import RequiredComponent from "../components/requiredComponent";
 
 const getInitialValues = ({ initInfo }) => {
   const { instanceName = initInfo.extensionSettings.instances[0].name } =
@@ -39,12 +40,19 @@ const SendPushSubscription = () => {
       getSettings={getSettings}
       render={({ initInfo }) => (
         <FormElementContainer>
-          <InstanceNamePicker
-            data-test-id="instanceNamePicker"
-            name="instanceName"
+          <RequiredComponent
             initInfo={initInfo}
-            disabledDescription="Only one instance was configured for this extension so no configuration is required for this action."
-          />
+            requiredComponent="pushNotifications"
+            title="the Send push subscription action"
+            whole
+          >
+            <InstanceNamePicker
+              data-test-id="instanceNamePicker"
+              name="instanceName"
+              initInfo={initInfo}
+              disabledDescription="Only one instance was configured for this extension so no configuration is required for this action."
+            />
+          </RequiredComponent>
         </FormElementContainer>
       )}
     />

@@ -22,9 +22,12 @@ governing permissions and limitations under the License.
 const createGetConfigOverrides = (environmentName) => (settings) => {
   const { edgeConfigOverrides } = settings;
   let computedConfigOverrides;
+  // if there are no overrides at all, return undefined
   if (!edgeConfigOverrides) {
     return undefined;
   }
+  // If there is an edgeConfigOverrides object, but no overrides for the current environment, check for
+  // the old settings when there were no environment-specific overrides.
   if (!edgeConfigOverrides[environmentName]) {
     // there are no settings for this current env, but there are settings for others
     if (
@@ -37,6 +40,7 @@ const createGetConfigOverrides = (environmentName) => (settings) => {
     // there are old settings
     computedConfigOverrides = edgeConfigOverrides;
   } else {
+    // there are settings for the current environment
     computedConfigOverrides = { ...edgeConfigOverrides[environmentName] };
   }
 
@@ -50,12 +54,33 @@ const createGetConfigOverrides = (environmentName) => (settings) => {
   delete computedConfigOverrides.enabled;
 
   // delete every child `enabled: true` key-value pair—it's the same as undefined
+  // Also "no override" can be represented as undefined, "", or null from a data element.
   Object.keys(computedConfigOverrides).forEach((key) => {
-    if (computedConfigOverrides[key]?.enabled === true) {
-      delete computedConfigOverrides[key].enabled;
+    if (Object.keys(computedConfigOverrides[key]).includes("enabled")) {
+      const enabled = computedConfigOverrides[key].enabled;
+      if (enabled === true) {
+        delete computedConfigOverrides[key].enabled;
+      }
+      if (enabled === "" || enabled === null || enabled === undefined) {
+        delete computedConfigOverrides[key];
+      }
     }
   });
 
+  // delete every com_adobe_experience_platform.*.enabled: true key-value pair
+  // its the same as undefined.
+  Object.keys(
+    computedConfigOverrides.com_adobe_experience_platform || {},
+  ).forEach((key) => {
+    if (
+      computedConfigOverrides.com_adobe_experience_platform[key]?.enabled ===
+      true
+    ) {
+      delete computedConfigOverrides.com_adobe_experience_platform[key].enabled;
+    }
+  });
+
+  // handle commas in report suites, and filter out empty strings
   if (computedConfigOverrides.com_adobe_analytics?.reportSuites?.length > 0) {
     computedConfigOverrides.com_adobe_analytics.reportSuites =
       computedConfigOverrides.com_adobe_analytics.reportSuites

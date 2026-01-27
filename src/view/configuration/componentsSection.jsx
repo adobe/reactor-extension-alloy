@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { InlineAlert, Content, Flex } from "@adobe/react-spectrum";
-import Heading from "../components/typography/heading";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import BetaBadge from "../components/betaBadge";
@@ -19,6 +17,7 @@ import valueOrDefault from "../utils/valueOrDefault";
 import alloyComponents, {
   isDefaultComponent,
 } from "../utils/alloyComponents.mjs";
+import SectionHeader from "../components/sectionHeader";
 
 const webSdkComponents = Object.keys(alloyComponents)
   .map((v) => ({
@@ -74,35 +73,24 @@ export const bridge = {
 
 const ComponentsSection = () => {
   return (
-    <Flex gap="size-200" direction="column">
-      <InlineAlert variant="notice" width="size-6000">
-        <Heading>Warning, advanced settings</Heading>
-        <Content>
-          Modifying settings here can break your implementation. You can
-          decrease the size of your Web SDK bundle by disabling components that
-          you are not using. Each time you change the list of used components,
-          please test your implementation thoroughly to verify that all
-          functionalities are working as expected.
-        </Content>
-      </InlineAlert>
+    <div>
+      <SectionHeader marginTop="">Components</SectionHeader>
 
-      <div>
-        {webSdkComponents.map(({ label, value, description, beta }) => {
-          return (
-            <FormikCheckbox
-              name={`components.${value}`}
-              data-test-id={`${value}ComponentCheckbox`}
-              width="size-5000"
-              description={description}
-              key={value}
-            >
-              {label}
-              {beta && <BetaBadge />}
-            </FormikCheckbox>
-          );
-        })}
-      </div>
-    </Flex>
+      {webSdkComponents.map(({ label, value, description, beta }) => {
+        return (
+          <FormikCheckbox
+            name={`components.${value}`}
+            data-test-id={`${value}ComponentCheckbox`}
+            width="size-5000"
+            description={description}
+            key={value}
+          >
+            {label}
+            {beta && <BetaBadge />}
+          </FormikCheckbox>
+        );
+      })}
+    </div>
   );
 };
 

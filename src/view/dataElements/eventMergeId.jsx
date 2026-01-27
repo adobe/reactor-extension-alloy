@@ -10,13 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import PropTypes from "prop-types";
 import { InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 import Body from "../components/typography/body";
 import RequiredComponent from "../components/requiredComponent";
+import { PREINSTALLED } from "../../lib/constants/libraryType";
 
 const getInitialValues = ({ initInfo }) => {
   const { cacheId = crypto.randomUUID() } = initInfo.settings || {};
@@ -29,19 +29,51 @@ const getInitialValues = ({ initInfo }) => {
 const getSettings = ({ values }) => {
   return values;
 };
+let initInfoCache;
 
-const EventMergeId = ({ initInfo }) => {
-  return (
-    <ExtensionView
-      getInitialValues={getInitialValues}
-      getSettings={getSettings}
-      render={() => (
+const EventMergeId = () => (
+  <ExtensionView
+    getInitialValues={getInitialValues}
+    getSettings={getSettings}
+    validateNonFormikState={() => {
+      const isNew = initInfoCache?.settings == null;
+      if (
+        isNew &&
+        (initInfoCache?.extensionSettings?.libraryCode?.type === PREINSTALLED ||
+          initInfoCache?.extensionSettings?.components?.eventMerge === false)
+      ) {
+        return false;
+      }
+
+      return true;
+    }}
+    render={({ initInfo }) => {
+      initInfoCache = initInfo;
+      const isPreinstalled =
+        initInfo?.extensionSettings?.libraryCode?.type === PREINSTALLED;
+
+      return isPreinstalled ? (
         <FillParentAndCenterChildren>
-          <RequiredComponent
-            initInfo={initInfo}
-            requiredComponent="eventMerge"
-            title="the event merge ID data element"
-          >
+          <InlineAlert variant="negative" width="size-6000">
+            <Heading>
+              Not available when using a self-hosted Alloy instance
+            </Heading>
+            <Content>
+              Event merge data elements will not function correctly when using a
+              self-hosted Alloy instance. To use this component, go to the
+              extension configuration view and select the &quot;Managed by
+              Launch&quot; option in the Build Options section.
+            </Content>
+          </InlineAlert>
+        </FillParentAndCenterChildren>
+      ) : (
+        <RequiredComponent
+          initInfo={initInfo}
+          requiredComponent="eventMerge"
+          title="the event merge ID data element"
+          whole
+        >
+          <FillParentAndCenterChildren>
             <InlineAlert variant="info" width="size-6000">
               <Heading size="XXS">Event merge ID caching</Heading>
               <Content>
@@ -55,15 +87,13 @@ const EventMergeId = ({ initInfo }) => {
             <Body size="L" marginTop="size-200">
               No configuration necessary.
             </Body>
-          </RequiredComponent>
-        </FillParentAndCenterChildren>
-      )}
-    />
-  );
-};
+          </FillParentAndCenterChildren>
+        </RequiredComponent>
+      );
+    }}
+  />
+);
 
-EventMergeId.propTypes = {
-  initInfo: PropTypes.object.isRequired,
-};
+EventMergeId.propTypes = {};
 
 render(EventMergeId);

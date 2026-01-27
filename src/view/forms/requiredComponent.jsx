@@ -97,6 +97,7 @@ const RequiredComponent = (
 
   const Component = (props) => {
     const { initInfo } = props;
+
     return (
       <ComponentDependency
         initInfo={initInfo}

@@ -11,8 +11,11 @@ governing permissions and limitations under the License.
 */
 
 import PropTypes from "prop-types";
-import { InlineAlert, Content, Heading } from "@adobe/react-spectrum";
+import { InlineAlert, Content, Heading, Well } from "@adobe/react-spectrum";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
+import { PREINSTALLED } from "../../lib/constants/libraryType";
+import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
+import { isDefaultComponent } from "../utils/alloyComponents.mjs";
 
 /**
  * A component that will render children if the required component is enabled.
@@ -24,6 +27,7 @@ import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
  * @param {string} props.title The title of the component.
  * @param {boolean} props.whole Is the component required for this whole form? If so, do not allow the form to create new items.
  * @param {boolean} props.deprecated Whether the component is deprecated.
+ * @param {boolean} props.isPreinstalled Whether the library is in preinstalled mode.
  * @param {React.ReactNode} props.children The children to render.
  * @returns {React.ReactNode} The rendered component.
  */
@@ -35,14 +39,42 @@ const RequiredComponent = ({
   deprecated = false,
   children,
 }) => {
+  const componentLabel = camelCaseToTitleCase(requiredComponent);
   const components = initInfo?.extensionSettings?.components || {};
-  const isComponentDisabled = components[requiredComponent] === false;
+  const isComponentDisabled =
+    (Object.keys(components).includes(requiredComponent) &&
+      components[requiredComponent] === false) ||
+    !isDefaultComponent(requiredComponent);
+  const isPreinstalled =
+    initInfo?.extensionSettings?.libraryCode?.type === PREINSTALLED;
+
+  if (isPreinstalled) {
+    const content = (
+      <>
+        <InlineAlert
+          variant="notice"
+          width="size-5000"
+          data-test-id="preinstalledModeWarning"
+        >
+          <Heading>Self-hosted Alloy instance detected</Heading>
+          <Content>
+            {title && title.charAt(0).toUpperCase() + title.slice(1)} requires
+            the &quot;
+            {componentLabel}&quot; component to be included in your self-hosted
+            alloy.js build. If this component is missing, {title} will not
+            function correctly.{" "}
+          </Content>
+        </InlineAlert>
+        {children}
+      </>
+    );
+
+    return whole ? content : <Well marginBottom="size-200">{content}</Well>;
+  }
 
   if (!isComponentDisabled) {
     return children;
   }
-
-  const componentLabel = camelCaseToTitleCase(requiredComponent);
 
   if (whole) {
     const isNew = initInfo?.settings == null;
@@ -51,19 +83,21 @@ const RequiredComponent = ({
       // This is returned when the component is disabled and the item is new. We want
       // to only show the error.
       return (
-        <InlineAlert
-          variant="negative"
-          width="size-5000"
-          data-test-id="requiredComponentError"
-        >
-          <Heading>Custom build component disabled</Heading>
-          <Content>
-            You cannot create {title} because a custom build component is
-            disabled on this property. To create this, first enabled the{" "}
-            {componentLabel} component in the custom build section of the Web
-            SDK extension configuration.
-          </Content>
-        </InlineAlert>
+        <FillParentAndCenterChildren>
+          <InlineAlert
+            width="size-5000"
+            variant="negative"
+            data-test-id="requiredComponentError"
+          >
+            <Heading>Custom build component disabled</Heading>
+            <Content>
+              You cannot create {title} because a custom build component is
+              disabled on this property. To create this, first enable the{" "}
+              {componentLabel} component in the custom build section of the Web
+              SDK extension configuration.
+            </Content>
+          </InlineAlert>
+        </FillParentAndCenterChildren>
       );
     }
     // This is returned when the component is diabled and the item is existing. We want
@@ -87,6 +121,7 @@ const RequiredComponent = ({
       </>
     );
   }
+
   if (!deprecated) {
     return (
       <InlineAlert width="size-5000">

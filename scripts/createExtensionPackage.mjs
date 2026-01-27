@@ -81,7 +81,8 @@ const getPackageJson = () => {
       email: "reactor@adobe.com",
     },
     scripts: {
-      build: "node ./scripts/buildAlloy.mjs -i ./alloy.js -o ./dist/lib",
+      build:
+        '[ "$ALLOY_LIBRARY_TYPE" = "\\"preinstalled\\"" ] && node ./scripts/buildAlloyPreinstalled.mjs -i ./alloyPreinstalled.js -o ./dist/lib || node ./scripts/buildAlloy.mjs -i ./alloy.js -o ./dist/lib',
     },
     license: "Apache-2.0",
     description: "Tool for generating custom alloy build based on user input.",
@@ -165,6 +166,11 @@ const createExtensionPackage = ({ verbose }) => {
   const alloy = fs.readFileSync(path.join(cwd, "src", "lib", "alloy.js"));
   zip.addFile("alloy.js", alloy);
 
+  const alloyPreinstalled = fs.readFileSync(
+    path.join(cwd, "src", "lib", "alloyPreinstalled.js"),
+  );
+  zip.addFile("alloyPreinstalled.js", alloyPreinstalled);
+
   const rollupConfig = fs.readFileSync(path.join(cwd, "rollup.config.mjs"));
   zip.addFile("rollup.config.mjs", rollupConfig);
 
@@ -180,6 +186,11 @@ const createExtensionPackage = ({ verbose }) => {
     path.join(cwd, "src", "view", "utils", "alloyComponents.mjs"),
   );
   zip.addFile("src/view/utils/alloyComponents.mjs", alloyComponents);
+
+  const buildPreinstalledScript = fs.readFileSync(
+    path.join(cwd, "scripts", "buildAlloyPreinstalled.mjs"),
+  );
+  zip.addFile("scripts/buildAlloyPreinstalled.mjs", buildPreinstalledScript);
 
   zip.writeZip(packagePath);
   console.log("Done");
