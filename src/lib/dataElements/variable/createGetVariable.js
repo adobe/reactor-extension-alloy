@@ -13,11 +13,5 @@ module.exports =
   ({ variableStore }) =>
   (settings) => {
     const { dataElementId, dataElementName } = settings;
-    if (dataElementName && variableStore[dataElementName] !== undefined) {
-      return variableStore[dataElementName];
-    }
-    if (dataElementId && variableStore[dataElementId] !== undefined) {
-      return variableStore[dataElementId];
-    }
-    return {};
+    return variableStore[dataElementName] || variableStore[dataElementId] || {};
   };

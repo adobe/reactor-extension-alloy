@@ -1470,6 +1470,11 @@ const createExtensionManifest = ({ version }) => {
             reservedKey: "originId",
           },
           {
+            type: "add",
+            propertyPath: "dataElementName",
+            reservedKey: "name",
+          },
+          {
             type: "remove",
             propertyPath: "schema",
           },
