@@ -463,7 +463,9 @@ const Configuration = ({ initInfo, context }) => {
                 description="Select whether Launch should bundle and manage the Alloy library, or use your own self-hosted alloy.js file that is already loaded on your page."
                 orientation="horizontal"
               >
-                <Radio value={LIBRARY_TYPE_MANAGED}>Managed by Launch</Radio>
+                <Radio value={LIBRARY_TYPE_MANAGED}>
+                  Managed by Adobe Tags
+                </Radio>
                 <Radio value={LIBRARY_TYPE_PREINSTALLED}>
                   Use a self-hosted alloy.js instance
                 </Radio>
