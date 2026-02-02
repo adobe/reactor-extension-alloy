@@ -390,6 +390,18 @@ const InstancesSection = ({ initInfo, context, isPreinstalled }) => {
                           );
                           setDeleteDialogOpen(false);
                           setInstanceToDelete(null);
+                          // Scroll to SDK instances panel after a short delay to allow DOM to update
+                          setTimeout(() => {
+                            const instancesPanel = document.getElementById(
+                              "sdk-instances-panel",
+                            );
+                            if (instancesPanel) {
+                              instancesPanel.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                              });
+                            }
+                          }, 100);
                         }}
                         autoFocus
                       >
@@ -477,11 +489,13 @@ const Configuration = ({ initInfo, context }) => {
         <Disclosure id="instances" data-test-id="instancesHeading">
           <DisclosureTitle>SDK instances</DisclosureTitle>
           <DisclosurePanel>
-            <InstancesSection
-              initInfo={initInfo}
-              context={context}
-              isPreinstalled={isPreinstalled}
-            />
+            <div id="sdk-instances-panel">
+              <InstancesSection
+                initInfo={initInfo}
+                context={context}
+                isPreinstalled={isPreinstalled}
+              />
+            </div>
           </DisclosurePanel>
         </Disclosure>
       </Accordion>
