@@ -78,6 +78,9 @@ import ComponentsSection, {
 import PushNotificationsSection, {
   bridge as pushNotificationsBridge,
 } from "./pushNotificationsSection";
+import BrandConciergeSection, {
+  bridge as brandConciergeBridge,
+} from "./brandConciergeSection";
 import {
   LIBRARY_TYPE_MANAGED,
   LIBRARY_TYPE_PREINSTALLED,
@@ -99,6 +102,7 @@ const sectionBridges = [
   advancedSectionBridge,
   mediaBridge,
   pushNotificationsBridge,
+  brandConciergeBridge,
 ];
 
 /**
@@ -309,6 +313,9 @@ const InstancesSection = ({ initInfo, context, isPreinstalled }) => {
                               instanceFieldName={instanceFieldName}
                             />
                             <PushNotificationsSection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <BrandConciergeSection
                               instanceFieldName={instanceFieldName}
                             />
                             <AdvertisingSection
