@@ -28,50 +28,40 @@ const getDefaultSettings = () => ({
 
 export const bridge = {
   getInstanceDefaults: () => ({
-    brandConcierge: getDefaultSettings(),
+    ...getDefaultSettings(),
   }),
 
   getInitialInstanceValues: ({ instanceSettings }) => {
-    const brandConcierge = {};
+    const brandConciergeValues = {};
     copyPropertiesWithDefaultFallback({
-      toObj: brandConcierge,
-      fromObj: instanceSettings.brandConcierge || {},
+      toObj: brandConciergeValues,
+      fromObj: instanceSettings,
       defaultsObj: getDefaultSettings(),
       keys: ["stickyConversationSession"],
     });
 
-    return { brandConcierge };
+    return brandConciergeValues;
   },
 
   getInstanceSettings: ({ instanceValues, components }) => {
     const instanceSettings = {};
 
-    if (components.brandConcierge && instanceValues.brandConcierge) {
-      const { brandConcierge } = instanceValues;
-      const brandConciergeSettings = {};
-
+    if (components.brandConcierge) {
       copyPropertiesIfValueDifferentThanDefault({
-        toObj: brandConciergeSettings,
-        fromObj: brandConcierge,
+        toObj: instanceSettings,
+        fromObj: instanceValues,
         defaultsObj: getDefaultSettings(),
         keys: ["stickyConversationSession"],
       });
-
-      if (Object.keys(brandConciergeSettings).length > 0) {
-        instanceSettings.brandConcierge = brandConciergeSettings;
-      }
     }
 
     return instanceSettings;
   },
 
   instanceValidationSchema: object().shape({
-    brandConcierge: object().when("$components.brandConcierge", {
+    stickyConversationSession: boolean().when("$components.brandConcierge", {
       is: true,
-      then: (schema) =>
-        schema.shape({
-          stickyConversationSession: boolean(),
-        }),
+      then: (schema) => schema,
     }),
   }),
 };
@@ -108,7 +98,7 @@ const BrandConciergeSection = ({ instanceFieldName }) => {
       <FormElementContainer>
         <FormikCheckbox
           data-test-id="stickyConversationSessionField"
-          name={`${instanceFieldName}.brandConcierge.stickyConversationSession`}
+          name={`${instanceFieldName}.stickyConversationSession`}
           description="Keep the Brand Concierge session sticky across different chats by writing a session cookie."
           width="size-5000"
         >

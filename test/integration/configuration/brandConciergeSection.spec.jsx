@@ -41,9 +41,7 @@ describe("Config brand concierge section", () => {
         instances: [
           {
             name: "alloy",
-            brandConcierge: {
-              stickyConversationSession: true,
-            },
+            stickyConversationSession: true,
           },
         ],
       }),
@@ -76,9 +74,7 @@ describe("Config brand concierge section", () => {
     await stickyConversationSessionField.check();
 
     const settings = await extensionBridge.getSettings();
-    expect(settings.instances[0].brandConcierge).toMatchObject({
-      stickyConversationSession: true,
-    });
+    expect(settings.instances[0].stickyConversationSession).toBe(true);
   });
 
   it("does not emit brand concierge settings when component is disabled", async () => {
@@ -92,9 +88,7 @@ describe("Config brand concierge section", () => {
         instances: [
           {
             name: "alloy",
-            brandConcierge: {
-              stickyConversationSession: true,
-            },
+            stickyConversationSession: true,
           },
         ],
       }),
@@ -104,7 +98,7 @@ describe("Config brand concierge section", () => {
     await toggleComponent("brandConcierge");
 
     const settings = await extensionBridge.getSettings();
-    expect(settings.instances[0].brandConcierge).toBeUndefined();
+    expect(settings.instances[0].stickyConversationSession).toBeUndefined();
   });
 
   it("shows alert panel when brand concierge component is disabled", async () => {

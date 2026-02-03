@@ -519,14 +519,8 @@ const createExtensionManifest = ({ version }) => {
                       ],
                       additionalProperties: false,
                     },
-                    brandConcierge: {
-                      type: "object",
-                      properties: {
-                        stickyConversationSession: {
-                          type: "boolean",
-                        },
-                      },
-                      additionalProperties: false,
+                    stickyConversationSession: {
+                      type: "boolean",
                     },
                     personalizationStorageEnabled: {
                       type: "boolean",
