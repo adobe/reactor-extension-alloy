@@ -14,6 +14,7 @@ import { object, string } from "yup";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import validateDuplicateValue from "./utils/validateDuplicateValue";
+import { LIBRARY_TYPE_PREINSTALLED } from "../constants/libraryType";
 
 const DEFAULT_EDGE_DOMAIN_TEMPLATE = "{companyId}.data.adobedc.net";
 const LEGACY_DEFAULT_EDGE_DOMAIN = "edge.adobedc.net";
@@ -30,6 +31,10 @@ export const createNameValidation = () => {
         return !(value in window);
       },
     });
+};
+
+const wasPreinstalled = (initInfo) => {
+  return initInfo.settings?.librarySettings?.type === LIBRARY_TYPE_PREINSTALLED;
 };
 
 export const createUniqueNameTest = () => {
@@ -77,7 +82,7 @@ export const bridge = {
   getInitialInstanceValues: ({ initInfo, instanceSettings }) => {
     const instanceValues = {};
 
-    if (!instanceSettings.edgeDomain) {
+    if (!wasPreinstalled(initInfo) && !instanceSettings.edgeDomain) {
       instanceSettings.edgeDomain = LEGACY_DEFAULT_EDGE_DOMAIN;
     }
 

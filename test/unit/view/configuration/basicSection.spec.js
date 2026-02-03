@@ -290,10 +290,8 @@ describe("basicSection bridge", () => {
         name: "myinstance",
       });
     });
-  });
 
-  describe("integration scenarios", () => {
-    it("scenario: brand new extension with tenantId", () => {
+    it("autofills tenant-specific edgeDomain when no existing settings are provided", () => {
       const initInfo = {
         company: {
           orgId: "TEST_ORG@AdobeOrg",
@@ -311,25 +309,7 @@ describe("basicSection bridge", () => {
       expect(settings.edgeDomain).toBe("mytenant.data.adobedc.net");
     });
 
-    it("scenario: adding second instance to existing extension with tenantId", () => {
-      const initInfo = {
-        company: {
-          orgId: "TEST_ORG@AdobeOrg",
-          tenantId: "mytenant",
-        },
-      };
-
-      const defaults = bridge.getInstanceDefaults({ initInfo });
-      expect(defaults.edgeDomain).toBe("mytenant.data.adobedc.net");
-
-      const settings = bridge.getInstanceSettings({
-        initInfo,
-        instanceValues: defaults,
-      });
-      expect(settings.edgeDomain).toBe("mytenant.data.adobedc.net");
-    });
-
-    it("scenario: loading old instance without saved edgeDomain", () => {
+    it("autofills legacy edgeDomain when loading an existing instance with no saved value", () => {
       const initInfo = {
         company: {
           orgId: "TEST_ORG@AdobeOrg",
@@ -356,7 +336,7 @@ describe("basicSection bridge", () => {
       });
     });
 
-    it("scenario: loading instance with custom domain", () => {
+    it("does not overwrite saved custom edgeDomain", () => {
       const initInfo = {
         company: {
           orgId: "TEST_ORG@AdobeOrg",
@@ -381,7 +361,7 @@ describe("basicSection bridge", () => {
       expect(savedSettings.edgeDomain).toBe("custom.example.com");
     });
 
-    it("scenario: loading instance with tenant-specific domain saved", () => {
+    it("does not overwrite saved tenant-specific edgeDomain", () => {
       const initInfo = {
         company: {
           orgId: "TEST_ORG@AdobeOrg",
@@ -391,6 +371,35 @@ describe("basicSection bridge", () => {
       const instanceSettings = {
         name: "newinstance",
         edgeDomain: "mytenant.data.adobedc.net",
+      };
+
+      const values = bridge.getInitialInstanceValues({
+        initInfo,
+        instanceSettings,
+      });
+      expect(values.edgeDomain).toBe("mytenant.data.adobedc.net");
+
+      const savedSettings = bridge.getInstanceSettings({
+        initInfo,
+        instanceValues: values,
+      });
+      expect(savedSettings.edgeDomain).toBe("mytenant.data.adobedc.net");
+    });
+
+    it("autofills tenant-specific edgeDomain when switching to preinstalled library from self-hosted", () => {
+      const initInfo = {
+        company: {
+          orgId: "TEST_ORG@AdobeOrg",
+          tenantId: "mytenant",
+        },
+        settings: {
+          librarySettings: {
+            type: "preinstalled",
+          },
+        },
+      };
+      const instanceSettings = {
+        name: "myinstance",
       };
 
       const values = bridge.getInitialInstanceValues({
