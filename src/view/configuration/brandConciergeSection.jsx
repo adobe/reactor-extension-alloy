@@ -99,7 +99,7 @@ const BrandConciergeSection = ({ instanceFieldName }) => {
         <FormikCheckbox
           data-test-id="stickyConversationSessionField"
           name={`${instanceFieldName}.stickyConversationSession`}
-          description="Keep the Brand Concierge session sticky across different chats by writing a session cookie."
+          description="Persist Adobe Brand Concierge sessions across page loads using a session cookie."
           width="size-5000"
         >
           Sticky conversation session
