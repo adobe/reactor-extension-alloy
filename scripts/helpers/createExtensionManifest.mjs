@@ -519,6 +519,9 @@ const createExtensionManifest = ({ version }) => {
                       ],
                       additionalProperties: false,
                     },
+                    stickyConversationSession: {
+                      type: "boolean",
+                    },
                     personalizationStorageEnabled: {
                       type: "boolean",
                     },
