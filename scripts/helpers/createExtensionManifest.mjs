@@ -516,8 +516,14 @@ const createExtensionManifest = ({ version }) => {
                       ],
                       additionalProperties: false,
                     },
-                    stickyConversationSession: {
-                      type: "boolean",
+                    conversation: {
+                      stickyConversationSession: {
+                        type: "boolean",
+                      },
+                      streamTimeout: {
+                        type: "integer",
+                        minimum: 10000,
+                      },
                     },
                     personalizationStorageEnabled: {
                       type: "boolean",
