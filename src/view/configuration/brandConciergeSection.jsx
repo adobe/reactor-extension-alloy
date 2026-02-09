@@ -21,9 +21,13 @@ import Heading from "../components/typography/heading";
 import BetaBadge from "../components/betaBadge";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
+const STREAM_TIMEOUT = 10000;
 
 const getDefaultSettings = () => ({
-  stickyConversationSession: false,
+  conversation: {
+    stickyConversationSession: false,
+    streamTimeout: STREAM_TIMEOUT
+  }
 });
 
 export const bridge = {
@@ -32,38 +36,47 @@ export const bridge = {
   }),
 
   getInitialInstanceValues: ({ instanceSettings }) => {
-    const brandConciergeValues = {};
+    const conversation = {};
+
     copyPropertiesWithDefaultFallback({
-      toObj: brandConciergeValues,
+      toObj: conversation,
       fromObj: instanceSettings,
       defaultsObj: getDefaultSettings(),
-      keys: ["stickyConversationSession"],
+      keys: ["stickyConversationSession", "streamTimeout"],
     });
 
-    return brandConciergeValues;
+    return { conversation };
   },
 
   getInstanceSettings: ({ instanceValues, components }) => {
-    const instanceSettings = {};
+    const conversation = {};
 
     if (components.brandConcierge) {
       copyPropertiesIfValueDifferentThanDefault({
-        toObj: instanceSettings,
+        toObj: conversation,
         fromObj: instanceValues,
         defaultsObj: getDefaultSettings(),
-        keys: ["stickyConversationSession"],
+        keys: ["stickyConversationSession", "streamTimeout"],
       });
     }
 
-    return instanceSettings;
+    return conversation;
   },
 
   instanceValidationSchema: object().shape({
-    stickyConversationSession: boolean().when("$components.brandConcierge", {
+    conversation: object().when("$components.brandConcierge", {
       is: true,
-      then: (schema) => schema,
-    }),
-  }),
+      then: (conciergeSchema) =>
+        conciergeSchema.shape(
+          {
+            stickyConversationSession: boolean(),
+            streamTimeout: number().min(
+              10000,
+              "The stream timeout must be greater than 10000 milliseconds.",
+            ).default(10000)
+          })
+    })
+  })
 };
 
 const BrandConciergeSection = ({ instanceFieldName }) => {
@@ -98,12 +111,19 @@ const BrandConciergeSection = ({ instanceFieldName }) => {
       <FormElementContainer>
         <FormikCheckbox
           data-test-id="stickyConversationSessionField"
-          name={`${instanceFieldName}.stickyConversationSession`}
+          name={`${instanceFieldName}.conversation.stickyConversationSession`}
           description="Persist Adobe Brand Concierge sessions across page loads using a session cookie."
           width="size-5000"
         >
           Sticky conversation session
         </FormikCheckbox>
+        <FormikNumberField
+          data-test-id="streamTimeoutDataTestId"
+          label="Main ping interval"
+          name={`${instanceFieldName}.conversation.streamTimeout`}
+          description="If the conversation stream chunks are not returned in the timeout duration, a timeout error will be triggered."
+          width="size-5000"
+        />
       </FormElementContainer>
     </>
   );
