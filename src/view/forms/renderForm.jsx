@@ -9,42 +9,14 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { object } from "yup";
-import PropTypes from "prop-types";
-import ExtensionView from "../components/extensionView";
 import render from "../render";
-
-const FormExtensionView = ({
-  getInitialValues,
-  getSettings,
-  getValidationSchema,
-  Component,
-}) => {
-  return (
-    <ExtensionView
-      getInitialValues={getInitialValues}
-      getSettings={getSettings}
-      getFormikStateValidationSchema={getValidationSchema}
-      render={(props) => <Component {...props} />}
-    />
-  );
-};
-FormExtensionView.propTypes = {
-  getInitialValues: PropTypes.func,
-  getSettings: PropTypes.func,
-  getValidationSchema: PropTypes.object,
-  Component: PropTypes.func,
-};
+import generateComponentFromForm from "./generateComponentFromForm";
 
 /** @typedef {import("./form").Form} Form */
 /**
  * Render a form
  * @param {Form} form - The form to render.
  */
-export default ({ getValidationShape, ...formPart }) => {
-  formPart.getValidationSchema = ({ initInfo }) => {
-    const shape = getValidationShape({ initInfo, existingValidationShape: {} });
-    return object().shape(shape);
-  };
-  render(() => <FormExtensionView {...formPart} />);
+export default (args) => {
+  render(() => generateComponentFromForm(args));
 };

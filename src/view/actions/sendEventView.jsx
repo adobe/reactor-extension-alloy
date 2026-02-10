@@ -32,6 +32,7 @@ import eventTypes from "./constants/eventTypes";
 import textField from "../forms/textField";
 import { validateSurface } from "../utils/surfaceUtils";
 import copyPropertiesIfValueDifferentThanDefault from "../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
+import generateComponentFromForm from "../forms/generateComponentFromForm";
 
 const FETCH = "fetch";
 const COLLECT = "collect";
@@ -422,7 +423,7 @@ const datasetIdField = textField({
     "Send data to a different dataset than what's been provided in the datastream. Note: this field is deprecated. Use the 'Event dataset' field instead.",
 });
 
-export default form(
+const sendEventForm = form(
   {
     wrapGetInitialValues,
     wrapGetSettings,
@@ -602,3 +603,5 @@ export default form(
     ),
   ],
 );
+
+export default generateComponentFromForm(sendEventForm);

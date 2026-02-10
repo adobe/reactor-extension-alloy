@@ -14,4 +14,4 @@ import render from "../render";
 import SendEventView from "./sendEventView";
 
 // Do not include padding because the accordion already has padding.
-render(SendEventView, { noPadding: true });
+render(SendEventView);
