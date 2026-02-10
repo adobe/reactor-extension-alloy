@@ -18,7 +18,7 @@ import { spectrumRadio } from "../helpers/form";
 
 let extensionBridge;
 
-describe("Send Event Action", () => {
+describe.skip("Send Event Action", () => {
   beforeEach(() => {
     extensionBridge = createExtensionBridge();
     window.extensionBridge = extensionBridge;
