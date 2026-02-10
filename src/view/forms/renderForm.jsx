@@ -18,5 +18,5 @@ import generateComponentFromForm from "./generateComponentFromForm";
  * @param {Form} form - The form to render.
  */
 export default (args) => {
-  render(() => generateComponentFromForm(args));
+  render(generateComponentFromForm(args));
 };

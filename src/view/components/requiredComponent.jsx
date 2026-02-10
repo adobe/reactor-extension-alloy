@@ -57,6 +57,7 @@ const RequiredComponent = ({
           variant="notice"
           width="size-5000"
           data-test-id="preinstalledModeWarning"
+          marginBottom="size-100"
         >
           <Heading>Self-hosted Alloy instance detected</Heading>
           <Content>
