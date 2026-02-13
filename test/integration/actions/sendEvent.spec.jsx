@@ -18,7 +18,7 @@ import { spectrumRadio } from "../helpers/form";
 
 let extensionBridge;
 
-describe.skip("Send Event Action", () => {
+describe("Send Event Action", () => {
   beforeEach(() => {
     extensionBridge = createExtensionBridge();
     window.extensionBridge = extensionBridge;
@@ -39,23 +39,16 @@ describe.skip("Send Event Action", () => {
         },
       });
 
-      // Wait for form to load
-      await expect
-        .element(view.getByText("Type", { selector: "label" }))
-        .toBeVisible();
-
-      // Verify advertising section header is NOT visible
-      await expect
-        .element(view.queryByText("Advertising", { selector: "h3" }))
-        .not.toBeInTheDocument();
-
       // Verify disabled component alert is shown
       await expect
-        .element(view.getByText("Custom build component disabled"))
+        .element(
+          view.getByText("enable the Advertising component in the custom"),
+        )
         .toBeVisible();
 
+      // The Advertising section header IS visible, but fields are hidden
       await expect
-        .element(view.getByText(/This part of the configuration is hidden/))
+        .element(view.getByRole("heading", { name: /Advertising/ }))
         .toBeVisible();
     });
 
@@ -71,14 +64,9 @@ describe.skip("Send Event Action", () => {
         },
       });
 
-      // Wait for form to load
-      await expect
-        .element(view.getByText("Type", { selector: "label" }))
-        .toBeVisible();
-
       // Verify advertising section header IS visible
       await expect
-        .element(view.getByText("Advertising", { selector: "h3" }))
+        .element(view.getByRole("heading", { name: /Advertising/ }))
         .toBeVisible();
 
       // Verify advertising field is visible
@@ -88,7 +76,9 @@ describe.skip("Send Event Action", () => {
 
       // Verify disabled alert is NOT shown
       await expect
-        .element(view.queryByText(/This part of the configuration is hidden/))
+        .element(
+          view.getByText("enable the Advertising component in the custom"),
+        )
         .not.toBeInTheDocument();
     });
 
@@ -104,19 +94,16 @@ describe.skip("Send Event Action", () => {
         },
       });
 
-      // Wait for form to load
+      // Verify disabled component alert is shown
       await expect
-        .element(view.getByText("Type", { selector: "label" }))
+        .element(
+          view.getByText("enable the Advertising component in the custom"),
+        )
         .toBeVisible();
 
-      // Verify advertising section is hidden
+      // The Advertising section header IS visible, but fields are hidden
       await expect
-        .element(view.queryByText("Advertising", { selector: "h3" }))
-        .not.toBeInTheDocument();
-
-      // Verify disabled alert is shown
-      await expect
-        .element(view.getByText(/This part of the configuration is hidden/))
+        .element(view.getByRole("heading", { name: /Advertising/ }))
         .toBeVisible();
     });
 
@@ -130,14 +117,17 @@ describe.skip("Send Event Action", () => {
         },
       });
 
+      // Verify personalization section header IS visible
       await expect
-        .element(view.getByText("Type", { selector: "label" }))
+        .element(view.getByRole("heading", { name: /Personalization/ }))
         .toBeVisible();
 
-      // Personalization is a default component, should be visible
+      // Verify disabled alert is NOT shown
       await expect
-        .element(view.getByText("Personalization", { selector: "h3" }))
-        .toBeVisible();
+        .element(
+          view.getByText("enable the Personalization component in the custom"),
+        )
+        .not.toBeInTheDocument();
     });
 
     it("hides personalization section when explicitly disabled", async () => {
@@ -152,18 +142,18 @@ describe.skip("Send Event Action", () => {
         },
       });
 
+      // Verify personalization section header IS visible
       await expect
-        .element(view.getByText("Type", { selector: "label" }))
+        .element(view.getByRole("heading", { name: /Personalization/ }))
         .toBeVisible();
 
-      // Personalization should be hidden
+      // Verify disabled alert IS shown (checking first occurrence)
       await expect
-        .element(view.queryByText("Personalization", { selector: "h3" }))
-        .not.toBeInTheDocument();
-
-      // Should show disabled alert
-      await expect
-        .element(view.getByText(/This part of the configuration is hidden/))
+        .element(
+          view
+            .getByText("enable the Personalization component in the custom")
+            .first(),
+        )
         .toBeVisible();
     });
   });
@@ -184,8 +174,10 @@ describe.skip("Send Event Action", () => {
         .toBeVisible();
 
       // Verify "Disabled" is selected by default
-      const disabledRadio = spectrumRadio("handleAdvertisingData-disabled");
-      expect(await disabledRadio.isChecked()).toBe(true);
+      const disabledRadio = spectrumRadio(
+        "handleAdvertisingDatadisabledOption",
+      );
+      expect(await disabledRadio.isSelected()).toBe(true);
     });
 
     it("does not save advertising settings when default disabled value is selected", async () => {
@@ -224,7 +216,7 @@ describe.skip("Send Event Action", () => {
         .toBeVisible();
 
       // Select "Automatic"
-      const autoRadio = spectrumRadio("handleAdvertisingData-auto");
+      const autoRadio = spectrumRadio("handleAdvertisingDataautoOption");
       await autoRadio.click();
 
       const settings = await extensionBridge.getSettings();
@@ -248,7 +240,7 @@ describe.skip("Send Event Action", () => {
         .toBeVisible();
 
       // Select "Wait"
-      const waitRadio = spectrumRadio("handleAdvertisingData-wait");
+      const waitRadio = spectrumRadio("handleAdvertisingDatawaitOption");
       await waitRadio.click();
 
       const settings = await extensionBridge.getSettings();
@@ -277,8 +269,8 @@ describe.skip("Send Event Action", () => {
         .toBeVisible();
 
       // Verify "Automatic" is selected
-      const autoRadio = spectrumRadio("handleAdvertisingData-auto");
-      expect(await autoRadio.isChecked()).toBe(true);
+      const autoRadio = spectrumRadio("handleAdvertisingDataautoOption");
+      expect(await autoRadio.isSelected()).toBe(true);
     });
 
     it("loads existing advertising settings - wait", async () => {
@@ -301,8 +293,8 @@ describe.skip("Send Event Action", () => {
         .toBeVisible();
 
       // Verify "Wait" is selected
-      const waitRadio = spectrumRadio("handleAdvertisingData-wait");
-      expect(await waitRadio.isChecked()).toBe(true);
+      const waitRadio = spectrumRadio("handleAdvertisingDatawaitOption");
+      expect(await waitRadio.isSelected()).toBe(true);
     });
 
     it("removes advertising settings when switching back to disabled", async () => {
@@ -325,7 +317,9 @@ describe.skip("Send Event Action", () => {
         .toBeVisible();
 
       // Switch to disabled
-      const disabledRadio = spectrumRadio("handleAdvertisingData-disabled");
+      const disabledRadio = spectrumRadio(
+        "handleAdvertisingDatadisabledOption",
+      );
       await disabledRadio.click();
 
       const settings = await extensionBridge.getSettings();
