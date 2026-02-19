@@ -12,51 +12,47 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
+import { page } from "vitest/browser";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad } from "../helpers/ui";
-import {
-  spectrumTextField,
-  spectrumComboBox,
-  spectrumTab,
-  spectrumButton,
-} from "../helpers/form";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
 
-const developmentOverridesTab = spectrumTab("developmentOverridesTab");
-const stagingOverridesTab = spectrumTab("stagingOverridesTab");
-const productionOverridesTab = spectrumTab("productionOverridesTab");
+const developmentOverridesTab = page.getByTestId("developmentOverridesTab");
+const stagingOverridesTab = page.getByTestId("stagingOverridesTab");
+const productionOverridesTab = page.getByTestId("productionOverridesTab");
 
-const overridesEnabled = spectrumComboBox("overridesEnabled");
+const overridesEnabled = page.getByTestId("overridesEnabled");
 
-const analyticsEnabled = spectrumComboBox("analyticsEnabled");
+const analyticsEnabled = page.getByTestId("analyticsEnabled");
 const reportSuitesOverride = [0, 1, 2].map((index) =>
-  spectrumTextField(`reportSuitesOverride.${index}`),
+  page.getByTestId(`reportSuitesOverride.${index}`),
 );
 const removeReportSuite = [0, 1, 2].map((index) =>
-  spectrumButton(`removeReportSuite.${index}`),
+  page.getByTestId(`removeReportSuite.${index}`),
 );
-const addReportSuite = spectrumButton("addReportSuite");
+const addReportSuite = page.getByTestId("addReportSuite");
 
-const audienceManagerEnabled = spectrumComboBox("audienceManagerEnabled");
+const audienceManagerEnabled = page.getByTestId("audienceManagerEnabled");
 
-const idSyncContainerOverride = spectrumTextField("idSyncContainerOverride");
+const idSyncContainerOverride = page.getByTestId("idSyncContainerOverride");
 
-const experiencePlatformEnabled = spectrumComboBox("experiencePlatformEnabled");
-const eventDatasetOverride = spectrumTextField("eventDatasetOverride");
-const odeEnabled = spectrumComboBox("odeEnabled");
-const edgeSegmentationEnabled = spectrumComboBox("edgeSegmentationEnabled");
-const edgeDestinationsEnabled = spectrumComboBox("edgeDestinationsEnabled");
-const ajoEnabled = spectrumComboBox("ajoEnabled");
+const experiencePlatformEnabled = page.getByTestId("experiencePlatformEnabled");
+const eventDatasetOverride = page.getByTestId("eventDatasetOverride");
+const odeEnabled = page.getByTestId("odeEnabled");
+const edgeSegmentationEnabled = page.getByTestId("edgeSegmentationEnabled");
+const edgeDestinationsEnabled = page.getByTestId("edgeDestinationsEnabled");
+const ajoEnabled = page.getByTestId("ajoEnabled");
 
-const ssefEnabled = spectrumComboBox("ssefEnabled");
-const targetEnabled = spectrumComboBox("targetEnabled");
-const targetPropertyTokenOverride = spectrumTextField(
+const ssefEnabled = page.getByTestId("ssefEnabled");
+const targetEnabled = page.getByTestId("targetEnabled");
+const targetPropertyTokenOverride = page.getByTestId(
   "targetPropertyTokenOverride",
 );
+const copyFromDevelopmentButton = page.getByTestId("copyFromDevelopmentButton");
 
 const buildSettingsWithDummyDatastream = (o = {}) => {
   o.instances = o.instances || [];
@@ -172,55 +168,57 @@ describe("Config overrides section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    expect(await developmentOverridesTab.isSelected()).toBe(true);
-    expect(await overridesEnabled.getValue()).toBe("Enabled");
-    expect(await analyticsEnabled.getValue()).toBe("Enabled");
-    expect(await reportSuitesOverride[0].getValue()).toBe("reportSuite1");
-    expect(await reportSuitesOverride[1].getValue()).toBe("reportSuite2");
-    expect(await removeReportSuite[0].isDisabled()).toBe(false);
-    expect(await removeReportSuite[1].isDisabled()).toBe(false);
-    expect(await addReportSuite.isDisabled()).toBe(false);
-    expect(await audienceManagerEnabled.getValue()).toBe("Disabled");
-    expect(await idSyncContainerOverride.getValue()).toBe("1111");
-    expect(await experiencePlatformEnabled.getValue()).toBe("Enabled");
-    expect(await eventDatasetOverride.getValue()).toBe("aepDatasetId");
-    expect(await odeEnabled.getValue()).toBe("Disabled");
-    expect(await edgeSegmentationEnabled.getValue()).toBe("Disabled");
-    expect(await edgeDestinationsEnabled.getValue()).toBe("Disabled");
-    expect(await ajoEnabled.getValue()).toBe("Disabled");
-    expect(await ssefEnabled.getValue()).toBe("Disabled");
-    expect(await targetEnabled.getValue()).toBe("Enabled");
-    expect(await targetPropertyTokenOverride.getValue()).toBe(
-      "targetPropToken",
-    );
+    await expect.element(developmentOverridesTab).toBeSelected();
+    await expect.element(overridesEnabled).toHaveValue("Enabled");
+
+    await expect.element(reportSuitesOverride[0]).toHaveValue("reportSuite1");
+    await expect.element(reportSuitesOverride[1]).toHaveValue("reportSuite2");
+    await expect.element(removeReportSuite[0]).not.toBeDisabled();
+    await expect.element(removeReportSuite[1]).not.toBeDisabled();
+    await expect.element(addReportSuite).not.toBeDisabled();
+    await expect.element(audienceManagerEnabled).toHaveValue("Disabled");
+    await expect.element(idSyncContainerOverride).toHaveValue("1111");
+    await expect.element(experiencePlatformEnabled).toHaveValue("Enabled");
+    await expect.element(eventDatasetOverride).toHaveValue("aepDatasetId");
+    await expect.element(odeEnabled).toHaveValue("Disabled");
+    await expect.element(edgeSegmentationEnabled).toHaveValue("Disabled");
+    await expect.element(edgeDestinationsEnabled).toHaveValue("Disabled");
+    await expect.element(ajoEnabled).toHaveValue("Disabled");
+    await expect.element(ssefEnabled).toHaveValue("Disabled");
+    await expect.element(targetEnabled).toHaveValue("Enabled");
+    await expect
+      .element(targetPropertyTokenOverride)
+      .toHaveValue("targetPropToken");
 
     await productionOverridesTab.click();
-    expect(await overridesEnabled.getValue()).toBe("No override");
+    await expect.element(overridesEnabled).toHaveValue("No override");
 
     await stagingOverridesTab.click();
-    expect(await overridesEnabled.getValue()).toBe("Enabled");
-    expect(await analyticsEnabled.getValue()).toBe("Enabled");
-    expect(await reportSuitesOverride[0].getValue()).toBe(
-      "reportSuite1Staging",
-    );
-    expect(await reportSuitesOverride[1].getValue()).toBe(
-      "reportSuite2Staging",
-    );
-    expect(await removeReportSuite[0].isDisabled()).toBe(false);
-    expect(await removeReportSuite[1].isDisabled()).toBe(false);
-    expect(await addReportSuite.isDisabled()).toBe(false);
-    expect(await audienceManagerEnabled.getValue()).toBe("Disabled");
-    expect(await experiencePlatformEnabled.getValue()).toBe("Enabled");
-    expect(await eventDatasetOverride.getValue()).toBe("aepDatasetIdStaging");
-    expect(await odeEnabled.getValue()).toBe("Disabled");
-    expect(await edgeSegmentationEnabled.getValue()).toBe("Disabled");
-    expect(await edgeDestinationsEnabled.getValue()).toBe("Disabled");
-    expect(await ajoEnabled.getValue()).toBe("Disabled");
-    expect(await ssefEnabled.getValue()).toBe("Disabled");
-    expect(await targetEnabled.getValue()).toBe("Enabled");
-    expect(await targetPropertyTokenOverride.getValue()).toBe(
-      "targetPropTokenStaging",
-    );
+    await expect.element(overridesEnabled).toHaveValue("Enabled");
+    await expect.element(analyticsEnabled).toHaveValue("Enabled");
+    await expect
+      .element(reportSuitesOverride[0])
+      .toHaveValue("reportSuite1Staging");
+    await expect
+      .element(reportSuitesOverride[1])
+      .toHaveValue("reportSuite2Staging");
+    await expect.element(removeReportSuite[0]).not.toBeDisabled();
+    await expect.element(removeReportSuite[1]).not.toBeDisabled();
+    await expect.element(addReportSuite).not.toBeDisabled();
+    await expect.element(audienceManagerEnabled).toHaveValue("Disabled");
+    await expect.element(experiencePlatformEnabled).toHaveValue("Enabled");
+    await expect
+      .element(eventDatasetOverride)
+      .toHaveValue("aepDatasetIdStaging");
+    await expect.element(odeEnabled).toHaveValue("Disabled");
+    await expect.element(edgeSegmentationEnabled).toHaveValue("Disabled");
+    await expect.element(edgeDestinationsEnabled).toHaveValue("Disabled");
+    await expect.element(ajoEnabled).toHaveValue("Disabled");
+    await expect.element(ssefEnabled).toHaveValue("Disabled");
+    await expect.element(targetEnabled).toHaveValue("Enabled");
+    await expect
+      .element(targetPropertyTokenOverride)
+      .toHaveValue("targetPropTokenStaging");
   });
 
   it("updates form values and saves to settings", async () => {
@@ -230,11 +228,12 @@ describe("Config overrides section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    // Enable overrides
     await overridesEnabled.selectOption("Enabled");
+    await expect.element(overridesEnabled).toHaveValue("Enabled");
 
     // Enable Analytics and add report suites
     await analyticsEnabled.selectOption("Enabled");
+    await expect.element(analyticsEnabled).toHaveValue("Enabled");
     await reportSuitesOverride[0].fill("myReportSuite1");
     await addReportSuite.click();
     await reportSuitesOverride[1].fill("myReportSuite2");
@@ -403,20 +402,19 @@ describe("Config overrides section", () => {
 
     // Switch to production tab
     await productionOverridesTab.click();
-    expect(await overridesEnabled.getValue()).toBe("No override");
+    await expect.element(overridesEnabled).toHaveValue("No override");
 
     // Copy from development
-    const copyFromDevelopmentButton = spectrumButton(
-      "copyFromDevelopmentButton",
-    );
     await copyFromDevelopmentButton.click();
 
     // Verify the settings were copied
-    expect(await overridesEnabled.getValue()).toBe("Enabled");
-    expect(await analyticsEnabled.getValue()).toBe("Enabled");
-    expect(await reportSuitesOverride[0].getValue()).toBe("devReportSuite");
-    expect(await targetEnabled.getValue()).toBe("Enabled");
-    expect(await targetPropertyTokenOverride.getValue()).toBe("devTargetToken");
+    await expect.element(overridesEnabled).toHaveValue("Enabled");
+    await expect.element(analyticsEnabled).toHaveValue("Enabled");
+    await expect.element(reportSuitesOverride[0]).toHaveValue("devReportSuite");
+    await expect.element(targetEnabled).toHaveValue("Enabled");
+    await expect
+      .element(targetPropertyTokenOverride)
+      .toHaveValue("devTargetToken");
 
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].edgeConfigOverrides).toEqual({
@@ -449,15 +447,9 @@ describe("Config overrides section", () => {
     await waitForConfigurationViewToLoad(view);
 
     // Analytics, Target, and other override fields should not be visible
-    await expect
-      .element(view.getByTestId("analyticsEnabled"))
-      .not.toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("targetEnabled"))
-      .not.toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("experiencePlatformEnabled"))
-      .not.toBeInTheDocument();
+    await expect.element(analyticsEnabled).not.toBeInTheDocument();
+    await expect.element(targetEnabled).not.toBeInTheDocument();
+    await expect.element(experiencePlatformEnabled).not.toBeInTheDocument();
   });
 
   it("hides report suites when analytics is disabled", async () => {
@@ -474,23 +466,15 @@ describe("Config overrides section", () => {
     await analyticsEnabled.selectOption("Disabled");
 
     // Report suite fields should not be visible
-    await expect
-      .element(view.getByTestId("reportSuitesOverride.0"))
-      .not.toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("addReportSuite"))
-      .not.toBeInTheDocument();
+    await expect.element(reportSuitesOverride[0]).not.toBeInTheDocument();
+    await expect.element(addReportSuite).not.toBeInTheDocument();
 
     // Enable analytics
     await analyticsEnabled.selectOption("Enabled");
 
     // Report suite fields should now be visible
-    await expect
-      .element(view.getByTestId("reportSuitesOverride.0"))
-      .toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("addReportSuite"))
-      .toBeInTheDocument();
+    await expect.element(reportSuitesOverride[0]).toBeInTheDocument();
+    await expect.element(addReportSuite).toBeInTheDocument();
   });
 
   it("hides target property token when target is disabled", async () => {
@@ -507,17 +491,13 @@ describe("Config overrides section", () => {
     await targetEnabled.selectOption("Disabled");
 
     // Target property token field should not be visible
-    await expect
-      .element(view.getByTestId("targetPropertyTokenOverride"))
-      .not.toBeInTheDocument();
+    await expect.element(targetPropertyTokenOverride).not.toBeInTheDocument();
 
     // Enable target
     await targetEnabled.selectOption("Enabled");
 
     // Target property token field should now be visible
-    await expect
-      .element(view.getByTestId("targetPropertyTokenOverride"))
-      .toBeInTheDocument();
+    await expect.element(targetPropertyTokenOverride).toBeInTheDocument();
   });
 
   it("migrates from legacy settings", async () => {

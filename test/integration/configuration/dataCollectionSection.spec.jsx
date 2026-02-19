@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
-// eslint-disable-next-line import/no-unresolved
+
 import { page } from "vitest/browser";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
