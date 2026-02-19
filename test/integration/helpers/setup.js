@@ -12,6 +12,23 @@ governing permissions and limitations under the License.
 
 import { afterEach, afterAll } from "vitest";
 import { worker } from "./mocks/browser";
+import "./spectrumLocators";
+import "./spectrumMatchers";
+
+// React (dev) logs to console when an error boundary catches an error. In Vitest browser
+// mode, onConsoleLog in the config has no effect (logs stay in the browser). Override
+// here so we suppress only that message in test output; it still appears in a real browser.
+const reactErrorBoundaryMessage =
+  "React will try to recreate this component tree";
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  for (const arg of args) {
+    if (String(arg).includes(reactErrorBoundaryMessage)) {
+      return;
+    }
+  }
+  originalConsoleError.apply(console, args);
+};
 
 worker.start({
   onUnhandledRequest: "bypass",

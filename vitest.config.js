@@ -47,7 +47,8 @@ export default defineProject({
                 browser: "chromium",
               },
             ],
-            provider: playwright(),
+            // Timeout for locator actions (e.g. page.getByRole(...).click()).
+            provider: playwright({ actionTimeout: 1000 }),
             headless: true,
             screenshotFailures: false,
             locators: {
