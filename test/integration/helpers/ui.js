@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { expect } from "vitest";
-// eslint-disable-next-line import/no-unresolved
+
 import { page } from "vitest/browser";
 import { spectrumCheckbox } from "./form";
 

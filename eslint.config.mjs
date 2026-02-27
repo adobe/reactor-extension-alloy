@@ -140,6 +140,12 @@ export default [
     rules: {
       ...react.configs.recommended.rules,
       ...react.configs["jsx-runtime"].rules,
+      "import/no-unresolved": [
+        2,
+        {
+          ignore: ["vitest/browser"],
+        },
+      ],
     },
   },
   {
