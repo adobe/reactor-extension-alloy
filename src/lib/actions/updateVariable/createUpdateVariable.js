@@ -14,21 +14,23 @@ const { deletePath } = require("../../utils/pathUtils");
 
 module.exports =
   ({ variableStore, deepAssign }) =>
-  ({ data, dataElementId, transforms, customCode }, event) => {
+  ({ data, dataElementId, dataElementName, transforms, customCode }, event) => {
+    const storeKey = dataElementName || dataElementId;
+
     const existingValue = Object.keys(transforms || {}).reduce((memo, path) => {
       const { clear } = transforms[path];
       return clear ? deletePath(memo, path) : memo;
-    }, variableStore[dataElementId] || {});
+    }, variableStore[storeKey] || {});
 
-    variableStore[dataElementId] = deepAssign({}, existingValue, data);
+    variableStore[storeKey] = deepAssign({}, existingValue, data);
 
     if (customCode) {
-      customCode(variableStore[dataElementId], event);
+      customCode(variableStore[storeKey], event);
     }
 
     // This is a temporary fix to support the 'audienceManager' property that should be lowercased.
     // eslint-disable-next-line no-underscore-dangle
-    const adobe = variableStore[dataElementId]?.__adobe || {};
+    const adobe = variableStore[storeKey]?.__adobe || {};
     if (adobe.audienceManager) {
       adobe.audiencemanager = adobe.audienceManager;
       delete adobe.audienceManager;
