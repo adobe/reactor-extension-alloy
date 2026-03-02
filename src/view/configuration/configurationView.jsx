@@ -78,6 +78,9 @@ import ComponentsSection, {
 import PushNotificationsSection, {
   bridge as pushNotificationsBridge,
 } from "./pushNotificationsSection";
+import BrandConciergeSection, {
+  bridge as brandConciergeBridge,
+} from "./brandConciergeSection";
 import {
   LIBRARY_TYPE_MANAGED,
   LIBRARY_TYPE_PREINSTALLED,
@@ -99,6 +102,7 @@ const sectionBridges = [
   advancedSectionBridge,
   mediaBridge,
   pushNotificationsBridge,
+  brandConciergeBridge,
 ];
 
 /**
@@ -311,6 +315,9 @@ const InstancesSection = ({ initInfo, context, isPreinstalled }) => {
                             <PushNotificationsSection
                               instanceFieldName={instanceFieldName}
                             />
+                            <BrandConciergeSection
+                              instanceFieldName={instanceFieldName}
+                            />
                             <AdvertisingSection
                               instanceFieldName={instanceFieldName}
                               initInfo={initInfo}
@@ -463,7 +470,9 @@ const Configuration = ({ initInfo, context }) => {
                 description="Select whether Launch should bundle and manage the Alloy library, or use your own self-hosted alloy.js file that is already loaded on your page."
                 orientation="horizontal"
               >
-                <Radio value={LIBRARY_TYPE_MANAGED}>Managed by Launch</Radio>
+                <Radio value={LIBRARY_TYPE_MANAGED}>
+                  Managed by Adobe Tags
+                </Radio>
                 <Radio value={LIBRARY_TYPE_PREINSTALLED}>
                   Use a self-hosted alloy.js instance
                 </Radio>

@@ -161,7 +161,6 @@ const createEdgeConfigOverridesSchema = (isAction) => {
       properties: {
         enabled: enabledDisabledOrDataElement,
       },
-      required: ["enabled"],
     },
     // deprecated and a typo for com_adobe_audiencemanager, but required for backwards compatibility and upgrades
     com_adobe_audience_manager: {
@@ -169,14 +168,12 @@ const createEdgeConfigOverridesSchema = (isAction) => {
       properties: {
         enabled: enabledDisabledOrDataElement,
       },
-      required: ["enabled"],
     },
     com_adobe_launch_ssf: {
       type: "object",
       properties: {
         enabled: enabledDisabledOrDataElement,
       },
-      required: ["enabled"],
     },
   };
   const configOverridesWithDatastream = {
@@ -518,6 +515,15 @@ const createExtensionManifest = ({ version }) => {
                         "appId",
                       ],
                       additionalProperties: false,
+                    },
+                    conversation: {
+                      stickyConversationSession: {
+                        type: "boolean",
+                      },
+                      streamTimeout: {
+                        type: "integer",
+                        minimum: 10000,
+                      },
                     },
                     personalizationStorageEnabled: {
                       type: "boolean",

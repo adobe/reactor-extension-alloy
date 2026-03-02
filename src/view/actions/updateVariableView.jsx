@@ -90,6 +90,8 @@ const getInitialFormStateFromDataElement = async ({
       });
     } catch {
       context.schemaLoadFailed = true;
+      // If schema cannot be fetched (e.g., missing or access issue),
+      // allow the user to continue and select a different data element by bailing out gracefully.
       return {};
     }
     if (!signal || !signal.aborted) {
@@ -121,6 +123,7 @@ const getInitialFormStateFromDataElement = async ({
     context.schema = schema;
     context.dataElementId = dataElement.id;
 
+    // Temporary fix to support the audienceManager property that should have been lowercased.
     // eslint-disable-next-line no-underscore-dangle
     const adobe = data?.data?.__adobe || {};
     if (adobe.audienceManager) {
@@ -201,6 +204,8 @@ const getInitialValues =
           dataElementId,
         });
       } catch {
+        // Ignore the error and let the user select the data element.
+        // We null out the schema because in the sandbox init can be called multiple times.
         context.schema = null;
         context.dataElementId = null;
       }
@@ -220,6 +225,7 @@ const getInitialValues =
     if (dataElement) {
       const prefix = isDataVariable(dataElement) ? "data" : "xdm";
       const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
+        // The key for a root element transform is "".
         memo[key === "" ? prefix : `${prefix}.${key}`] = transforms[key];
         return memo;
       }, {});
@@ -245,6 +251,7 @@ const getSettings =
   (context) =>
   ({ values }) => {
     const { dataElement } = values;
+    const { id: dataElementId } = dataElement || {};
     const transforms = {};
 
     const { xdm, data } =
@@ -264,6 +271,7 @@ const getSettings =
 
     const response = {
       dataElementName: dataElement?.name,
+      dataElementId,
       data: xdm || data || {},
     };
 

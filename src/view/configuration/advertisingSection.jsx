@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useField, FieldArray } from "formik";
+import { useField, useFormikContext, FieldArray } from "formik";
 import {
   Content,
   Flex,
@@ -52,6 +52,8 @@ const getDefaultSettings = () => ({
       enabled: ENABLED,
     },
   ], // Always include one advertiser row by default for better UX
+  useManualEntry: false, // Tracks if API failed (not saved to settings)
+  validAdvertiserIds: [], // List of valid advertiser IDs from API (not saved to settings)
   id5PartnerId: "",
   rampIdJSPath: "",
 });
@@ -283,8 +285,44 @@ export const bridge = {
                 .of(
                   object()
                     .shape({
-                      advertiserId: string().required(
-                        "Please select an advertiser.",
+                      advertiserId: string().test(
+                        "advertiser-validation",
+                        function testAdvertiserValidation(value) {
+                          // Access advertising object from parent hierarchy
+                          // this.from[0] is advertiser setting object, this.from[1] is advertising object
+                          const advertisingObject = this.from?.[1]?.value;
+                          const useManualEntry =
+                            advertisingObject?.useManualEntry ?? false;
+                          const validAdvertiserIds =
+                            advertisingObject?.validAdvertiserIds ?? [];
+
+                          // Check if value is empty
+                          if (!value || value.trim() === "") {
+                            return this.createError({
+                              message: useManualEntry
+                                ? "Please enter an advertiser ID."
+                                : "Please select an advertiser.",
+                            });
+                          }
+
+                          // Skip validation for data elements
+                          if (value.includes("%")) {
+                            return true;
+                          }
+
+                          // If API succeeded and we have valid IDs, check if value matches
+                          if (
+                            !useManualEntry &&
+                            validAdvertiserIds.length > 0 &&
+                            !validAdvertiserIds.includes(value)
+                          ) {
+                            return this.createError({
+                              message: "Unrecognized advertiser ID.",
+                            });
+                          }
+
+                          return true;
+                        },
                       ),
                       enabled: lazy((value) =>
                         typeof value === "string" && value.includes("%")
@@ -376,6 +414,7 @@ export const bridge = {
 };
 
 const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
+  const { setFieldValue } = useFormikContext();
   const [{ value: advertisingComponentEnabled }] = useField(
     "components.advertising",
   );
@@ -420,17 +459,26 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
           response?.items || response?.data || response || [];
 
         setAdvertisers(advertisersList);
+        // API succeeded - use dropdown mode
+        setFieldValue(`${instanceFieldName}.advertising.useManualEntry`, false);
+        // Store valid advertiser IDs for validation
+        setFieldValue(
+          `${instanceFieldName}.advertising.validAdvertiserIds`,
+          advertisersList.map((adv) => adv.advertiser_id),
+        );
       } catch {
         setError(
           "Unable to retrieve advertiser data. Please contact your system administrator for assistance.",
         );
+        // API failed - use manual entry mode
+        setFieldValue(`${instanceFieldName}.advertising.useManualEntry`, true);
       } finally {
         setLoading(false);
       }
     };
 
     fetchAdvertisersData();
-  }, [advertisingComponentEnabled, initInfo]);
+  }, [advertisingComponentEnabled, initInfo, instanceFieldName, setFieldValue]);
 
   const disabledView = (
     <View width="size-6000">
@@ -457,38 +505,36 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
     </View>
   );
 
-  const noAdvertisersView = (
-    <InlineAlert variant="negative">
-      <Heading>No DSP Advertiser Found</Heading>
-      <Content>
-        No advertiser was found corresponding to this IMS org in Adobe
-        Advertising DSP. Please connect with your DSP account manager to add
-        advertiser to this IMS org in the DSP.
-      </Content>
-    </InlineAlert>
-  );
-
-  const failedAdvertisersView = (
-    <InlineAlert variant="negative">
-      <Heading>Failed to load DSP advertiser data</Heading>
-      <Content>
-        Unable to retrieve advertiser data from DSP. Please try after some time.
-        Please contact your DSP account manager if the issue persists.
-      </Content>
-    </InlineAlert>
-  );
-
   const getAdvertisersContent = () => {
-    if (error) {
-      return failedAdvertisersView;
-    }
+    // Show warning if API failed but still allow manual entry
+    const apiWarning = error && (
+      <InlineAlert variant="notice" marginBottom="size-200">
+        <Heading>Unable to load advertisers</Heading>
+        <Content>
+          Could not retrieve advertiser data from DSP. You can manually enter
+          advertiser IDs below.
+        </Content>
+      </InlineAlert>
+    );
 
-    if (!loading && advertisers.length === 0) {
-      return noAdvertisersView;
-    }
+    // Show info if no advertisers found but still allow manual entry
+    const noAdvertisersInfo = !loading &&
+      !error &&
+      advertisers.length === 0 && (
+        <InlineAlert variant="notice" marginBottom="size-200">
+          <Heading>No DSP Advertisers Found</Heading>
+          <Content>
+            No advertisers found for this IMS org in Adobe Advertising DSP. You
+            can manually enter advertiser IDs below, or contact your DSP account
+            manager to add advertisers.
+          </Content>
+        </InlineAlert>
+      );
 
     return (
       <div>
+        {apiWarning}
+        {noAdvertisersInfo}
         <LabeledValue label="Advertisers" />
         <FieldArray
           name={`${instanceFieldName}.advertising.advertiserSettings`}
@@ -499,30 +545,45 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                   {advertiserSettings.map((setting, index) => {
                     return (
                       <Flex key={index} alignItems="start">
-                        {/* Advertiser Dropdown */}
-                        <FormikKeyedComboBox
-                          data-test-id={`advertiser${index}Field`}
-                          name={`${instanceFieldName}.advertising.advertiserSettings.${index}.advertiserId`}
-                          width="size-4000"
-                          aria-label={`Advertiser ${index + 1}`}
-                          marginTop="size-0"
-                          marginEnd="size-200"
-                          items={advertisers}
-                          getKey={(advertiser) => advertiser.advertiser_id}
-                          getLabel={(advertiser) => advertiser.advertiser_name}
-                          isDisabled={loading || !!error}
-                          isRequired
-                          allowsCustomValue={false}
-                        >
-                          {(advertiser) => (
-                            <Item
-                              key={advertiser.advertiser_id}
-                              data-test-id={advertiser.advertiser_id}
-                            >
-                              {advertiser.advertiser_name}
-                            </Item>
-                          )}
-                        </FormikKeyedComboBox>
+                        {/* Show dropdown when API succeeds, text input when API fails */}
+                        {error ? (
+                          <FormikTextField
+                            data-test-id={`advertiser${index}Field`}
+                            name={`${instanceFieldName}.advertising.advertiserSettings.${index}.advertiserId`}
+                            UNSAFE_style={{ width: "224px" }}
+                            aria-label={`Advertiser ${index + 1}`}
+                            placeholder="Enter advertiser ID"
+                            marginTop="size-0"
+                            marginEnd="size-200"
+                            isRequired
+                          />
+                        ) : (
+                          <FormikKeyedComboBox
+                            data-test-id={`advertiser${index}Field`}
+                            name={`${instanceFieldName}.advertising.advertiserSettings.${index}.advertiserId`}
+                            width="size-4000"
+                            aria-label={`Advertiser ${index + 1}`}
+                            marginTop="size-0"
+                            marginEnd="size-200"
+                            items={advertisers}
+                            getKey={(advertiser) => advertiser.advertiser_id}
+                            getLabel={(advertiser) =>
+                              advertiser.advertiser_name
+                            }
+                            isDisabled={loading}
+                            isRequired
+                            allowsCustomValue
+                          >
+                            {(advertiser) => (
+                              <Item
+                                key={advertiser.advertiser_id}
+                                data-test-id={advertiser.advertiser_id}
+                              >
+                                {advertiser.advertiser_name}
+                              </Item>
+                            )}
+                          </FormikKeyedComboBox>
+                        )}
 
                         {/* Status Dropdown - Supports Data Elements */}
                         <DataElementSelector marginEnd="size-100">
@@ -626,8 +687,8 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
               {getAdvertisersContent()}
             </Flex>
 
-            {/* ID5 and RampID fields - shown only when DSP is enabled AND advertisers are available */}
-            {!loading && advertisers.length > 0 && !error && (
+            {/* ID5 and RampID fields - shown when DSP is enabled (regardless of API status) */}
+            {!loading && (
               <>
                 <Flex direction="row" gap="size-250">
                   <DataElementSelector>

@@ -16,7 +16,7 @@ import ExtensionView from "../components/extensionView";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 import Body from "../components/typography/body";
 import RequiredComponent from "../components/requiredComponent";
-import { PREINSTALLED } from "../../lib/constants/libraryType";
+import { LIBRARY_TYPE_PREINSTALLED } from "../constants/libraryType";
 
 const getInitialValues = ({ initInfo }) => {
   const { cacheId = crypto.randomUUID() } = initInfo.settings || {};
@@ -39,7 +39,8 @@ const EventMergeId = () => (
       const isNew = initInfoCache?.settings == null;
       if (
         isNew &&
-        (initInfoCache?.extensionSettings?.libraryCode?.type === PREINSTALLED ||
+        (initInfoCache?.extensionSettings?.libraryCode?.type ===
+          LIBRARY_TYPE_PREINSTALLED ||
           initInfoCache?.extensionSettings?.components?.eventMerge === false)
       ) {
         return false;
@@ -50,7 +51,8 @@ const EventMergeId = () => (
     render={({ initInfo }) => {
       initInfoCache = initInfo;
       const isPreinstalled =
-        initInfo?.extensionSettings?.libraryCode?.type === PREINSTALLED;
+        initInfo?.extensionSettings?.libraryCode?.type ===
+        LIBRARY_TYPE_PREINSTALLED;
 
       return isPreinstalled ? (
         <FillParentAndCenterChildren>

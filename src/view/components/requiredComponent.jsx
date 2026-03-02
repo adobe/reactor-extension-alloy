@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import PropTypes from "prop-types";
 import { InlineAlert, Content, Heading, Well } from "@adobe/react-spectrum";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
-import { PREINSTALLED } from "../../lib/constants/libraryType";
+import { LIBRARY_TYPE_PREINSTALLED } from "../constants/libraryType";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 import { isDefaultComponent } from "../utils/alloyComponents.mjs";
 
@@ -41,12 +41,14 @@ const RequiredComponent = ({
 }) => {
   const componentLabel = camelCaseToTitleCase(requiredComponent);
   const components = initInfo?.extensionSettings?.components || {};
-  const isComponentDisabled =
-    (Object.keys(components).includes(requiredComponent) &&
-      components[requiredComponent] === false) ||
-    !isDefaultComponent(requiredComponent);
+  const isComponentDisabled = Object.keys(components).includes(
+    requiredComponent,
+  )
+    ? components[requiredComponent] === false
+    : !isDefaultComponent(requiredComponent);
   const isPreinstalled =
-    initInfo?.extensionSettings?.libraryCode?.type === PREINSTALLED;
+    initInfo?.extensionSettings?.libraryCode?.type ===
+    LIBRARY_TYPE_PREINSTALLED;
 
   if (isPreinstalled) {
     const content = (
@@ -55,6 +57,7 @@ const RequiredComponent = ({
           variant="notice"
           width="size-5000"
           data-test-id="preinstalledModeWarning"
+          marginBottom="size-100"
         >
           <Heading>Self-hosted Alloy instance detected</Heading>
           <Content>

@@ -1,6 +1,6 @@
 {
   "name": "reactor-extension-alloy",
-  "version": "2.34.0-beta.44",
+  "version": "2.34.1",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
   "author": {
     "name": "Adobe",
@@ -37,6 +37,7 @@
     "test:integration": "pnpm exec playwright install chromium && vitest run --project=integration",
     "test:integration:watch": "pnpm exec playwright install chromium && vitest --project=integration",
     "test:integration:debug": "pnpm exec playwright install chromium && vitest --project=integration --browser=chromium --browser.provider=playwright --browser.headless=false",
+    "test:integration:debug:file": "pnpm exec playwright install chromium && vitest --browser=chromium --browser.provider=playwright --browser.headless=false --testTimeout=7000",
     "test:serve": "serve --cors --no-clipboard --no-port-switching -p \"$WEB_SERVER_PORT\" dist/view",
     "test:functional": "pnpm run build && WEB_SERVER_PORT=4000 conc --pad-prefix --kill-others --hide serve --names \"serve,test\" \"pnpm run test:serve\" \"testcafe playwright:chromium --esm test/functional/specs\"",
     "test:functional:component": "pnpm run build && WEB_SERVER_PORT=4000 conc --pad-prefix --kill-others --hide serve --names \"serve,test\" \"pnpm run test:serve\" \"testcafe --esm playwright:chromium test/functional/specs/component\"",
@@ -61,7 +62,7 @@
     ]
   },
   "dependencies": {
-    "@adobe/alloy": "2.30.1-beta.21",
+    "@adobe/alloy": "2.31.1",
     "@adobe/react-spectrum": "^3.45.0",
     "@react-stately/data": "^3.14.1",
     "@spectrum-icons/illustrations": "^3.6.26",
@@ -101,7 +102,7 @@
     "@vitest/browser-playwright": "^4.0.8",
     "@vitest/coverage-v8": "^4.0.8",
     "adm-zip": "^0.5.16",
-    "ajv": "^8.17.1",
+    "ajv": "^8.18.0",
     "ajv-draft-04": "^1.0.0",
     "ajv-formats": "^3.0.1",
     "babel-plugin-jsx-remove-data-test-id": "^3.0.0",

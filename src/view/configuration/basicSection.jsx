@@ -11,7 +11,13 @@ governing permissions and limitations under the License.
 */
 
 import { useField } from "formik";
-import { Flex, InlineAlert, Heading, Content } from "@adobe/react-spectrum";
+import {
+  Flex,
+  InlineAlert,
+  Heading,
+  Content,
+  Link,
+} from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
@@ -32,7 +38,19 @@ const BasicSection = ({ instanceFieldName, initInfo, isPreinstalled }) => {
           data-test-id="nameField"
           label="Name"
           name={`${instanceFieldName}.name`}
-          description="A global method on the window object will be created with this name."
+          description={
+            <>
+              Must match an instance name that is defined in the Web SDK{" "}
+              <Link
+                href="https://experienceleague.adobe.com/en/docs/experience-platform/collection/js/install/library"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                base code
+              </Link>{" "}
+              from your site.
+            </>
+          }
           isRequired
           width="size-5000"
         />

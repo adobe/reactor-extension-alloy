@@ -119,7 +119,7 @@ const PushNotificationsSection = ({ instanceFieldName }) => {
         isn&lsquo;t actively open. The service worker runs in the background and
         handles incoming notifications. See the documentation for{" "}
         <Link
-          href="https://experienceleague.adobe.com/en/docs/experience-platform/web-sdk/commands/configure/pushnotifications#install-the-service-worker-javascript"
+          href="https://experienceleague.adobe.com/en/docs/experience-platform/collection/js/commands/configure/pushnotifications#install-the-service-worker"
           target="_blank"
           rel="noopener noreferrer"
         >

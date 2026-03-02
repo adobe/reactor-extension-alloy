@@ -350,7 +350,9 @@ test.requestHooks(
 
     // Inline notice should be shown, but UI should allow selection
     await t
-      .expect(Selector("div").withText("Saved configuration not found").exists)
+      .expect(
+        Selector("div").withText("Could not load saved configuration").exists,
+      )
       .ok();
 
     // Select a valid sandbox and schema
