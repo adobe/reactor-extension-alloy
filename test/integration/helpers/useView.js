@@ -9,6 +9,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { userEvent } from "vitest/browser";
 import defer from "../../../src/view/utils/defer";
 import renderView from "./renderView";
 
@@ -65,7 +66,9 @@ export default async function useView(View) {
   driver.validate = (...args) => {
     return registration.validate(...args);
   };
-  driver.getSettings = (...args) => {
+  driver.getSettings = async (...args) => {
+    // Click on the body to give the onBlur event a chance to fire
+    await userEvent.click(document.body);
     return registration.getSettings(...args);
   };
 
