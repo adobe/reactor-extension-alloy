@@ -108,7 +108,7 @@ describe("Config Sandboxes", () => {
           /You do not have enough permissions to fetch the Prod sandbox configurations/i,
         ),
       )
-      .toBeInTheDocument();
+      .toBeVisible();
 
     await expect.element(datastreamDisabledFieldProduction).toBeDisabled();
     await expect
@@ -131,6 +131,6 @@ describe("Config Sandboxes", () => {
           name: /you do not have enough permissions to fetch the organization configurations/i,
         }),
       )
-      .toBeInTheDocument();
+      .toBeVisible();
   });
 });

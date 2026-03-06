@@ -14,16 +14,6 @@ import spectrum from "./spectrum.mjs";
 import overrideWrappers from "./overrideViewSelectors.mjs";
 
 export const addInstanceButton = spectrum.button("addInstanceButton");
-export const instancesTabs = spectrum.tabs();
-export const resourceUsageDialog = {
-  cancelDeleteInstanceButton: spectrum.button("cancelDeleteInstanceButton"),
-  confirmDeleteInstanceButton: spectrum.button("confirmDeleteInstanceButton"),
-};
-
-export const buildOptions = {
-  heading: spectrum.button("buildOptionsHeading"),
-  pushNotifications: spectrum.checkbox("pushNotificationsComponentCheckbox"),
-};
 
 const instances = [];
 

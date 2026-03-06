@@ -45,8 +45,8 @@ describe("Datastream Selector - Refresh Button", () => {
       name: "Refresh datastreams",
     });
 
-    await expect.element(refreshButton).toBeInTheDocument();
-    await expect.element(refreshButton.locator("svg")).toBeInTheDocument();
+    await expect.element(refreshButton).toBeVisible();
+    await expect.element(refreshButton.locator("svg")).toBeVisible();
   });
 
   it("refresh button is disabled while loading", async () => {
@@ -92,7 +92,7 @@ describe("Datastream Selector - Refresh Button", () => {
       name: "Refresh datastreams",
     });
 
-    await expect.element(datastreamField).toBeInTheDocument();
+    await expect.element(datastreamField).toBeVisible();
 
     await refreshButton.click();
 
@@ -104,7 +104,7 @@ describe("Datastream Selector - Refresh Button", () => {
       .toBe(false);
 
     // Verify the field is still functional after refresh
-    await expect.element(datastreamField).toBeInTheDocument();
+    await expect.element(datastreamField).toBeVisible();
   });
 
   it("refresh button works independently for each environment", async () => {
@@ -124,7 +124,7 @@ describe("Datastream Selector - Refresh Button", () => {
       name: /Refresh datastreams/,
     });
 
-    await expect.element(allRefreshButtons.nth(0)).toBeInTheDocument();
+    await expect.element(allRefreshButtons.nth(0)).toBeVisible();
 
     const firstRefreshButton = allRefreshButtons.nth(0);
     await firstRefreshButton.click();

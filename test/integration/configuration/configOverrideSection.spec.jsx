@@ -453,8 +453,8 @@ describe("Config overrides section", () => {
     await analyticsEnabled.selectOption("Enabled");
 
     // Report suite fields should now be visible
-    await expect.element(reportSuitesOverride[0]).toBeInTheDocument();
-    await expect.element(addReportSuite).toBeInTheDocument();
+    await expect.element(reportSuitesOverride[0]).toBeVisible();
+    await expect.element(addReportSuite).toBeVisible();
   });
 
   it("hides target property token when target is disabled", async () => {
@@ -473,7 +473,7 @@ describe("Config overrides section", () => {
     await targetEnabled.selectOption("Enabled");
 
     // Target property token field should now be visible
-    await expect.element(targetPropertyTokenOverride).toBeInTheDocument();
+    await expect.element(targetPropertyTokenOverride).toBeVisible();
   });
 
   it("migrates from legacy settings", async () => {

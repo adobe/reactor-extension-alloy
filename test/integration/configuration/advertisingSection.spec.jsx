@@ -39,14 +39,14 @@ let advertisingComponentCheckbox;
  * Wait for advertiser fields to load after enabling DSP
  */
 const waitForAdvertisersToLoad = async () => {
-  await expect.element(advertiser0Field).toBeInTheDocument({ timeout: 10000 });
+  await expect.element(advertiser0Field).toBeVisible({ timeout: 10000 });
 };
 
 /**
  * Wait for ID5 and RampID fields to appear (they show after advertisers load)
  */
 const waitForOptionalFieldsToLoad = async () => {
-  await expect.element(id5PartnerIdField).toBeInTheDocument({ timeout: 10000 });
+  await expect.element(id5PartnerIdField).toBeVisible({ timeout: 10000 });
 };
 
 describe("Config advertising section", () => {
@@ -438,10 +438,10 @@ describe("Config advertising section", () => {
     await waitForOptionalFieldsToLoad();
 
     // Verify DSP-specific fields are now visible
-    await expect.element(addAdvertiserButton).toBeInTheDocument();
-    await expect.element(id5PartnerIdField).toBeInTheDocument();
-    await expect.element(rampIdJSPathField).toBeInTheDocument();
-    await expect.element(advertiser0Field).toBeInTheDocument();
+    await expect.element(addAdvertiserButton).toBeVisible();
+    await expect.element(id5PartnerIdField).toBeVisible();
+    await expect.element(rampIdJSPathField).toBeVisible();
+    await expect.element(advertiser0Field).toBeVisible();
   });
 
   it("shows warning alert when no advertisers are found but allows manual entry", async () => {
@@ -533,10 +533,10 @@ describe("Config advertising section", () => {
     await waitForAdvertisersToLoad();
 
     // Verify add advertiser button is visible
-    await expect.element(addAdvertiserButton).toBeInTheDocument();
+    await expect.element(addAdvertiserButton).toBeVisible();
 
     // Verify one advertiser row is visible by default
-    await expect.element(advertiser0Field).toBeInTheDocument();
+    await expect.element(advertiser0Field).toBeVisible();
   });
 
   it("allows adding multiple advertisers", async () => {

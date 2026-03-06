@@ -257,7 +257,7 @@ describe("Config data collection section", () => {
   it("shows and hides download link qualifier based on download link enabled", async () => {
     await driver.init(buildSettings());
 
-    await expect.element(downloadLinkQualifierField).toBeInTheDocument();
+    await expect.element(downloadLinkQualifierField).toBeVisible();
 
     await downloadLinkEnabledField.click();
 
@@ -267,7 +267,7 @@ describe("Config data collection section", () => {
   it("shows and hides event grouping options based on internal link enabled", async () => {
     await driver.init(buildSettings());
 
-    await expect.element(eventGroupingNoneField).toBeInTheDocument();
+    await expect.element(eventGroupingNoneField).toBeVisible();
 
     await internalLinkEnabledField.click();
 
@@ -381,16 +381,12 @@ describe("Config data collection section", () => {
 
     await contextGranularitySpecificField.click();
 
-    await expect.element(contextWebField).toBeInTheDocument();
-    await expect.element(contextDeviceField).toBeInTheDocument();
-    await expect.element(contextEnvironmentField).toBeInTheDocument();
-    await expect.element(contextPlaceContextField).toBeInTheDocument();
-    await expect
-      .element(contextHighEntropyUserAgentHintsField)
-      .toBeInTheDocument();
-    await expect
-      .element(contextOneTimeAnalyticsReferrerField)
-      .toBeInTheDocument();
+    await expect.element(contextWebField).toBeVisible();
+    await expect.element(contextDeviceField).toBeVisible();
+    await expect.element(contextEnvironmentField).toBeVisible();
+    await expect.element(contextPlaceContextField).toBeVisible();
+    await expect.element(contextHighEntropyUserAgentHintsField).toBeVisible();
+    await expect.element(contextOneTimeAnalyticsReferrerField).toBeVisible();
   });
 
   it("saves non-default context when specific is selected", async () => {
