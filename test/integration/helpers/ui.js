@@ -13,10 +13,9 @@ governing permissions and limitations under the License.
 import { expect } from "vitest";
 
 import { page } from "vitest/browser";
-import { spectrumCheckbox } from "./form";
 
-export const waitForConfigurationViewToLoad = async (screen) => {
-  await expect.element(screen.getByText("SDK instances")).toBeVisible();
+export const waitForConfigurationViewToLoad = async () => {
+  await expect.element(page.getByText("SDK instances")).toBeVisible();
 };
 
 /**
@@ -34,8 +33,5 @@ export const expandAccordion = async (name) => {
 
 export const toggleComponent = async (component) => {
   await expandAccordion("Build options");
-  const pushNotificationsCheckbox = spectrumCheckbox(
-    `${component}ComponentCheckbox`,
-  );
-  await pushNotificationsCheckbox.click();
+  await page.getByTestId(`${component}ComponentCheckbox`).click();
 };

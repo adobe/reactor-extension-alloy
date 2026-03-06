@@ -17,14 +17,53 @@ import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad, toggleComponent } from "../helpers/ui";
-import {
-  spectrumCheckbox,
-  spectrumTextField,
-  spectrumRadio,
-} from "../helpers/form";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
+
+const internalLinkEnabledField = page.getByTestId("internalLinkEnabledField");
+const externalLinkEnabledField = page.getByTestId("externalLinkEnabledField");
+const downloadLinkEnabledField = page.getByTestId("downloadLinkEnabledField");
+const downloadLinkQualifierField = page.getByTestId(
+  "downloadLinkQualifierField",
+);
+const contextGranularitySpecificField = page.getByTestId(
+  "contextGranularitySpecificField",
+);
+const contextGranularityAllField = page.getByTestId(
+  "contextGranularityAllField",
+);
+const contextWebField = page.getByTestId("contextWebField");
+const contextDeviceField = page.getByTestId("contextDeviceField");
+const contextEnvironmentField = page.getByTestId("contextEnvironmentField");
+const contextPlaceContextField = page.getByTestId("contextPlaceContextField");
+const contextHighEntropyUserAgentHintsField = page.getByTestId(
+  "contextHighEntropyUserAgentHintsField",
+);
+const contextOneTimeAnalyticsReferrerField = page.getByTestId(
+  "contextOneTimeAnalyticsReferrerField",
+);
+const eventGroupingNoneField = page.getByTestId("eventGroupingNoneField");
+const eventGroupingSessionStorageField = page.getByTestId(
+  "eventGroupingSessionStorageField",
+);
+const eventGroupingMemoryField = page.getByTestId("eventGroupingMemoryField");
+const downloadLinkQualifierTestButton = page.getByTestId(
+  "downloadLinkQualifierTestButton",
+);
+const downloadLinkQualifierRestoreButton = page.getByTestId(
+  "downloadLinkQualifierRestoreButton",
+);
+const onBeforeEventSendEditButton = page.getByTestId(
+  "onBeforeEventSendEditButton",
+);
+const filterClickDetailsEditButton = page.getByTestId(
+  "filterClickDetailsEditButton",
+);
+
+const eventGroupingRadio = (name) =>
+  page.getByTestId(`eventGrouping${name}Field`);
+const contextCheckbox = (name) => page.getByTestId(`context${name}Field`);
 
 describe("Config data collection section", () => {
   beforeEach(() => {
@@ -37,7 +76,7 @@ describe("Config data collection section", () => {
   });
 
   it("sets form values from settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -54,58 +93,35 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const internalLinkEnabledField = spectrumCheckbox(
-      "internalLinkEnabledField",
-    );
-    expect(await internalLinkEnabledField.isChecked()).toBe(true);
+    await expect.element(internalLinkEnabledField).toBeChecked();
 
-    let fields = [
-      ["None", true],
-      ["SessionStorage", false],
-      ["Memory", false],
-    ];
+    await expect.element(eventGroupingRadio("None")).toBeChecked();
+    await expect
+      .element(eventGroupingRadio("SessionStorage"))
+      .not.toBeChecked();
+    await expect.element(eventGroupingRadio("Memory")).not.toBeChecked();
 
-    for (const [fieldName, expectedValue] of fields) {
-      const field = spectrumRadio(`eventGrouping${fieldName}Field`);
-      // eslint-disable-next-line no-await-in-loop
-      expect(await field.isSelected()).toBe(expectedValue);
-    }
-    const externalLinkEnabledField = spectrumCheckbox(
-      "externalLinkEnabledField",
-    );
-    expect(await externalLinkEnabledField.isChecked()).toBe(true);
+    await expect.element(externalLinkEnabledField).toBeChecked();
+    await expect.element(downloadLinkEnabledField).toBeChecked();
 
-    const downloadLinkEnabledField = spectrumCheckbox(
-      "downloadLinkEnabledField",
-    );
-    expect(await downloadLinkEnabledField.isChecked()).toBe(true);
+    await expect.element(contextGranularitySpecificField).toBeChecked();
 
-    // Check that context is set to specific
-    const contextGranularitySpecificField = page.getByTestId(
-      "contextGranularitySpecificField",
-    );
-    expect(contextGranularitySpecificField.element().checked).toBe(true);
-
-    fields = [
-      ["Web", true],
-      ["Device", true],
-      ["Environment", false],
-      ["PlaceContext", false],
-      ["HighEntropyUserAgentHints", false],
-      ["OneTimeAnalyticsReferrer", false],
-    ];
-
-    for (const [fieldName, expectedValue] of fields) {
-      const field = spectrumCheckbox(`context${fieldName}Field`);
-      // eslint-disable-next-line no-await-in-loop
-      expect(await field.isChecked()).toBe(expectedValue);
-    }
+    await expect.element(contextCheckbox("Web")).toBeChecked();
+    await expect.element(contextCheckbox("Device")).toBeChecked();
+    await expect.element(contextCheckbox("Environment")).not.toBeChecked();
+    await expect.element(contextCheckbox("PlaceContext")).not.toBeChecked();
+    await expect
+      .element(contextHighEntropyUserAgentHintsField)
+      .not.toBeChecked();
+    await expect
+      .element(contextOneTimeAnalyticsReferrerField)
+      .not.toBeChecked();
   });
 
   it("sets form values from settings with event grouping session storage", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -121,28 +137,17 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const internalLinkEnabledField = spectrumCheckbox(
-      "internalLinkEnabledField",
-    );
-    expect(await internalLinkEnabledField.isChecked()).toBe(true);
+    await expect.element(internalLinkEnabledField).toBeChecked();
 
-    const fields = [
-      ["None", false],
-      ["SessionStorage", true],
-      ["Memory", false],
-    ];
-
-    for (const [fieldName, expectedValue] of fields) {
-      const field = spectrumRadio(`eventGrouping${fieldName}Field`);
-      // eslint-disable-next-line no-await-in-loop
-      expect(await field.isSelected()).toBe(expectedValue);
-    }
+    await expect.element(eventGroupingRadio("None")).not.toBeChecked();
+    await expect.element(eventGroupingRadio("SessionStorage")).toBeChecked();
+    await expect.element(eventGroupingRadio("Memory")).not.toBeChecked();
   });
 
   it("sets form values from settings with event grouping memory", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -157,28 +162,19 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const internalLinkEnabledField = spectrumCheckbox(
-      "internalLinkEnabledField",
-    );
-    expect(await internalLinkEnabledField.isChecked()).toBe(true);
+    await expect.element(internalLinkEnabledField).toBeChecked();
 
-    const fields = [
-      ["None", false],
-      ["SessionStorage", false],
-      ["Memory", true],
-    ];
-
-    for (const [fieldName, expectedValue] of fields) {
-      const field = spectrumRadio(`eventGrouping${fieldName}Field`);
-      // eslint-disable-next-line no-await-in-loop
-      expect(await field.isSelected()).toBe(expectedValue);
-    }
+    await expect.element(eventGroupingRadio("None")).not.toBeChecked();
+    await expect
+      .element(eventGroupingRadio("SessionStorage"))
+      .not.toBeChecked();
+    await expect.element(eventGroupingRadio("Memory")).toBeChecked();
   });
 
   it("sets form values from settings with download link enabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -191,21 +187,16 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const downloadsLinkEnabledField = spectrumCheckbox(
-      "downloadLinkEnabledField",
-    );
-    expect(await downloadsLinkEnabledField.isChecked()).toBe(true);
-
-    const downloadLinkQualifierField = spectrumTextField(
-      "downloadLinkQualifierField",
-    );
-    expect(await downloadLinkQualifierField.getValue()).toBe("\\.(exe|zip)$");
+    await expect.element(downloadLinkEnabledField).toBeChecked();
+    await expect
+      .element(downloadLinkQualifierField)
+      .toHaveValue("\\.(exe|zip)$");
   });
 
   it("sets form values from settings with all link types disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -218,26 +209,15 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const internalLinkEnabledField = spectrumCheckbox(
-      "internalLinkEnabledField",
-    );
-    expect(await internalLinkEnabledField.isChecked()).toBe(false);
-
-    const externalLinkEnabledField = spectrumCheckbox(
-      "externalLinkEnabledField",
-    );
-    expect(await externalLinkEnabledField.isChecked()).toBe(false);
-
-    const downloadLinkEnabledField = spectrumCheckbox(
-      "downloadLinkEnabledField",
-    );
-    expect(await downloadLinkEnabledField.isChecked()).toBe(false);
+    await expect.element(internalLinkEnabledField).not.toBeChecked();
+    await expect.element(externalLinkEnabledField).not.toBeChecked();
+    await expect.element(downloadLinkEnabledField).not.toBeChecked();
   });
 
   it("sets form values from settings with some link types disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -253,54 +233,27 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const internalLinkEnabledField = spectrumCheckbox(
-      "internalLinkEnabledField",
-    );
-    expect(await internalLinkEnabledField.isChecked()).toBe(true);
-
-    const externalLinkEnabledField = spectrumCheckbox(
-      "externalLinkEnabledField",
-    );
-    expect(await externalLinkEnabledField.isChecked()).toBe(false);
-
-    const downloadLinkEnabledField = spectrumCheckbox(
-      "downloadLinkEnabledField",
-    );
-    expect(await downloadLinkEnabledField.isChecked()).toBe(false);
+    await expect.element(internalLinkEnabledField).toBeChecked();
+    await expect.element(externalLinkEnabledField).not.toBeChecked();
+    await expect.element(downloadLinkEnabledField).not.toBeChecked();
   });
 
   it("updates form values and saves to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Disable external link collection (from default true to false)
-    const externalLinkEnabledField = spectrumCheckbox(
-      "externalLinkEnabledField",
-    );
-    await externalLinkEnabledField.uncheck();
+    await externalLinkEnabledField.click();
+    await downloadLinkEnabledField.click();
 
-    // Disable download link collection (from default true to false)
-    const downloadLinkEnabledField = spectrumCheckbox(
-      "downloadLinkEnabledField",
-    );
-    await downloadLinkEnabledField.uncheck();
-
-    // Change context to specific
-    const contextGranularitySpecificField = page.getByTestId(
-      "contextGranularitySpecificField",
-    );
     await contextGranularitySpecificField.click();
 
-    // Uncheck web context
-    const contextWebField = spectrumCheckbox("contextWebField");
-    await contextWebField.uncheck();
+    await contextWebField.click();
 
-    // Get settings and verify
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].clickCollection.externalLinkEnabled).toBe(
       false,
@@ -316,67 +269,50 @@ describe("Config data collection section", () => {
   });
 
   it("shows and hides download link qualifier based on download link enabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Initially, download link is enabled by default, so qualifier should be visible
     await expect
-      .element(view.getByTestId("downloadLinkQualifierField"))
+      .element(page.getByTestId("downloadLinkQualifierField"))
       .toBeInTheDocument();
 
-    // Disable download link collection
-    const downloadLinkEnabledField = spectrumCheckbox(
-      "downloadLinkEnabledField",
-    );
-    await downloadLinkEnabledField.uncheck();
+    await downloadLinkEnabledField.click();
 
-    // Qualifier field should not be visible
     await expect
-      .element(view.getByTestId("downloadLinkQualifierField"))
+      .element(page.getByTestId("downloadLinkQualifierField"))
       .not.toBeInTheDocument();
   });
 
   it("shows and hides event grouping options based on internal link enabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Initially, internal link is enabled by default, so event grouping should be visible
     await expect
-      .element(view.getByTestId("eventGroupingNoneField"))
+      .element(page.getByTestId("eventGroupingNoneField"))
       .toBeInTheDocument();
 
-    // Disable internal link collection
-    const internalLinkEnabledField = spectrumCheckbox(
-      "internalLinkEnabledField",
-    );
-    await internalLinkEnabledField.uncheck();
+    await internalLinkEnabledField.click();
 
-    // Event grouping options should not be visible
     await expect
-      .element(view.getByTestId("eventGroupingNoneField"))
+      .element(page.getByTestId("eventGroupingNoneField"))
       .not.toBeInTheDocument();
   });
 
   it("saves event grouping settings when session storage is selected", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Select session storage event grouping
-    const eventGroupingSessionStorageField = page.getByTestId(
-      "eventGroupingSessionStorageField",
-    );
     await eventGroupingSessionStorageField.click();
 
-    // Get settings and verify
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].clickCollection.eventGroupingEnabled).toBe(
       true,
@@ -387,31 +323,25 @@ describe("Config data collection section", () => {
   });
 
   it("saves event grouping settings when memory is selected", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Select memory event grouping
-    const eventGroupingMemoryField = page.getByTestId(
-      "eventGroupingMemoryField",
-    );
     await eventGroupingMemoryField.click();
 
-    // Get settings and verify
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].clickCollection.eventGroupingEnabled).toBe(
       true,
     );
-    // sessionStorageEnabled should not be present when false (it's the default)
     expect(
       settings.instances[0].clickCollection.sessionStorageEnabled,
     ).toBeUndefined();
   });
 
   it("does not emit click collection settings when activity collector is disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -430,7 +360,7 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
     await toggleComponent("activityCollector");
 
     const settings = await extensionBridge.getSettings();
@@ -440,72 +370,48 @@ describe("Config data collection section", () => {
   });
 
   it("hides click collection fields and shows alert when activity collector is disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings({}));
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
     await toggleComponent("activityCollector");
 
-    // Should now show alert panel
     await expect
       .element(
-        view.getByRole("heading", {
+        page.getByRole("heading", {
           name: /activity collector component disabled/i,
         }),
       )
       .toBeVisible();
 
-    // Checkboxes should not be present
     await expect
-      .element(view.getByTestId("internalLinkEnabledField"))
+      .element(page.getByTestId("internalLinkEnabledField"))
       .not.toBeInTheDocument();
   });
 
   it("shows default values when no settings are provided", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Default for internal link is true
-    const internalLinkEnabledField = spectrumCheckbox(
-      "internalLinkEnabledField",
-    );
-    expect(await internalLinkEnabledField.isChecked()).toBe(true);
+    await expect.element(internalLinkEnabledField).toBeChecked();
+    await expect.element(externalLinkEnabledField).toBeChecked();
+    await expect.element(downloadLinkEnabledField).toBeChecked();
 
-    // Default for external link is true
-    const externalLinkEnabledField = spectrumCheckbox(
-      "externalLinkEnabledField",
-    );
-    expect(await externalLinkEnabledField.isChecked()).toBe(true);
-
-    // Default for download link is true
-    const downloadLinkEnabledField = spectrumCheckbox(
-      "downloadLinkEnabledField",
-    );
-    expect(await downloadLinkEnabledField.isChecked()).toBe(true);
-
-    // Default for context granularity is "all"
-    const contextGranularityAllField = page.getByTestId(
-      "contextGranularityAllField",
-    );
-    expect(contextGranularityAllField.element().checked).toBe(true);
-
-    // Default for event grouping is "none"
-    const eventGroupingNoneField = page.getByTestId("eventGroupingNoneField");
-    expect(eventGroupingNoneField.element().checked).toBe(true);
+    await expect.element(contextGranularityAllField).toBeChecked();
+    await expect.element(eventGroupingNoneField).toBeChecked();
   });
 
   it("does not save default values to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Default values should not be saved
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].onBeforeEventSend).toBeUndefined();
     expect(settings.instances[0].clickCollection).toBeUndefined();
@@ -514,92 +420,66 @@ describe("Config data collection section", () => {
   });
 
   it("updates download link qualifier", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Change download link qualifier
-    const downloadLinkQualifierField = spectrumTextField(
-      "downloadLinkQualifierField",
-    );
     await downloadLinkQualifierField.fill("\\.(zip|exe)$");
 
-    // Get settings and verify
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].downloadLinkQualifier).toBe("\\.(zip|exe)$");
   });
 
   it("shows context checkboxes when specific context is selected", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Initially, context granularity is "all", so checkboxes should not be visible
     await expect
-      .element(view.getByTestId("contextWebField"))
+      .element(page.getByTestId("contextWebField"))
       .not.toBeInTheDocument();
 
-    // Change to specific context
-    const contextGranularitySpecificField = page.getByTestId(
-      "contextGranularitySpecificField",
-    );
     await contextGranularitySpecificField.click();
 
-    // Context checkboxes should now be visible
     await expect
-      .element(view.getByTestId("contextWebField"))
+      .element(page.getByTestId("contextWebField"))
       .toBeInTheDocument();
     await expect
-      .element(view.getByTestId("contextDeviceField"))
+      .element(page.getByTestId("contextDeviceField"))
       .toBeInTheDocument();
     await expect
-      .element(view.getByTestId("contextEnvironmentField"))
+      .element(page.getByTestId("contextEnvironmentField"))
       .toBeInTheDocument();
     await expect
-      .element(view.getByTestId("contextPlaceContextField"))
+      .element(page.getByTestId("contextPlaceContextField"))
       .toBeInTheDocument();
     await expect
-      .element(view.getByTestId("contextHighEntropyUserAgentHintsField"))
+      .element(page.getByTestId("contextHighEntropyUserAgentHintsField"))
       .toBeInTheDocument();
     await expect
-      .element(view.getByTestId("contextOneTimeAnalyticsReferrerField"))
+      .element(page.getByTestId("contextOneTimeAnalyticsReferrerField"))
       .toBeInTheDocument();
   });
 
   it("saves non-default context when specific is selected", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Change to specific context
-    const contextGranularitySpecificField = page.getByTestId(
-      "contextGranularitySpecificField",
-    );
     await contextGranularitySpecificField.click();
 
-    // Uncheck environment
-    const contextEnvironmentField = spectrumCheckbox("contextEnvironmentField");
-    await contextEnvironmentField.uncheck();
+    await contextEnvironmentField.click();
 
-    // Check high entropy
-    const contextHighEntropyField = spectrumCheckbox(
-      "contextHighEntropyUserAgentHintsField",
-    );
-    await contextHighEntropyField.check();
+    await contextHighEntropyUserAgentHintsField.click();
 
-    // Check Analytics Referrer
-    const contextOneTimeAnalyticsReferrerField = spectrumCheckbox(
-      "contextOneTimeAnalyticsReferrerField",
-    );
-    await contextOneTimeAnalyticsReferrerField.check();
+    await contextOneTimeAnalyticsReferrerField.click();
 
-    // Get settings and verify
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].context).toEqual([
       "web",
@@ -611,7 +491,7 @@ describe("Config data collection section", () => {
   });
 
   it("loads context options from settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -624,83 +504,45 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Check that context is set to specific
-    const contextGranularitySpecificField = page.getByTestId(
-      "contextGranularitySpecificField",
-    );
-    expect(contextGranularitySpecificField.element().checked).toBe(true);
+    await expect.element(contextGranularitySpecificField).toBeChecked();
 
-    // Check that default context options are set properly
-    const contextWebField = spectrumCheckbox("contextWebField");
-    expect(await contextWebField.isChecked()).toBe(true);
-    const contextDeviceField = spectrumCheckbox("contextDeviceField");
-    expect(await contextDeviceField.isChecked()).toBe(true);
-    const contextEnvironmentField = spectrumCheckbox("contextEnvironmentField");
-    expect(await contextEnvironmentField.isChecked()).toBe(false);
-    const contextPlaceContextField = spectrumCheckbox(
-      "contextPlaceContextField",
-    );
-    expect(await contextPlaceContextField.isChecked()).toBe(false);
-
-    // Check that default-disabled context options are set properly
-    const contextHighEntropyUserAgentHintsField = spectrumCheckbox(
-      "contextHighEntropyUserAgentHintsField",
-    );
-    expect(await contextHighEntropyUserAgentHintsField.isChecked()).toBe(false);
-    const contextOneTimeAnalyticsReferrerField = spectrumCheckbox(
-      "contextOneTimeAnalyticsReferrerField",
-    );
-    expect(await contextOneTimeAnalyticsReferrerField.isChecked()).toBe(true);
+    await expect.element(contextWebField).toBeChecked();
+    await expect.element(contextDeviceField).toBeChecked();
+    await expect.element(contextEnvironmentField).not.toBeChecked();
+    await expect.element(contextPlaceContextField).not.toBeChecked();
+    await expect
+      .element(contextHighEntropyUserAgentHintsField)
+      .not.toBeChecked();
+    await expect.element(contextOneTimeAnalyticsReferrerField).toBeChecked();
   });
 
   it("disables click collection when all link types are disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Disable all link types
-    const internalLinkEnabledField = spectrumCheckbox(
-      "internalLinkEnabledField",
-    );
-    await internalLinkEnabledField.uncheck();
+    await internalLinkEnabledField.click();
+    await externalLinkEnabledField.click();
+    await downloadLinkEnabledField.click();
 
-    const externalLinkEnabledField = spectrumCheckbox(
-      "externalLinkEnabledField",
-    );
-    await externalLinkEnabledField.uncheck();
-
-    const downloadLinkEnabledField = spectrumCheckbox(
-      "downloadLinkEnabledField",
-    );
-    await downloadLinkEnabledField.uncheck();
-
-    // Get settings and verify
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].clickCollectionEnabled).toBe(false);
   });
 
   it("sets download link qualifier when test button is clicked", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const downloadLinkQualifierTestButton = page.getByTestId(
-      "downloadLinkQualifierTestButton",
-    );
     await downloadLinkQualifierTestButton.click();
 
-    const downloadLinkQualifierField = spectrumTextField(
-      "downloadLinkQualifierField",
-    );
-    expect(await downloadLinkQualifierField.getValue()).toMatch(
-      /edited regex/i,
-    );
+    expect(downloadLinkQualifierField.element().value).toMatch(/edited regex/i);
   });
 
   it("does not save onBeforeEventSend code if it matches placeholder", async () => {
@@ -711,15 +553,12 @@ describe("Config data collection section", () => {
     });
     window.extensionBridge = testExtensionBridge;
 
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     testExtensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const onBeforeEventSendEditButton = page.getByTestId(
-      "onBeforeEventSendEditButton",
-    );
     await onBeforeEventSendEditButton.click();
 
     const settings = await testExtensionBridge.getSettings();
@@ -734,15 +573,12 @@ describe("Config data collection section", () => {
     });
     window.extensionBridge = testExtensionBridge;
 
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     testExtensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const filterClickDetailsEditButton = page.getByTestId(
-      "filterClickDetailsEditButton",
-    );
     await filterClickDetailsEditButton.click();
 
     const settings = await testExtensionBridge.getSettings();
@@ -753,39 +589,33 @@ describe("Config data collection section", () => {
 
   describe("restore default buttons", () => {
     it("restores default download link qualifier when button is clicked", async () => {
-      const view = await renderView(ConfigurationView);
+      await renderView(ConfigurationView);
 
       extensionBridge.init(buildSettings());
 
-      await waitForConfigurationViewToLoad(view);
+      await waitForConfigurationViewToLoad();
 
-      // First, change the orgId
-      const downloadLinkQualifierField = spectrumTextField(
-        "downloadLinkQualifierField",
-      );
       const originalDownloadLinkQualifier =
-        await downloadLinkQualifierField.getValue();
+        downloadLinkQualifierField.element().value;
       await downloadLinkQualifierField.fill("\\.(exe|zip)$");
 
-      // Verify it changed
-      expect(await downloadLinkQualifierField.getValue()).toBe("\\.(exe|zip)$");
+      await expect
+        .element(downloadLinkQualifierField)
+        .toHaveValue("\\.(exe|zip)$");
 
-      const restoreButton = page.getByTestId(
-        "downloadLinkQualifierRestoreButton",
-      );
-      // Click restore button - click in a different position area to avoid margin issues.
-      // When running in headless mode, clicking at center of the button sometimes misses.
-      await restoreButton.click({ position: { x: 10, y: 10 } });
+      await downloadLinkQualifierRestoreButton.click({
+        position: { x: 10, y: 10 },
+      });
 
-      expect(await downloadLinkQualifierField.getValue()).toBe(
-        originalDownloadLinkQualifier,
-      );
+      await expect
+        .element(downloadLinkQualifierField)
+        .toHaveValue(originalDownloadLinkQualifier);
     });
   });
 
   describe("validation", () => {
     it("validates download link qualifier regex format", async () => {
-      const view = await renderView(ConfigurationView);
+      await renderView(ConfigurationView);
 
       extensionBridge.init(
         buildSettings({
@@ -798,14 +628,13 @@ describe("Config data collection section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad(view);
+      await waitForConfigurationViewToLoad();
 
-      // The field should show validation error for invalid regex
       expect(await extensionBridge.validate()).toBe(false);
     });
 
     it("accepts valid download link qualifier regex", async () => {
-      const view = await renderView(ConfigurationView);
+      await renderView(ConfigurationView);
 
       extensionBridge.init(
         buildSettings({
@@ -818,13 +647,13 @@ describe("Config data collection section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad(view);
+      await waitForConfigurationViewToLoad();
 
       expect(await extensionBridge.validate()).toBe(true);
     });
 
     it("requires download link qualifier when download link is enabled", async () => {
-      const view = await renderView(ConfigurationView);
+      await renderView(ConfigurationView);
 
       extensionBridge.init(
         buildSettings({
@@ -840,12 +669,8 @@ describe("Config data collection section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad(view);
+      await waitForConfigurationViewToLoad();
 
-      // Clear the qualifier field
-      const downloadLinkQualifierField = spectrumTextField(
-        "downloadLinkQualifierField",
-      );
       await downloadLinkQualifierField.fill("");
 
       expect(await extensionBridge.validate()).toBe(false);

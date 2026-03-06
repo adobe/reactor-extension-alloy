@@ -78,7 +78,7 @@ describe("Config overrides section", () => {
   });
 
   it("sets form values from settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettingsWithDummyDatastream({
@@ -166,7 +166,7 @@ describe("Config overrides section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     await expect.element(developmentOverridesTab).toBeSelected();
     await expect.element(overridesEnabled).toHaveValue("Enabled");
@@ -222,11 +222,11 @@ describe("Config overrides section", () => {
   });
 
   it("updates form values and saves to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     await overridesEnabled.selectOption("Enabled");
     await expect.element(overridesEnabled).toHaveValue("Enabled");
@@ -274,11 +274,11 @@ describe("Config overrides section", () => {
   });
 
   it("validates third party id sync container", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -295,11 +295,11 @@ describe("Config overrides section", () => {
   });
 
   it("allows you to save data elements", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -341,11 +341,11 @@ describe("Config overrides section", () => {
   });
 
   it("allows you to add and delete report suites", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Enable overrides and analytics
     await overridesEnabled.selectOption("Enabled");
@@ -387,11 +387,11 @@ describe("Config overrides section", () => {
   });
 
   it("allows you to copy overrides from one environment to another", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Set up development environment with some overrides
     await overridesEnabled.selectOption("Enabled");
@@ -440,11 +440,11 @@ describe("Config overrides section", () => {
   });
 
   it("hides everything when no overrides are enabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Analytics, Target, and other override fields should not be visible
     await expect.element(analyticsEnabled).not.toBeInTheDocument();
@@ -453,11 +453,11 @@ describe("Config overrides section", () => {
   });
 
   it("hides report suites when analytics is disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -478,11 +478,11 @@ describe("Config overrides section", () => {
   });
 
   it("hides target property token when target is disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -501,7 +501,7 @@ describe("Config overrides section", () => {
   });
 
   it("migrates from legacy settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     // Initialize with legacy format (if there's a different format - this is a placeholder)
     extensionBridge.init(
@@ -516,7 +516,7 @@ describe("Config overrides section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // After loading, settings should be in the new format
     const settings = await extensionBridge.getSettings();
@@ -524,11 +524,11 @@ describe("Config overrides section", () => {
   });
 
   it("saves no override settings correctly", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Set to "No override"
     await overridesEnabled.selectOption("No override");
@@ -540,11 +540,11 @@ describe("Config overrides section", () => {
   });
 
   it("saves enabled settings correctly", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -592,11 +592,11 @@ describe("Config overrides section", () => {
   });
 
   it("saves disabled settings correctly", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettingsWithDummyDatastream());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");

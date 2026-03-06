@@ -31,4 +31,14 @@ locators.extend({
       })
       .toBe();
   },
+  async expand() {
+    await expect
+      .poll(async () => {
+        if (this.element().getAttribute("aria-expanded") !== "true") {
+          await this.click();
+        }
+        await expect.element(this).toHaveAttribute("aria-expanded", "true");
+      })
+      .toBe();
+  },
 });

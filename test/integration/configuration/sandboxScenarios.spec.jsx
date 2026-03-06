@@ -18,13 +18,17 @@ import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { worker } from "../helpers/mocks/browser";
-import { spectrumRadio } from "../helpers/form";
 import {
   singleSandboxNoDefaultHandlers,
   sandboxUserRegionMissingHandlers,
 } from "../helpers/mocks/defaultHandlers";
 
 let extensionBridge;
+
+const productionSandboxField = page.getByTestId("productionSandboxField");
+const edgeConfigInputMethodSelectRadio = page.getByTestId(
+  "edgeConfigInputMethodSelectRadio",
+);
 
 describe("Config Sandboxes", () => {
   beforeEach(() => {
@@ -38,31 +42,29 @@ describe("Config Sandboxes", () => {
 
   it("shows disabled sandbox dropdown when only one non default sandbox is returned", async () => {
     worker.use(...singleSandboxNoDefaultHandlers);
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const sandboxSelect = page.getByTestId("productionSandboxField");
-    await expect.element(sandboxSelect).toBeDisabled();
+    await expect.element(productionSandboxField).toBeDisabled();
   });
 
   it("shows alert panel when user region is missing", async () => {
     worker.use(...sandboxUserRegionMissingHandlers);
 
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const selectRadio = spectrumRadio("edgeConfigInputMethodSelectRadio");
-    await selectRadio.click();
+    await edgeConfigInputMethodSelectRadio.click();
 
     await expect
       .element(
-        view.getByRole("heading", {
+        page.getByRole("heading", {
           name: /you do not have enough permissions to fetch the organization configurations/i,
         }),
       )

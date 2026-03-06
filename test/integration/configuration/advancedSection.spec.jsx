@@ -17,10 +17,12 @@ import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad } from "../helpers/ui";
-import { spectrumTextField } from "../helpers/form";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
+
+const edgeBasePathField = page.getByTestId("edgeBasePathField");
+const edgeBasePathRestoreButton = page.getByTestId("edgeBasePathRestoreButton");
 
 describe("Config advanced section", () => {
   beforeEach(() => {
@@ -33,7 +35,7 @@ describe("Config advanced section", () => {
   });
 
   it("sets form values from settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -46,20 +48,18 @@ describe("Config advanced section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const edgeBasePathField = spectrumTextField("edgeBasePathField");
-    expect(await edgeBasePathField.getValue()).toBe("custom-path");
+    await expect.element(edgeBasePathField).toHaveValue("custom-path");
   });
 
   it("updates form values and saves to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const edgeBasePathField = spectrumTextField("edgeBasePathField");
     await edgeBasePathField.fill("my-custom-path");
 
     // Get settings and verify
@@ -68,22 +68,21 @@ describe("Config advanced section", () => {
   });
 
   it("shows default value 'ee' when no setting is provided", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const edgeBasePathField = spectrumTextField("edgeBasePathField");
-    expect(await edgeBasePathField.getValue()).toBe("ee");
+    await expect.element(edgeBasePathField).toHaveValue("ee");
   });
 
   it("does not save default value 'ee' to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Default should be "ee" but not saved
     const settings = await extensionBridge.getSettings();
@@ -91,7 +90,7 @@ describe("Config advanced section", () => {
   });
 
   it("allows data element in edge base path field", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -104,10 +103,9 @@ describe("Config advanced section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const edgeBasePathField = spectrumTextField("edgeBasePathField");
-    expect(await edgeBasePathField.getValue()).toBe("%myDataElement%");
+    await expect.element(edgeBasePathField).toHaveValue("%myDataElement%");
 
     // Verify it's saved
     const settings = await extensionBridge.getSettings();
@@ -115,52 +113,48 @@ describe("Config advanced section", () => {
   });
 
   it("restores default edge base path when restore button is clicked", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
-
-    const edgeBasePathField = spectrumTextField("edgeBasePathField");
+    await waitForConfigurationViewToLoad();
 
     // Change the value
     await edgeBasePathField.fill("custom-path");
 
     // Verify it changed
-    expect(await edgeBasePathField.getValue()).toBe("custom-path");
+    await expect.element(edgeBasePathField).toHaveValue("custom-path");
 
     // Click restore button
-    const restoreButton = page.getByTestId("edgeBasePathRestoreButton");
-    await restoreButton.click();
+    await edgeBasePathRestoreButton.click();
 
     // Verify it's restored to default
-    expect(await edgeBasePathField.getValue()).toBe("ee");
+    await expect.element(edgeBasePathField).toHaveValue("ee");
   });
 
   describe("validation", () => {
     it("requires edge base path", async () => {
-      const view = await renderView(ConfigurationView);
+      await renderView(ConfigurationView);
 
       extensionBridge.init(buildSettings());
 
-      await waitForConfigurationViewToLoad(view);
+      await waitForConfigurationViewToLoad();
 
       expect(await extensionBridge.validate()).toBe(true);
 
       // Clear the edge base path field
-      const edgeBasePathField = spectrumTextField("edgeBasePathField");
       await edgeBasePathField.fill("");
 
-      expect(await edgeBasePathField.hasError()).toBe(true);
-      expect(await edgeBasePathField.getErrorMessage()).toBe(
-        "Please specify an edge base path.",
-      );
+      await expect.element(edgeBasePathField).not.toBeValid();
+      await expect
+        .element(edgeBasePathField)
+        .toHaveAccessibleDescription(/please specify an edge base path/i);
 
       expect(await extensionBridge.validate()).toBe(false);
     });
 
     it("accepts valid edge base path", async () => {
-      const view = await renderView(ConfigurationView);
+      await renderView(ConfigurationView);
 
       extensionBridge.init(
         buildSettings({
@@ -173,7 +167,7 @@ describe("Config advanced section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad(view);
+      await waitForConfigurationViewToLoad();
 
       expect(await extensionBridge.validate()).toBe(true);
     });

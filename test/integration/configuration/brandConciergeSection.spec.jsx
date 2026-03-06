@@ -11,14 +11,23 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
+
+import { page, userEvent } from "vitest/browser";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad, toggleComponent } from "../helpers/ui";
-import { spectrumCheckbox, spectrumNumberField } from "../helpers/form";
+import { waitForConfigurationViewToLoad, expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
+
+const stickyConversationSessionField = page.getByTestId(
+  "stickyConversationSessionField",
+);
+const streamTimeoutField = page.getByTestId("streamTimeoutDataTestId");
+const brandConciergeComponentCheckbox = page.getByTestId(
+  "brandConciergeComponentCheckbox",
+);
 
 describe("Config brand concierge section", () => {
   beforeEach(() => {
@@ -31,7 +40,7 @@ describe("Config brand concierge section", () => {
   });
 
   it("sets form values from settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -43,27 +52,21 @@ describe("Config brand concierge section", () => {
             name: "alloy",
             conversation: {
               stickyConversationSession: true,
-              streamTimeout: 20000, // 20 seconds in milliseconds
+              streamTimeout: 20000,
             },
           },
         ],
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const stickyConversationSessionField = spectrumCheckbox(
-      "stickyConversationSessionField",
-    );
-    expect(await stickyConversationSessionField.isChecked()).toBe(true);
-
-    // Stream timeout should be displayed in seconds (20000ms = 20s)
-    const streamTimeoutField = spectrumNumberField("streamTimeoutDataTestId");
-    expect(await streamTimeoutField.getNumericValue()).toBe(20);
+    await expect.element(stickyConversationSessionField).toBeChecked();
+    await expect.element(streamTimeoutField).toHaveValue("20");
   });
 
   it("updates form values and saves to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -73,27 +76,22 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const stickyConversationSessionField = spectrumCheckbox(
-      "stickyConversationSessionField",
-    );
-    await stickyConversationSessionField.check();
+    await stickyConversationSessionField.click();
 
-    // Set stream timeout to 30 seconds (should save as 30000ms)
-    const streamTimeoutField = spectrumNumberField("streamTimeoutDataTestId");
-    await streamTimeoutField.fill(30);
+    await streamTimeoutField.fill("30");
+    await userEvent.keyboard("{Tab}");
 
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].conversation.stickyConversationSession).toBe(
       true,
     );
-    // Should be saved as milliseconds (30s = 30000ms)
     expect(settings.instances[0].conversation.streamTimeout).toBe(30000);
   });
 
   it("does not emit brand concierge settings when component is disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -112,22 +110,23 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
-    await toggleComponent("brandConcierge");
+    await waitForConfigurationViewToLoad();
+    await expandAccordion("Build options");
+    await brandConciergeComponentCheckbox.click();
 
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].conversation).toBeUndefined();
   });
 
   it("shows alert panel when brand concierge component is disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     await expect
       .element(
-        view.getByRole("heading", {
+        page.getByRole("heading", {
           name: /brand concierge component disabled/i,
         }),
       )
@@ -135,7 +134,7 @@ describe("Config brand concierge section", () => {
   });
 
   it("shows alert when component is toggled off", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -145,12 +144,13 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
-    await toggleComponent("brandConcierge");
+    await waitForConfigurationViewToLoad();
+    await expandAccordion("Build options");
+    await brandConciergeComponentCheckbox.click();
 
     await expect
       .element(
-        view.getByRole("heading", {
+        page.getByRole("heading", {
           name: /brand concierge component disabled/i,
         }),
       )
@@ -158,7 +158,7 @@ describe("Config brand concierge section", () => {
   });
 
   it("converts stream timeout from milliseconds to seconds on load", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -169,21 +169,20 @@ describe("Config brand concierge section", () => {
           {
             name: "alloy",
             conversation: {
-              streamTimeout: 45000, // 45 seconds in milliseconds
+              streamTimeout: 45000,
             },
           },
         ],
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const streamTimeoutField = spectrumNumberField("streamTimeoutDataTestId");
-    expect(await streamTimeoutField.getNumericValue()).toBe(45);
+    await expect.element(streamTimeoutField).toHaveValue("45");
   });
 
   it("does not save stream timeout when it equals default value", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -193,9 +192,8 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Default is 10 seconds, don't change it
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].conversation?.streamTimeout).toBeUndefined();
   });

@@ -11,6 +11,8 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
+
+import { page } from "vitest/browser";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import VariableView from "../../../src/view/dataElements/variableView";
@@ -37,31 +39,31 @@ describe("Variable Data Element Error Handling", () => {
   describe("Sandbox errors", () => {
     it("displays error when access token is invalid", async () => {
       worker.use(...sandboxUnauthorizedHandlers);
-      const view = await renderView(VariableView);
+      await renderView(VariableView);
       extensionBridge.init();
 
       await expect
-        .element(view.getByText(/your access token appears to be invalid/i))
+        .element(page.getByText(/your access token appears to be invalid/i))
         .toBeVisible();
     });
 
     it("displays error when sandbox API returns server error", async () => {
       worker.use(...sandboxServerErrorHandlers);
-      const view = await renderView(VariableView);
+      await renderView(VariableView);
       extensionBridge.init();
 
       await expect
-        .element(view.getByText(/failed to load sandboxes/i))
+        .element(page.getByText(/failed to load sandboxes/i))
         .toBeVisible();
     });
 
     it("displays error when user has no access to any sandboxes", async () => {
       worker.use(...sandboxEmptyHandlers);
-      const view = await renderView(VariableView);
+      await renderView(VariableView);
       extensionBridge.init();
 
       await expect
-        .element(view.getByText(/you do not have access to any sandboxes/i))
+        .element(page.getByText(/you do not have access to any sandboxes/i))
         .toBeVisible();
     });
   });
@@ -69,10 +71,10 @@ describe("Variable Data Element Error Handling", () => {
   describe("Schema errors", () => {
     it("gracefully handles schema list API error", async () => {
       worker.use(...schemasServerErrorHandlers);
-      const view = await renderView(VariableView);
+      await renderView(VariableView);
       extensionBridge.init();
 
-      const schemaField = view.getByTestId("schemaField");
+      const schemaField = page.getByTestId("schemaField");
       await expect.element(schemaField).toBeVisible();
     });
   });

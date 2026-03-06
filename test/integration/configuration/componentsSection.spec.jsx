@@ -11,14 +11,44 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
+
+import { page } from "vitest/browser";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad, toggleComponent } from "../helpers/ui";
-import { spectrumCheckbox } from "../helpers/form";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
+
+const personalizationComponentCheckbox = page.getByTestId(
+  "personalizationComponentCheckbox",
+);
+const consentComponentCheckbox = page.getByTestId("consentComponentCheckbox");
+const pushNotificationsComponentCheckbox = page.getByTestId(
+  "pushNotificationsComponentCheckbox",
+);
+const advertisingComponentCheckbox = page.getByTestId(
+  "advertisingComponentCheckbox",
+);
+const activityCollectorComponentCheckbox = page.getByTestId(
+  "activityCollectorComponentCheckbox",
+);
+const audiencesComponentCheckbox = page.getByTestId(
+  "audiencesComponentCheckbox",
+);
+const rulesEngineComponentCheckbox = page.getByTestId(
+  "rulesEngineComponentCheckbox",
+);
+const streamingMediaComponentCheckbox = page.getByTestId(
+  "streamingMediaComponentCheckbox",
+);
+const mediaAnalyticsBridgeComponentCheckbox = page.getByTestId(
+  "mediaAnalyticsBridgeComponentCheckbox",
+);
+const eventMergeComponentCheckbox = page.getByTestId(
+  "eventMergeComponentCheckbox",
+);
 
 describe("Config components section", () => {
   beforeEach(() => {
@@ -31,11 +61,11 @@ describe("Config components section", () => {
   });
 
   it("has all necessary components enabled by default", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     const settings = await extensionBridge.getSettings();
 
@@ -46,11 +76,11 @@ describe("Config components section", () => {
   });
 
   it("tracks disabled state for components enabled by default", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Toggle off consent and personalization components
     await toggleComponent("consent");
@@ -64,7 +94,7 @@ describe("Config components section", () => {
   });
 
   it("restores disabled components from settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -75,35 +105,23 @@ describe("Config components section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Verify checkboxes are unchecked
-    const personalizationCheckbox = spectrumCheckbox(
-      "personalizationComponentCheckbox",
-    );
-    expect(await personalizationCheckbox.isChecked()).toBe(false);
-
-    const consentCheckbox = spectrumCheckbox("consentComponentCheckbox");
-    expect(await consentCheckbox.isChecked()).toBe(false);
+    await expect.element(personalizationComponentCheckbox).not.toBeChecked();
+    await expect.element(consentComponentCheckbox).not.toBeChecked();
   });
 
   it("does not include new components when creating a new configuration", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Verify new beta components are unchecked
-    const pushNotificationsCheckbox = spectrumCheckbox(
-      "pushNotificationsComponentCheckbox",
-    );
-    expect(await pushNotificationsCheckbox.isChecked()).toBe(false);
-
-    const advertisingCheckbox = spectrumCheckbox(
-      "advertisingComponentCheckbox",
-    );
-    expect(await advertisingCheckbox.isChecked()).toBe(false);
+    await expect.element(pushNotificationsComponentCheckbox).not.toBeChecked();
+    await expect.element(advertisingComponentCheckbox).not.toBeChecked();
 
     const settings = await extensionBridge.getSettings();
     expect(settings.components).toBeDefined();
@@ -113,7 +131,7 @@ describe("Config components section", () => {
   });
 
   it("does not include new components when upgrading existing configuration", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -129,18 +147,11 @@ describe("Config components section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Verify new beta components are unchecked
-    const pushNotificationsCheckbox = spectrumCheckbox(
-      "pushNotificationsComponentCheckbox",
-    );
-    expect(await pushNotificationsCheckbox.isChecked()).toBe(false);
-
-    const advertisingCheckbox = spectrumCheckbox(
-      "advertisingComponentCheckbox",
-    );
-    expect(await advertisingCheckbox.isChecked()).toBe(false);
+    await expect.element(pushNotificationsComponentCheckbox).not.toBeChecked();
+    await expect.element(advertisingComponentCheckbox).not.toBeChecked();
 
     const settings = await extensionBridge.getSettings();
     expect(settings.components).toBeDefined();
@@ -148,51 +159,28 @@ describe("Config components section", () => {
   });
 
   it("enables default components by default for new configuration", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Verify default components are checked
-    const activityCollectorCheckbox = spectrumCheckbox(
-      "activityCollectorComponentCheckbox",
-    );
-    expect(await activityCollectorCheckbox.isChecked()).toBe(true);
-
-    const audiencesCheckbox = spectrumCheckbox("audiencesComponentCheckbox");
-    expect(await audiencesCheckbox.isChecked()).toBe(true);
-
-    const consentCheckbox = spectrumCheckbox("consentComponentCheckbox");
-    expect(await consentCheckbox.isChecked()).toBe(true);
-
-    const personalizationCheckbox = spectrumCheckbox(
-      "personalizationComponentCheckbox",
-    );
-    expect(await personalizationCheckbox.isChecked()).toBe(true);
-
-    const rulesEngineCheckbox = spectrumCheckbox(
-      "rulesEngineComponentCheckbox",
-    );
-    expect(await rulesEngineCheckbox.isChecked()).toBe(true);
-
-    const streamingMediaCheckbox = spectrumCheckbox(
-      "streamingMediaComponentCheckbox",
-    );
-    expect(await streamingMediaCheckbox.isChecked()).toBe(true);
-
-    const mediaAnalyticsBridgeCheckbox = spectrumCheckbox(
-      "mediaAnalyticsBridgeComponentCheckbox",
-    );
-    expect(await mediaAnalyticsBridgeCheckbox.isChecked()).toBe(true);
+    await expect.element(activityCollectorComponentCheckbox).toBeChecked();
+    await expect.element(audiencesComponentCheckbox).toBeChecked();
+    await expect.element(consentComponentCheckbox).toBeChecked();
+    await expect.element(personalizationComponentCheckbox).toBeChecked();
+    await expect.element(rulesEngineComponentCheckbox).toBeChecked();
+    await expect.element(streamingMediaComponentCheckbox).toBeChecked();
+    await expect.element(mediaAnalyticsBridgeComponentCheckbox).toBeChecked();
   });
 
   it("allows toggling components on and off", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Toggle off a component
     await toggleComponent("audiences");
@@ -208,11 +196,11 @@ describe("Config components section", () => {
   });
 
   it("allows enabling beta components", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Enable advertising component
     await toggleComponent("advertising");
@@ -221,14 +209,11 @@ describe("Config components section", () => {
     expect(settings.components.advertising).toBe(true);
 
     // Verify checkbox is checked
-    const advertisingCheckbox = spectrumCheckbox(
-      "advertisingComponentCheckbox",
-    );
-    expect(await advertisingCheckbox.isChecked()).toBe(true);
+    await expect.element(advertisingComponentCheckbox).toBeChecked();
   });
 
   it("preserves enabled beta components from settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -239,18 +224,11 @@ describe("Config components section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Verify beta components are checked
-    const advertisingCheckbox = spectrumCheckbox(
-      "advertisingComponentCheckbox",
-    );
-    expect(await advertisingCheckbox.isChecked()).toBe(true);
-
-    const pushNotificationsCheckbox = spectrumCheckbox(
-      "pushNotificationsComponentCheckbox",
-    );
-    expect(await pushNotificationsCheckbox.isChecked()).toBe(true);
+    await expect.element(advertisingComponentCheckbox).toBeChecked();
+    await expect.element(pushNotificationsComponentCheckbox).toBeChecked();
 
     const settings = await extensionBridge.getSettings();
     expect(settings.components.advertising).toBe(true);
@@ -258,11 +236,11 @@ describe("Config components section", () => {
   });
 
   it("allows disabling all components", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Disable all default components
     await toggleComponent("activityCollector");
@@ -285,22 +263,21 @@ describe("Config components section", () => {
   });
 
   it("handles deprecated components correctly", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // eventMerge is deprecated and should be disabled by default for new configs
-    const eventMergeCheckbox = spectrumCheckbox("eventMergeComponentCheckbox");
-    expect(await eventMergeCheckbox.isChecked()).toBe(false);
+    await expect.element(eventMergeComponentCheckbox).not.toBeChecked();
 
     const settings = await extensionBridge.getSettings();
     expect(settings.components.eventMerge).toBe(false);
   });
 
   it("preserves deprecated components from existing configuration", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -310,11 +287,10 @@ describe("Config components section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Verify deprecated component is enabled from settings
-    const eventMergeCheckbox = spectrumCheckbox("eventMergeComponentCheckbox");
-    expect(await eventMergeCheckbox.isChecked()).toBe(true);
+    await expect.element(eventMergeComponentCheckbox).toBeChecked();
 
     const settings = await extensionBridge.getSettings();
     // When eventMerge is true (its default value), it won't be in settings
@@ -323,11 +299,11 @@ describe("Config components section", () => {
   });
 
   it("only saves non-default component states to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // All default components are enabled, so no explicit component settings
     const settings = await extensionBridge.getSettings();

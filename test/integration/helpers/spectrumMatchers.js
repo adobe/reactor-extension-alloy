@@ -12,67 +12,19 @@ governing permissions and limitations under the License.
 import { expect } from "vitest";
 
 expect.extend({
-  toBeSelected(element) {
-    if (this.isNot) {
-      return {
-        pass: element.getAttribute("aria-selected") === "true",
-        message: () => `Expected element to not be selected, but it was`,
-        actual: element.getAttribute("aria-selected"),
-        expected: "false",
-      };
-    }
-    return {
-      pass: element.getAttribute("aria-selected") === "true",
-      message: () => `Expected element to be selected, but it was not`,
-      actual: element.getAttribute("aria-selected"),
-      expected: "true",
-    };
-  },
-  async toHaveError(element, message) {
-    let description;
-    const domEl =
-      element && typeof element.element === "function"
-        ? element.element()
-        : element;
-
-    const hasInvalid = domEl?.getAttribute?.("aria-invalid") === "true";
-    if (!hasInvalid) {
-      return {
-        pass: false,
-        message: () =>
-          `Expected element to have error (aria-invalid="true") but got aria-invalid="${domEl?.getAttribute?.("aria-invalid") ?? "undefined"}"`,
-        actual: domEl?.getAttribute?.("aria-invalid"),
-        expected: "true",
-      };
-    }
-
-    if (message === undefined) {
-      return {
-        pass: true,
-        message: () => "",
-        actual: undefined,
-        expected: undefined,
-      };
-    }
-
-    const describedBy = domEl.getAttribute("aria-describedby");
-    if (describedBy) {
-      const firstId = describedBy.split(/\s+/)[0];
-      const descEl = document.getElementById(firstId);
-      description = descEl ? (descEl.textContent?.trim() ?? "") : "";
-    }
-
-    const pass =
-      message instanceof RegExp
-        ? message.test(description ?? "")
-        : description === message;
-
+  toBeSelected(received) {
+    const el =
+      typeof received?.element === "function" ? received.element() : received;
+    const selected = el?.getAttribute?.("aria-selected") === "true";
+    const pass = this.isNot ? !selected : selected;
     return {
       pass,
       message: () =>
-        `Expected element to ${this.isNot ? "not have" : "have"} error matching ${String(message)} but got ${description ?? "undefined"}`,
-      actual: description,
-      expected: message,
+        this.isNot
+          ? `Expected element to not be selected, but it was`
+          : `Expected element to be selected, but it was not`,
+      actual: el?.getAttribute?.("aria-selected"),
+      expected: this.isNot ? "false" : "true",
     };
   },
 });

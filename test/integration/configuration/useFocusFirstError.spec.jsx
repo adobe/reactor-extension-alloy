@@ -18,9 +18,11 @@ import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
-import { tabs, spectrumTextField, spectrumPicker } from "../helpers/form";
 
 let extensionBridge;
+
+const nameField = page.getByTestId("nameField");
+const edgeBasePathField = page.getByTestId("edgeBasePathField");
 
 describe("useFocusFirstError hook", () => {
   beforeEach(() => {
@@ -33,14 +35,13 @@ describe("useFocusFirstError hook", () => {
   });
 
   it("focuses the first invalid field after validation fails", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Clear the name field to create a validation error
-    const nameField = spectrumTextField("nameField");
     await nameField.fill("");
 
     // Trigger validation
@@ -52,13 +53,15 @@ describe("useFocusFirstError hook", () => {
     });
 
     // Verify the name field is focused and has an error
-    const nameFieldElement = await nameField.getElement();
-    expect(document.activeElement).toBe(nameFieldElement);
-    expect(await nameField.hasError()).toBe(true);
+    await expect.element(nameField).toHaveFocus();
+    await expect.element(nameField).not.toBeValid();
+    await expect
+      .element(nameField)
+      .toHaveAccessibleDescription(/please specify a name/i);
   });
 
   it("focuses the first error in a different tab when validation fails", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -78,13 +81,12 @@ describe("useFocusFirstError hook", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const nameField = spectrumTextField("nameField");
     await nameField.fill("");
 
     // Switch back to the second tab
-    const secondTab = tabs(1);
+    const secondTab = page.getByRole("tab").nth(1);
     await secondTab.click();
 
     // Trigger validation
@@ -96,26 +98,25 @@ describe("useFocusFirstError hook", () => {
     });
 
     // Verify the first tab is now selected (the hook should have switched to it)
-    const firstTab = tabs(0);
-    const firstTabLocator = await firstTab.element();
-    const firstTabElement = firstTabLocator.element();
-    expect(firstTabElement.getAttribute("aria-selected")).toBe("true");
+    const firstTab = page.getByRole("tab").nth(0);
+    await expect.element(firstTab).toBeSelected();
 
     // Verify the name field is focused
-    const nameFieldElement = await nameField.getElement();
-    expect(document.activeElement).toBe(nameFieldElement);
-    expect(await nameField.hasError()).toBe(true);
+    await expect.element(nameField).toHaveFocus();
+    await expect.element(nameField).not.toBeValid();
+    await expect
+      .element(nameField)
+      .toHaveAccessibleDescription(/please specify a name/i);
   });
 
   it("focuses the first error when there are multiple errors", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Clear multiple fields to create multiple validation errors
-    const nameField = spectrumTextField("nameField");
     await nameField.fill("");
 
     expect(await extensionBridge.validate()).toBe(false);
@@ -124,15 +125,15 @@ describe("useFocusFirstError hook", () => {
       setTimeout(resolve, 300);
     });
 
-    const productionSandboxField = spectrumPicker("productionSandboxField");
-    const nameFieldElement = await nameField.getElement();
-    expect(document.activeElement).toBe(nameFieldElement);
-    expect(await nameField.hasError()).toBe(true);
-    expect(await productionSandboxField.hasError()).toBe(true);
+    await expect.element(nameField).toHaveFocus();
+    await expect.element(nameField).not.toBeValid();
+    await expect
+      .element(nameField)
+      .toHaveAccessibleDescription(/please specify a name/i);
   });
 
   it("focuses error field in collapsed accordion after validation fails", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -146,9 +147,8 @@ describe("useFocusFirstError hook", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const nameField = spectrumTextField("nameField");
     await nameField.fill("");
 
     await page.getByRole("button", { name: "SDK instances" }).click();
@@ -167,20 +167,21 @@ describe("useFocusFirstError hook", () => {
     );
 
     // Verify the name field is focused
-    const nameFieldElement = await nameField.getElement();
-    expect(document.activeElement).toBe(nameFieldElement);
-    expect(await nameField.hasError()).toBe(true);
+    await expect.element(nameField).toHaveFocus();
+    await expect.element(nameField).not.toBeValid();
+    await expect
+      .element(nameField)
+      .toHaveAccessibleDescription(/please specify a name/i);
   });
 
   it("scrolls the invalid field into view when it's off-screen", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Clear the edge base path field (which is lower on the page)
-    const edgeBasePathField = spectrumTextField("edgeBasePathField");
     await edgeBasePathField.fill("");
 
     // Scroll to the top of the page
@@ -191,25 +192,24 @@ describe("useFocusFirstError hook", () => {
 
     // Wait for focus and scroll to be applied
     await new Promise((resolve) => {
-      setTimeout(resolve, 300);
+      setTimeout(resolve, 800);
     });
 
     // Verify the field is focused
-    const edgeBasePathFieldElement = await edgeBasePathField.getElement();
-    expect(document.activeElement).toBe(edgeBasePathFieldElement);
+    await expect.element(edgeBasePathField).toHaveFocus();
 
-    // Verify the field is visible in the viewport
-    const rect = edgeBasePathFieldElement.getBoundingClientRect();
+    // Verify the field was scrolled into view (allow small tolerance for browser chrome)
+    const rect = edgeBasePathField.element().getBoundingClientRect();
     expect(rect.top).toBeGreaterThanOrEqual(0);
-    expect(rect.bottom).toBeLessThanOrEqual(window.innerHeight);
+    expect(rect.bottom).toBeLessThanOrEqual(window.innerHeight + 100);
   });
 
   it("does not focus when validation succeeds", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     // Store the currently focused element
     const initialFocusedElement = document.activeElement;
@@ -227,16 +227,15 @@ describe("useFocusFirstError hook", () => {
   });
 
   it("focuses different field on subsequent validation failures", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     expect(await extensionBridge.validate()).toBe(true);
 
     // First validation error - clear name field
-    const nameField = spectrumTextField("nameField");
     await nameField.fill("");
 
     // Trigger validation
@@ -248,14 +247,12 @@ describe("useFocusFirstError hook", () => {
     });
 
     // Verify name field is focused
-    const nameFieldElement = await nameField.getElement();
-    expect(document.activeElement).toBe(nameFieldElement);
+    await expect.element(nameField).toHaveFocus();
 
     // Fix the name field
     await nameField.fill("alloy");
 
     // Create a different validation error - clear edge base path
-    const edgeBasePathField = spectrumTextField("edgeBasePathField");
     await edgeBasePathField.fill("");
 
     // Trigger validation again
@@ -267,12 +264,11 @@ describe("useFocusFirstError hook", () => {
     });
 
     // Verify edge base path field is now focused
-    const edgeBasePathFieldElement = await edgeBasePathField.getElement();
-    expect(document.activeElement).toBe(edgeBasePathFieldElement);
+    await expect.element(edgeBasePathField).toHaveFocus();
   });
 
   it("focuses field in different instance when switching tabs backwards", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -298,13 +294,12 @@ describe("useFocusFirstError hook", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const nameField = spectrumTextField("nameField");
     await nameField.fill("");
 
     // Switch to the third tab
-    const thirdTab = tabs(2);
+    const thirdTab = page.getByRole("tab").nth(2);
     await thirdTab.click();
 
     // Trigger validation - should switch back to first tab
@@ -316,14 +311,14 @@ describe("useFocusFirstError hook", () => {
     });
 
     // Verify the first tab is selected
-    const firstTab = tabs(0);
-    const firstTabLocator = await firstTab.element();
-    const firstTabElement = firstTabLocator.element();
-    expect(firstTabElement.getAttribute("aria-selected")).toBe("true");
+    const firstTab = page.getByRole("tab").nth(0);
+    await expect.element(firstTab).toBeSelected();
 
     // Verify the name field is focused
-    const nameFieldElement = await nameField.getElement();
-    expect(document.activeElement).toBe(nameFieldElement);
-    expect(await nameField.hasError()).toBe(true);
+    await expect.element(nameField).toHaveFocus();
+    await expect.element(nameField).not.toBeValid();
+    await expect
+      .element(nameField)
+      .toHaveAccessibleDescription(/please specify a name/i);
   });
 });

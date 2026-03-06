@@ -12,12 +12,12 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
+import { page } from "vitest/browser";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { worker } from "../helpers/mocks/browser";
-import { spectrumRadio, spectrumTextField } from "../helpers/form";
 import {
   datastreamsForbiddenHandlers,
   datastreamForbiddenHandlers,
@@ -25,6 +25,19 @@ import {
 } from "../helpers/mocks/defaultHandlers";
 
 let extensionBridge;
+
+const edgeConfigInputMethodFreeformRadio = page.getByTestId(
+  "edgeConfigInputMethodFreeformRadio",
+);
+const edgeConfigInputMethodSelectRadio = page.getByTestId(
+  "edgeConfigInputMethodSelectRadio",
+);
+const productionEnvironmentTextfield = page.getByTestId(
+  "productionEnvironmentTextfield",
+);
+const datastreamDisabledFieldProduction = page.getByTestId(
+  "datastreamDisabledFieldproduction",
+);
 
 describe("Config Sandboxes", () => {
   beforeEach(() => {
@@ -39,7 +52,7 @@ describe("Config Sandboxes", () => {
   it("does not show alert panel and uses freeform input method with forbidden datastream access", async () => {
     worker.use(...datastreamForbiddenHandlers);
 
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init({
       settings: {
@@ -56,19 +69,17 @@ describe("Config Sandboxes", () => {
         ],
       },
     });
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const selectRadio = spectrumRadio("edgeConfigInputMethodFreeformRadio");
-    expect(await selectRadio.isSelected()).toBe(true);
+    await expect.element(edgeConfigInputMethodFreeformRadio).toBeChecked();
 
-    const dataStreamInput = spectrumTextField("productionEnvironmentTextfield");
-    expect(await dataStreamInput.getValue()).toBe(
-      "2fdb3763-0507-42ea-8856-e91bf3b64faa",
-    );
+    await expect
+      .element(productionEnvironmentTextfield)
+      .toHaveValue("2fdb3763-0507-42ea-8856-e91bf3b64faa");
 
     await expect
       .element(
-        view.getByRole("heading", {
+        page.getByRole("heading", {
           name: /you do not have enough permissions to fetch the organization configurations/i,
         }),
       )
@@ -78,7 +89,7 @@ describe("Config Sandboxes", () => {
   it("does show a disabled data stream field input with forbidden datastreams access", async () => {
     worker.use(...datastreamsForbiddenHandlers);
 
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init({
       settings: {
@@ -96,23 +107,20 @@ describe("Config Sandboxes", () => {
         ],
       },
     });
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     await expect
       .element(
-        view.getByText(
+        page.getByText(
           /You do not have enough permissions to fetch the Prod sandbox configurations/i,
         ),
       )
       .toBeInTheDocument();
 
-    const dataStreamInput = spectrumTextField(
-      "datastreamDisabledFieldproduction",
-    );
-    expect(await dataStreamInput.isDisabled()).toBe(true);
-    expect(await dataStreamInput.getValue()).toBe(
-      "2fdb3763-0507-42ea-8856-e91bf3b64faa",
-    );
+    await expect.element(datastreamDisabledFieldProduction).toBeDisabled();
+    await expect
+      .element(datastreamDisabledFieldProduction)
+      .toHaveValue("2fdb3763-0507-42ea-8856-e91bf3b64faa");
   });
 
   it("shows alert panel with one non-default sandbox and forbidden datastreams access", async () => {
@@ -121,17 +129,16 @@ describe("Config Sandboxes", () => {
       ...datastreamsForbiddenHandlers,
     );
 
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init();
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const selectRadio = spectrumRadio("edgeConfigInputMethodSelectRadio");
-    await selectRadio.click();
+    await edgeConfigInputMethodSelectRadio.click();
 
     await expect
       .element(
-        view.getByRole("heading", {
+        page.getByRole("heading", {
           name: /you do not have enough permissions to fetch the organization configurations/i,
         }),
       )

@@ -17,10 +17,14 @@ import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad } from "../helpers/ui";
-import { spectrumCheckbox, spectrumComboBox } from "../helpers/form";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
+
+const idMigrationEnabledField = page.getByTestId("idMigrationEnabledField");
+const thirdPartyCookiesEnabledField = page.getByTestId(
+  "thirdPartyCookiesEnabledField",
+);
 
 describe("Config Identity section", () => {
   beforeEach(() => {
@@ -33,7 +37,7 @@ describe("Config Identity section", () => {
   });
 
   it("sets form values from settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -47,73 +51,53 @@ describe("Config Identity section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const idMigrationEnabledField = spectrumCheckbox("idMigrationEnabledField");
-    expect(await idMigrationEnabledField.isChecked()).toBe(false);
-
-    const thirdPartyCookiesEnabledField = page.getByTestId(
-      "thirdPartyCookiesEnabledField",
-    );
-    expect(thirdPartyCookiesEnabledField.element().value).toBe("Disabled");
+    await expect.element(idMigrationEnabledField).not.toBeChecked();
+    await expect.element(thirdPartyCookiesEnabledField).toHaveValue("Disabled");
   });
 
   it("updates form values and saves to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const idMigrationEnabledField = spectrumCheckbox("idMigrationEnabledField");
-    await idMigrationEnabledField.uncheck();
+    await idMigrationEnabledField.click();
 
-    // Change third-party cookies to "Disabled"
-    const thirdPartyCookiesEnabledField = page.getByTestId(
-      "thirdPartyCookiesEnabledField",
-    );
-    await thirdPartyCookiesEnabledField.clear();
     await thirdPartyCookiesEnabledField.fill("Disabled");
 
-    // Get settings and verify
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].idMigrationEnabled).toBe(false);
     expect(settings.instances[0].thirdPartyCookiesEnabled).toBe(false);
   });
 
   it("shows default values when no settings are provided", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Default for idMigrationEnabled is true
-    const idMigrationEnabledField = spectrumCheckbox("idMigrationEnabledField");
-    expect(await idMigrationEnabledField.isChecked()).toBe(true);
-
-    // Default for thirdPartyCookiesEnabled is "Enabled"
-    const thirdPartyCookiesEnabledField = page.getByTestId(
-      "thirdPartyCookiesEnabledField",
-    );
-    expect(thirdPartyCookiesEnabledField.element().value).toBe("Enabled");
+    await expect.element(idMigrationEnabledField).toBeChecked();
+    await expect.element(thirdPartyCookiesEnabledField).toHaveValue("Enabled");
   });
 
   it("does not save default values to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Default values should not be saved
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].idMigrationEnabled).toBeUndefined();
     expect(settings.instances[0].thirdPartyCookiesEnabled).toBeUndefined();
   });
 
   it("allows data element in third-party cookies field", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -126,16 +110,12 @@ describe("Config Identity section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const thirdPartyCookiesEnabledField = page.getByTestId(
-      "thirdPartyCookiesEnabledField",
-    );
-    expect(thirdPartyCookiesEnabledField.element().value).toBe(
-      "%myDataElement%",
-    );
+    await expect
+      .element(thirdPartyCookiesEnabledField)
+      .toHaveValue("%myDataElement%");
 
-    // Verify it's saved as string
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].thirdPartyCookiesEnabled).toBe(
       "%myDataElement%",
@@ -144,26 +124,24 @@ describe("Config Identity section", () => {
 
   describe("validation", () => {
     it("validates data element format in third-party cookies field", async () => {
-      const view = await renderView(ConfigurationView);
+      await renderView(ConfigurationView);
 
       extensionBridge.init(buildSettings());
 
-      await waitForConfigurationViewToLoad(view);
+      await waitForConfigurationViewToLoad();
 
-      const thirdPartyCookiesCombo = spectrumComboBox(
-        "thirdPartyCookiesEnabledField",
-      );
-      await thirdPartyCookiesCombo.fill("invalid%DataElement");
+      await thirdPartyCookiesEnabledField.fill("invalid%DataElement");
 
       expect(await extensionBridge.validate()).toBe(false);
 
-      expect(await thirdPartyCookiesCombo.hasError()).toBe(true);
-      const errorMessage = await thirdPartyCookiesCombo.getErrorMessage();
-      expect(errorMessage).toBe("Please enter a valid data element.");
+      await expect.element(thirdPartyCookiesEnabledField).not.toBeValid();
+      await expect
+        .element(thirdPartyCookiesEnabledField)
+        .toHaveAccessibleDescription(/please enter a valid data element/i);
     });
 
     it("accepts valid data element format in third-party cookies field", async () => {
-      const view = await renderView(ConfigurationView);
+      await renderView(ConfigurationView);
 
       extensionBridge.init(
         buildSettings({
@@ -176,7 +154,7 @@ describe("Config Identity section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad(view);
+      await waitForConfigurationViewToLoad();
 
       expect(await extensionBridge.validate()).toBe(true);
     });

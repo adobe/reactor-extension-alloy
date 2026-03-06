@@ -16,11 +16,30 @@ import { page } from "vitest/browser";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad, toggleComponent } from "../helpers/ui";
-import { spectrumCheckbox } from "../helpers/form";
+import { waitForConfigurationViewToLoad, expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
+
+const targetMigrationEnabledField = page.getByTestId(
+  "targetMigrationEnabledField",
+);
+const personalizationStorageEnabledField = page.getByTestId(
+  "personalizationStorageEnabledField",
+);
+const prehidingStyleEditButton = page.getByTestId("prehidingStyleEditButton");
+const ajoPicker = page.getByTestId(
+  "autoCollectPropositionInteractionsAJOPicker",
+);
+const tgtPicker = page.getByTestId(
+  "autoCollectPropositionInteractionsTGTPicker",
+);
+const personalizationComponentCheckbox = page.getByTestId(
+  "personalizationComponentCheckbox",
+);
+const rulesEngineComponentCheckbox = page.getByTestId(
+  "rulesEngineComponentCheckbox",
+);
 
 describe("Config personalization section", () => {
   beforeEach(() => {
@@ -33,7 +52,7 @@ describe("Config personalization section", () => {
   });
 
   it("sets form values from settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -52,67 +71,37 @@ describe("Config personalization section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const targetMigrationEnabledField = spectrumCheckbox(
-      "targetMigrationEnabledField",
-    );
-    expect(await targetMigrationEnabledField.isChecked()).toBe(true);
+    await expect.element(targetMigrationEnabledField).toBeChecked();
+    await expect.element(personalizationStorageEnabledField).toBeChecked();
 
-    const personalizationStorageEnabledField = spectrumCheckbox(
-      "personalizationStorageEnabledField",
-    );
-    expect(await personalizationStorageEnabledField.isChecked()).toBe(true);
-
-    // Check picker values
-    const ajoPickerButton = page.getByTestId(
-      "autoCollectPropositionInteractionsAJOPicker",
-    );
-    expect(ajoPickerButton.element().textContent).toContain(
-      "Decorated elements only",
-    );
-
-    const tgtPickerButton = page.getByTestId(
-      "autoCollectPropositionInteractionsTGTPicker",
-    );
-    expect(tgtPickerButton.element().textContent).toContain("Always");
+    await expect
+      .element(ajoPicker)
+      .toHaveTextContent(/decorated elements only/i);
+    await expect.element(tgtPicker).toHaveTextContent(/always/i);
   });
 
   it("updates form values and saves to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    const targetMigrationEnabledField = spectrumCheckbox(
-      "targetMigrationEnabledField",
-    );
-    await targetMigrationEnabledField.check();
+    await targetMigrationEnabledField.click();
+    await personalizationStorageEnabledField.click();
 
-    const personalizationStorageEnabledField = spectrumCheckbox(
-      "personalizationStorageEnabledField",
-    );
-    await personalizationStorageEnabledField.check();
+    await prehidingStyleEditButton.click();
 
-    // Click to open prehiding style code editor
-    await page.getByTestId("prehidingStyleEditButton").click();
-
-    // Change AJO picker to "Never"
-    await page
-      .getByTestId("autoCollectPropositionInteractionsAJOPicker")
-      .click();
+    await ajoPicker.click();
     await page.getByRole("option", { name: /never/i }).click();
 
-    // Change TGT picker to "Decorated elements only"
-    await page
-      .getByTestId("autoCollectPropositionInteractionsTGTPicker")
-      .click();
+    await tgtPicker.click();
     await page
       .getByRole("option", { name: /decorated elements only/i })
       .click();
 
-    // Get settings and verify
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].targetMigrationEnabled).toBe(true);
     expect(settings.instances[0].personalizationStorageEnabled).toBe(true);
@@ -128,7 +117,7 @@ describe("Config personalization section", () => {
   });
 
   it("does not emit personalization settings when component is disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -147,8 +136,9 @@ describe("Config personalization section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
-    await toggleComponent("personalization");
+    await waitForConfigurationViewToLoad();
+    await expandAccordion("Build options");
+    await personalizationComponentCheckbox.click();
 
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].targetMigrationEnabled).toBeUndefined();
@@ -160,7 +150,7 @@ describe("Config personalization section", () => {
   });
 
   it("does not emit personalization storage when rules engine is disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -174,8 +164,9 @@ describe("Config personalization section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
-    await toggleComponent("rulesEngine");
+    await waitForConfigurationViewToLoad();
+    await expandAccordion("Build options");
+    await rulesEngineComponentCheckbox.click();
 
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].targetMigrationEnabled).toBe(true);
@@ -183,7 +174,7 @@ describe("Config personalization section", () => {
   });
 
   it("hides personalization storage checkbox when rules engine is disabled", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -193,51 +184,40 @@ describe("Config personalization section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Should show info alert instead of checkbox
     await expect
       .element(
-        view.getByText(
+        page.getByText(
           /enable it above to configure personalization storage settings/i,
         ),
       )
       .toBeVisible();
 
-    // Checkbox should not be present
     await expect
-      .element(view.getByTestId("personalizationStorageEnabledField"))
-      .not.toBeInTheDocument(); // expect(personalizationStorageCheckbox).toBeNull();
+      .element(personalizationStorageEnabledField)
+      .not.toBeInTheDocument();
   });
 
   it("shows default values for auto-collect pickers", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Check default values
-    const ajoPickerButton = page.getByTestId(
-      "autoCollectPropositionInteractionsAJOPicker",
-    );
-    expect(ajoPickerButton.element().textContent).toContain("Always");
-
-    const tgtPickerButton = page.getByTestId(
-      "autoCollectPropositionInteractionsTGTPicker",
-    );
-    expect(tgtPickerButton.element().textContent).toContain("Never");
+    await expect.element(ajoPicker).toHaveTextContent(/always/i);
+    await expect.element(tgtPicker).toHaveTextContent(/never/i);
   });
 
   it("does not save default values to settings", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
     const settings = await extensionBridge.getSettings();
-    // Default values should not be saved
     expect(settings.instances[0].targetMigrationEnabled).toBeUndefined();
     expect(settings.instances[0].prehidingStyle).toBeUndefined();
     expect(settings.instances[0].personalizationStorageEnabled).toBeUndefined();
@@ -247,7 +227,7 @@ describe("Config personalization section", () => {
   });
 
   it("saves non-default auto-collect values", async () => {
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -257,20 +237,15 @@ describe("Config personalization section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
+    await waitForConfigurationViewToLoad();
 
-    // Change TGT picker from default "Never" to "Always"
-    await page
-      .getByTestId("autoCollectPropositionInteractionsTGTPicker")
-      .click();
+    await tgtPicker.click();
     await page.getByRole("option", { name: /^always$/i }).click();
 
     const settings = await extensionBridge.getSettings();
-    // Only non-default TGT value should be saved
     expect(settings.instances[0].autoCollectPropositionInteractions?.TGT).toBe(
       "always",
     );
-    // AJO is still default, so should not be saved
     expect(
       settings.instances[0].autoCollectPropositionInteractions?.AJO,
     ).toBeUndefined();
@@ -284,7 +259,7 @@ describe("Config personalization section", () => {
     });
     window.extensionBridge = testExtensionBridge;
 
-    const view = await renderView(ConfigurationView);
+    await renderView(ConfigurationView);
 
     testExtensionBridge.init(
       buildSettings({
@@ -294,8 +269,8 @@ describe("Config personalization section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(view);
-    await page.getByTestId("prehidingStyleEditButton").click();
+    await waitForConfigurationViewToLoad();
+    await prehidingStyleEditButton.click();
 
     const settings = await testExtensionBridge.getSettings();
 
