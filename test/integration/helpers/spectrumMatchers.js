@@ -28,4 +28,51 @@ expect.extend({
       expected: "true",
     };
   },
+  async toHaveError(element, message) {
+    let description;
+    const domEl =
+      element && typeof element.element === "function"
+        ? element.element()
+        : element;
+
+    const hasInvalid = domEl?.getAttribute?.("aria-invalid") === "true";
+    if (!hasInvalid) {
+      return {
+        pass: false,
+        message: () =>
+          `Expected element to have error (aria-invalid="true") but got aria-invalid="${domEl?.getAttribute?.("aria-invalid") ?? "undefined"}"`,
+        actual: domEl?.getAttribute?.("aria-invalid"),
+        expected: "true",
+      };
+    }
+
+    if (message === undefined) {
+      return {
+        pass: true,
+        message: () => "",
+        actual: undefined,
+        expected: undefined,
+      };
+    }
+
+    const describedBy = domEl.getAttribute("aria-describedby");
+    if (describedBy) {
+      const firstId = describedBy.split(/\s+/)[0];
+      const descEl = document.getElementById(firstId);
+      description = descEl ? (descEl.textContent?.trim() ?? "") : "";
+    }
+
+    const pass =
+      message instanceof RegExp
+        ? message.test(description ?? "")
+        : description === message;
+
+    return {
+      pass,
+      message: () =>
+        `Expected element to ${this.isNot ? "not have" : "have"} error matching ${String(message)} but got ${description ?? "undefined"}`,
+      actual: description,
+      expected: message,
+    };
+  },
 });

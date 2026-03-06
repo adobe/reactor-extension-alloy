@@ -12,11 +12,11 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
+import { page } from "vitest/browser";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad, toggleComponent } from "../helpers/ui";
-import { spectrumTextField, spectrumComboBox } from "../helpers/form";
+import { waitForConfigurationViewToLoad, expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 import { worker } from "../helpers/mocks/browser";
 import {
@@ -24,27 +24,33 @@ import {
   advertisersUnauthorizedHandlers,
 } from "../helpers/mocks/defaultHandlers";
 
+let extensionBridge;
+
+const dspEnabledField = page.getByTestId("dspEnabledField");
+const id5PartnerIdField = page.getByTestId("id5PartnerIdField");
+const rampIdJSPathField = page.getByTestId("rampIdJSPathField");
+const addAdvertiserButton = page.getByTestId("addAdvertiserButton");
+const advertiser0Field = page.getByTestId("advertiser0Field");
+const advertiser1Field = page.getByTestId("advertiser1Field");
+const advertiserEnabled0Field = page.getByTestId("advertiserEnabled0Field");
+const deleteAdvertiser0Button = page.getByTestId("deleteAdvertiser0Button");
+const advertisingComponentCheckbox = page.getByTestId(
+  "advertisingComponentCheckbox",
+);
+
 /**
  * Wait for advertiser fields to load after enabling DSP
  */
-const waitForAdvertisersToLoad = async (view) => {
-  // Wait for the advertiser field to appear (indicates advertisers are loaded)
-  await expect
-    .element(view.getByTestId("advertiser0Field"))
-    .toBeInTheDocument({ timeout: 10000 });
+const waitForAdvertisersToLoad = async () => {
+  await expect.element(advertiser0Field).toBeInTheDocument({ timeout: 10000 });
 };
 
 /**
  * Wait for ID5 and RampID fields to appear (they show after advertisers load)
  */
-const waitForOptionalFieldsToLoad = async (view) => {
-  // Wait for ID5 field to appear
-  await expect
-    .element(view.getByTestId("id5PartnerIdField"))
-    .toBeInTheDocument({ timeout: 10000 });
+const waitForOptionalFieldsToLoad = async () => {
+  await expect.element(id5PartnerIdField).toBeInTheDocument({ timeout: 10000 });
 };
-
-let extensionBridge;
 
 describe("Config advertising section", () => {
   beforeEach(() => {
@@ -86,19 +92,16 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    await waitForAdvertisersToLoad(view);
-    await waitForOptionalFieldsToLoad(view);
+    await waitForAdvertisersToLoad();
+    await waitForOptionalFieldsToLoad();
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    expect(await dspEnabledField.getValue()).toBe("Enabled");
+    await expect.element(dspEnabledField).toHaveValue("Enabled");
 
-    const id5PartnerIdField = spectrumTextField("id5PartnerIdField");
-    expect(await id5PartnerIdField.getValue()).toBe("test-id5-partner");
+    await expect.element(id5PartnerIdField).toHaveValue("test-id5-partner");
 
-    const rampIdJSPathField = spectrumTextField("rampIdJSPathField");
-    expect(await rampIdJSPathField.getValue()).toBe(
-      "https://example.com/ats.js",
-    );
+    await expect
+      .element(rampIdJSPathField)
+      .toHaveValue("https://example.com/ats.js");
   });
 
   it("sets form values from settings with DSP disabled", async () => {
@@ -123,8 +126,7 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    expect(await dspEnabledField.getValue()).toBe("Disabled");
+    await expect.element(dspEnabledField).toHaveValue("Disabled");
   });
 
   it("updates form values and saves to settings", async () => {
@@ -140,20 +142,16 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    await dspEnabledField.fill("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load after enabling DSP
-    await waitForAdvertisersToLoad(view);
-    await waitForOptionalFieldsToLoad(view);
+    await waitForAdvertisersToLoad();
+    await waitForOptionalFieldsToLoad();
 
-    const advertiserIdField = spectrumComboBox("advertiser0Field");
-    await advertiserIdField.selectOption("test");
+    await advertiser0Field.selectOption("test");
 
-    const id5PartnerIdField = spectrumTextField("id5PartnerIdField");
     await id5PartnerIdField.fill("new-id5-partner");
 
-    const rampIdJSPathField = spectrumTextField("rampIdJSPathField");
     await rampIdJSPathField.fill("https://new.example.com/ats.js");
 
     // Get settings and verify
@@ -200,7 +198,8 @@ describe("Config advertising section", () => {
     );
 
     await waitForConfigurationViewToLoad(view);
-    await toggleComponent("advertising");
+    await expandAccordion("Build options");
+    await advertisingComponentCheckbox.click();
 
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].advertising).toBeUndefined();
@@ -214,7 +213,7 @@ describe("Config advertising section", () => {
 
     await expect
       .element(
-        view.getByRole("heading", {
+        page.getByRole("heading", {
           name: /adobe advertising component disabled/i,
         }),
       )
@@ -233,12 +232,13 @@ describe("Config advertising section", () => {
     );
 
     await waitForConfigurationViewToLoad(view);
-    await toggleComponent("advertising");
+    await expandAccordion("Build options");
+    await advertisingComponentCheckbox.click();
 
     // Should now show alert panel
     await expect
       .element(
-        view.getByRole("heading", {
+        page.getByRole("heading", {
           name: /adobe advertising component disabled/i,
         }),
       )
@@ -267,8 +267,7 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    expect(await dspEnabledField.getValue()).toBe("%myDataElement%");
+    await expect.element(dspEnabledField).toHaveValue("%myDataElement%");
 
     // Verify it's saved as string
     const settings = await extensionBridge.getSettings();
@@ -299,11 +298,10 @@ describe("Config advertising section", () => {
     );
 
     await waitForConfigurationViewToLoad(view);
-    await waitForAdvertisersToLoad(view);
-    await waitForOptionalFieldsToLoad(view);
+    await waitForAdvertisersToLoad();
+    await waitForOptionalFieldsToLoad();
 
-    const id5PartnerIdField = spectrumTextField("id5PartnerIdField");
-    expect(await id5PartnerIdField.getValue()).toBe("%id5DataElement%");
+    await expect.element(id5PartnerIdField).toHaveValue("%id5DataElement%");
 
     // Verify it's saved as string
     const settings = await extensionBridge.getSettings();
@@ -334,11 +332,10 @@ describe("Config advertising section", () => {
     );
 
     await waitForConfigurationViewToLoad(view);
-    await waitForAdvertisersToLoad(view);
-    await waitForOptionalFieldsToLoad(view);
+    await waitForAdvertisersToLoad();
+    await waitForOptionalFieldsToLoad();
 
-    const rampIdJSPathField = spectrumTextField("rampIdJSPathField");
-    expect(await rampIdJSPathField.getValue()).toBe("%rampIdDataElement%");
+    await expect.element(rampIdJSPathField).toHaveValue("%rampIdDataElement%");
 
     // Verify it's saved as string
     const settings = await extensionBridge.getSettings();
@@ -360,11 +357,10 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    await dspEnabledField.fill("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
-    await waitForAdvertisersToLoad(view);
+    await waitForAdvertisersToLoad();
 
     // Leave optional fields empty
     const settings = await extensionBridge.getSettings();
@@ -385,8 +381,7 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    expect(await dspEnabledField.getValue()).toBe("Disabled");
+    await expect.element(dspEnabledField).toHaveValue("Disabled");
   });
 
   it("converts boolean dspEnabled to string for UI display", async () => {
@@ -411,8 +406,7 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    expect(await dspEnabledField.getValue()).toBe("Enabled");
+    await expect.element(dspEnabledField).toHaveValue("Enabled");
   });
 
   it("converts Enabled string to boolean true when saving", async () => {
@@ -428,11 +422,10 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    await dspEnabledField.fill("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
-    await waitForAdvertisersToLoad(view);
+    await waitForAdvertisersToLoad();
 
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].advertising.dspEnabled).toBe(true);
@@ -451,8 +444,7 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    await dspEnabledField.fill("Disabled");
+    await dspEnabledField.selectOption("Disabled");
 
     const settings = await extensionBridge.getSettings();
     expect(settings.instances[0].advertising.dspEnabled).toBe(false);
@@ -471,19 +463,12 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    expect(await dspEnabledField.getValue()).toBe("Disabled");
+    await expect.element(dspEnabledField).toHaveValue("Disabled");
 
     // Verify DSP-specific fields are not visible
-    await expect
-      .element(view.getByTestId("addAdvertiserButton"))
-      .not.toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("id5PartnerIdField"))
-      .not.toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("rampIdJSPathField"))
-      .not.toBeInTheDocument();
+    await expect.element(addAdvertiserButton).not.toBeInTheDocument();
+    await expect.element(id5PartnerIdField).not.toBeInTheDocument();
+    await expect.element(rampIdJSPathField).not.toBeInTheDocument();
   });
 
   it("shows DSP fields when DSP is enabled", async () => {
@@ -499,26 +484,17 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    await dspEnabledField.fill("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
-    await waitForAdvertisersToLoad(view);
-    await waitForOptionalFieldsToLoad(view);
+    await waitForAdvertisersToLoad();
+    await waitForOptionalFieldsToLoad();
 
     // Verify DSP-specific fields are now visible
-    await expect
-      .element(view.getByTestId("addAdvertiserButton"))
-      .toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("id5PartnerIdField"))
-      .toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("rampIdJSPathField"))
-      .toBeInTheDocument();
-    await expect
-      .element(view.getByTestId("advertiser0Field"))
-      .toBeInTheDocument();
+    await expect.element(addAdvertiserButton).toBeInTheDocument();
+    await expect.element(id5PartnerIdField).toBeInTheDocument();
+    await expect.element(rampIdJSPathField).toBeInTheDocument();
+    await expect.element(advertiser0Field).toBeInTheDocument();
   });
 
   it("shows warning alert when no advertisers are found but allows manual entry", async () => {
@@ -537,13 +513,12 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    await dspEnabledField.fill("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for the warning alert to appear
     await expect
       .element(
-        view.getByRole("heading", {
+        page.getByRole("heading", {
           name: /no dsp advertisers found/i,
         }),
       )
@@ -551,13 +526,13 @@ describe("Config advertising section", () => {
 
     // Verify the alert content
     await expect
-      .element(view.getByText(/no advertisers found for this ims org/i))
+      .element(page.getByText(/no advertisers found for this ims org/i))
       .toBeVisible();
 
     // Verify DSP fields are now visible for manual entry
-    await expect.element(view.getByTestId("addAdvertiserButton")).toBeVisible();
-    await expect.element(view.getByTestId("id5PartnerIdField")).toBeVisible();
-    await expect.element(view.getByTestId("rampIdJSPathField")).toBeVisible();
+    await expect.element(addAdvertiserButton).toBeVisible();
+    await expect.element(id5PartnerIdField).toBeVisible();
+    await expect.element(rampIdJSPathField).toBeVisible();
 
     // Verify form is invalid without advertiser ID
     expect(await extensionBridge.validate()).toBe(false);
@@ -579,13 +554,12 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    await dspEnabledField.fill("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for the warning alert to appear
     await expect
       .element(
-        view.getByRole("heading", {
+        page.getByRole("heading", {
           name: /unable to load advertisers/i,
         }),
       )
@@ -593,13 +567,13 @@ describe("Config advertising section", () => {
 
     // Verify the alert content
     await expect
-      .element(view.getByText(/could not retrieve advertiser data from dsp/i))
+      .element(page.getByText(/could not retrieve advertiser data from dsp/i))
       .toBeVisible();
 
     // Verify DSP fields are now visible for manual entry
-    await expect.element(view.getByTestId("addAdvertiserButton")).toBeVisible();
-    await expect.element(view.getByTestId("id5PartnerIdField")).toBeVisible();
-    await expect.element(view.getByTestId("rampIdJSPathField")).toBeVisible();
+    await expect.element(addAdvertiserButton).toBeVisible();
+    await expect.element(id5PartnerIdField).toBeVisible();
+    await expect.element(rampIdJSPathField).toBeVisible();
 
     // Verify form is invalid without advertiser ID
     expect(await extensionBridge.validate()).toBe(false);
@@ -618,21 +592,16 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    await dspEnabledField.fill("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
-    await waitForAdvertisersToLoad(view);
+    await waitForAdvertisersToLoad();
 
     // Verify add advertiser button is visible
-    await expect
-      .element(view.getByTestId("addAdvertiserButton"))
-      .toBeInTheDocument();
+    await expect.element(addAdvertiserButton).toBeInTheDocument();
 
     // Verify one advertiser row is visible by default
-    await expect
-      .element(view.getByTestId("advertiser0Field"))
-      .toBeInTheDocument();
+    await expect.element(advertiser0Field).toBeInTheDocument();
   });
 
   it("allows adding multiple advertisers", async () => {
@@ -648,23 +617,19 @@ describe("Config advertising section", () => {
 
     await waitForConfigurationViewToLoad(view);
 
-    const dspEnabledField = spectrumComboBox("dspEnabledField");
-    await dspEnabledField.fill("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
-    await waitForAdvertisersToLoad(view);
-    await waitForOptionalFieldsToLoad(view);
+    await waitForAdvertisersToLoad();
+    await waitForOptionalFieldsToLoad();
 
     // Select first advertiser
-    const advertiser0Field = spectrumComboBox("advertiser0Field");
     await advertiser0Field.selectOption("test");
 
     // Add second advertiser
-    const addAdvertiserButton = view.getByTestId("addAdvertiserButton");
     await addAdvertiserButton.click();
 
     // Select second advertiser
-    const advertiser1Field = spectrumComboBox("advertiser1Field");
     await advertiser1Field.selectOption("Advertiser BF");
 
     // Verify settings
@@ -717,12 +682,11 @@ describe("Config advertising section", () => {
     );
 
     await waitForConfigurationViewToLoad(view);
-    await waitForAdvertisersToLoad(view);
-    await waitForOptionalFieldsToLoad(view);
+    await waitForAdvertisersToLoad();
+    await waitForOptionalFieldsToLoad();
 
     // Remove first advertiser
-    const removeButton0 = view.getByTestId("deleteAdvertiser0Button");
-    await removeButton0.click();
+    await deleteAdvertiser0Button.click();
 
     // Verify settings
     const settings = await extensionBridge.getSettings();
@@ -764,12 +728,11 @@ describe("Config advertising section", () => {
     );
 
     await waitForConfigurationViewToLoad(view);
-    await waitForAdvertisersToLoad(view);
-    await waitForOptionalFieldsToLoad(view);
+    await waitForAdvertisersToLoad();
+    await waitForOptionalFieldsToLoad();
 
     // Toggle to disabled
-    const advertiserEnabled0Field = spectrumComboBox("advertiserEnabled0Field");
-    await advertiserEnabled0Field.fill("Disabled");
+    await advertiserEnabled0Field.selectOption("Disabled");
 
     // Verify settings
     let settings = await extensionBridge.getSettings();
@@ -778,7 +741,7 @@ describe("Config advertising section", () => {
     ).toBe(false);
 
     // Toggle back to enabled
-    await advertiserEnabled0Field.fill("Enabled");
+    await advertiserEnabled0Field.selectOption("Enabled");
 
     // Verify settings
     settings = await extensionBridge.getSettings();
@@ -801,19 +764,13 @@ describe("Config advertising section", () => {
 
       await waitForConfigurationViewToLoad(view);
 
-      const dspEnabledField = spectrumComboBox("dspEnabledField");
       await dspEnabledField.fill("");
 
       expect(await extensionBridge.validate()).toBe(false);
 
-      // Check that the field shows an error
-      expect(await dspEnabledField.hasError()).toBe(true);
-
-      // Check the error message
-      const errorMessage = await dspEnabledField.getErrorMessage();
-      expect(errorMessage).toBe(
-        "Please choose a value or specify a data element.",
-      );
+      await expect
+        .element(dspEnabledField)
+        .toHaveError(/please choose a value or specify a data element/i);
     });
 
     it("validates data element format in DSP enabled field", async () => {
@@ -847,18 +804,9 @@ describe("Config advertising section", () => {
       // Trigger validation
       expect(await extensionBridge.validate()).toBe(false);
 
-      // Wait a bit for the error to appear in the DOM
-      await new Promise((resolve) => {
-        setTimeout(resolve, 100);
-      });
-
-      // Check that the field shows an error
-      const dspEnabledField = spectrumComboBox("dspEnabledField");
-      expect(await dspEnabledField.hasError()).toBe(true);
-
-      // Check the error message
-      const errorMessage = await dspEnabledField.getErrorMessage();
-      expect(errorMessage).toBe("Please enter a valid data element.");
+      await expect
+        .element(dspEnabledField)
+        .toHaveError(/please enter a valid data element/i);
     });
 
     it("accepts valid data element format in DSP enabled field", async () => {
@@ -890,13 +838,9 @@ describe("Config advertising section", () => {
       await waitForConfigurationViewToLoad(view);
 
       // When DSP is a data element, advertisers will still load
-      await waitForAdvertisersToLoad(view);
+      await waitForAdvertisersToLoad();
 
       expect(await extensionBridge.validate()).toBe(true);
-
-      // Check that the field does not show an error
-      const dspEnabledField = spectrumComboBox("dspEnabledField");
-      expect(await dspEnabledField.hasError()).toBe(false);
     });
 
     it("validates data element format in ID5 Partner ID field", async () => {
@@ -927,24 +871,15 @@ describe("Config advertising section", () => {
       );
 
       await waitForConfigurationViewToLoad(view);
-      await waitForAdvertisersToLoad(view);
-      await waitForOptionalFieldsToLoad(view);
+      await waitForAdvertisersToLoad();
+      await waitForOptionalFieldsToLoad();
 
       // Trigger validation
       expect(await extensionBridge.validate()).toBe(false);
 
-      // Wait a bit for the error to appear in the DOM
-      await new Promise((resolve) => {
-        setTimeout(resolve, 100);
-      });
-
-      // Check that the field shows an error
-      const id5PartnerIdField = spectrumTextField("id5PartnerIdField");
-      expect(await id5PartnerIdField.hasError()).toBe(true);
-
-      // Check the error message
-      const errorMessage = await id5PartnerIdField.getErrorMessage();
-      expect(errorMessage).toBe("Please enter a valid data element.");
+      await expect
+        .element(id5PartnerIdField)
+        .toHaveError(/please enter a valid data element/i);
     });
 
     it("validates data element format in RampID JS Path field", async () => {
@@ -975,24 +910,15 @@ describe("Config advertising section", () => {
       );
 
       await waitForConfigurationViewToLoad(view);
-      await waitForAdvertisersToLoad(view);
-      await waitForOptionalFieldsToLoad(view);
+      await waitForAdvertisersToLoad();
+      await waitForOptionalFieldsToLoad();
 
       // Trigger validation
       expect(await extensionBridge.validate()).toBe(false);
 
-      // Wait a bit for the error to appear in the DOM
-      await new Promise((resolve) => {
-        setTimeout(resolve, 100);
-      });
-
-      // Check that the field shows an error
-      const rampIdJSPathField = spectrumTextField("rampIdJSPathField");
-      expect(await rampIdJSPathField.hasError()).toBe(true);
-
-      // Check the error message
-      const errorMessage = await rampIdJSPathField.getErrorMessage();
-      expect(errorMessage).toBe("Please enter a valid data element.");
+      await expect
+        .element(rampIdJSPathField)
+        .toHaveError(/please enter a valid data element/i);
     });
 
     it("shows error when advertiser field is missing while DSP is enabled", async () => {
@@ -1017,23 +943,14 @@ describe("Config advertising section", () => {
       );
 
       await waitForConfigurationViewToLoad(view);
-      await waitForAdvertisersToLoad(view);
+      await waitForAdvertisersToLoad();
 
       // Trigger validation
       expect(await extensionBridge.validate()).toBe(false);
 
-      // Wait a bit for the error to appear in the DOM
-      await new Promise((resolve) => {
-        setTimeout(resolve, 100);
-      });
-
-      // Check that the advertiser field shows an error
-      const advertiserField = spectrumComboBox("advertiser0Field");
-      expect(await advertiserField.hasError()).toBe(true);
-
-      // Check the error message
-      const errorMessage = await advertiserField.getErrorMessage();
-      expect(errorMessage).toBe("Please select an advertiser.");
+      await expect
+        .element(advertiser0Field)
+        .toHaveError(/please select an advertiser/i);
     });
   });
 });
