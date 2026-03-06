@@ -43,6 +43,7 @@ describe("Config brand concierge section", () => {
             name: "alloy",
             conversation: {
               stickyConversationSession: true,
+              voiceEnabled: true,
               streamTimeout: 20000, // 20 seconds in milliseconds
             },
           },
@@ -56,6 +57,9 @@ describe("Config brand concierge section", () => {
       "stickyConversationSessionField",
     );
     expect(await stickyConversationSessionField.isChecked()).toBe(true);
+
+    const voiceEnabledField = spectrumCheckbox("voiceEnabledField");
+    expect(await voiceEnabledField.isChecked()).toBe(true);
 
     // Stream timeout should be displayed in seconds (20000ms = 20s)
     const streamTimeoutField = spectrumNumberField("streamTimeoutDataTestId");
@@ -80,6 +84,9 @@ describe("Config brand concierge section", () => {
     );
     await stickyConversationSessionField.check();
 
+    const voiceEnabledField = spectrumCheckbox("voiceEnabledField");
+    await voiceEnabledField.check();
+
     // Set stream timeout to 30 seconds (should save as 30000ms)
     const streamTimeoutField = spectrumNumberField("streamTimeoutDataTestId");
     await streamTimeoutField.fill(30);
@@ -88,6 +95,7 @@ describe("Config brand concierge section", () => {
     expect(settings.instances[0].conversation.stickyConversationSession).toBe(
       true,
     );
+    expect(settings.instances[0].conversation.voiceEnabled).toBe(true);
     // Should be saved as milliseconds (30s = 30000ms)
     expect(settings.instances[0].conversation.streamTimeout).toBe(30000);
   });
@@ -105,6 +113,7 @@ describe("Config brand concierge section", () => {
             name: "alloy",
             conversation: {
               stickyConversationSession: true,
+              voiceEnabled: true,
               streamTimeout: 15000,
             },
           },
@@ -197,6 +206,7 @@ describe("Config brand concierge section", () => {
 
     // Default is 10 seconds, don't change it
     const settings = await extensionBridge.getSettings();
+    expect(settings.instances[0].conversation?.voiceEnabled).toBeUndefined();
     expect(settings.instances[0].conversation?.streamTimeout).toBeUndefined();
   });
 });

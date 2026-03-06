@@ -520,6 +520,9 @@ const createExtensionManifest = ({ version }) => {
                       stickyConversationSession: {
                         type: "boolean",
                       },
+                      voiceEnabled: {
+                        type: "boolean",
+                      },
                       streamTimeout: {
                         type: "integer",
                         minimum: 10000,
