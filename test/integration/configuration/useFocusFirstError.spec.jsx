@@ -46,6 +46,7 @@ describe("useFocusFirstError hook", () => {
 
     // Clear the name field to create a validation error
     await nameField.fill("");
+    await driver.tab();
 
     // Trigger validation
     await driver.expectValidate().toBe(false);
@@ -78,6 +79,7 @@ describe("useFocusFirstError hook", () => {
     );
 
     await nameField.fill("");
+    await driver.tab();
 
     // Switch back to the second tab
     const secondTab = view.getByRole("tab").nth(1);
@@ -103,6 +105,7 @@ describe("useFocusFirstError hook", () => {
 
     // Clear multiple fields to create multiple validation errors
     await nameField.fill("");
+    await driver.tab();
 
     await driver.expectValidate().toBe(false);
 
@@ -127,6 +130,7 @@ describe("useFocusFirstError hook", () => {
     );
 
     await nameField.fill("");
+    await driver.tab();
 
     await view.getByRole("button", { name: "SDK instances" }).click();
 
@@ -149,6 +153,7 @@ describe("useFocusFirstError hook", () => {
 
     // Clear the edge base path field (which is lower on the page)
     await edgeBasePathField.fill("");
+    await driver.tab();
 
     // Scroll to the top of the page
     await nameField.element().scrollIntoView();
@@ -190,6 +195,7 @@ describe("useFocusFirstError hook", () => {
 
     // First validation error - clear name field
     await nameField.fill("");
+    await driver.tab();
 
     // Trigger validation
     await driver.expectValidate().toBe(false);
@@ -199,9 +205,11 @@ describe("useFocusFirstError hook", () => {
 
     // Fix the name field
     await nameField.fill("alloy");
+    await driver.tab();
 
     // Create a different validation error - clear edge base path
     await edgeBasePathField.fill("");
+    await driver.tab();
 
     // Trigger validation again
     await driver.expectValidate().toBe(false);
@@ -236,6 +244,7 @@ describe("useFocusFirstError hook", () => {
     );
 
     await nameField.fill("");
+    await driver.tab();
 
     // Switch to the third tab
     const thirdTab = view.getByRole("tab").nth(2);

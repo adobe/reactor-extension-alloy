@@ -68,11 +68,7 @@ describe("Datastream Selector - Refresh Button", () => {
     await refreshButton.click();
 
     // The button should eventually become enabled again after loading completes
-    await expect
-      .poll(() => refreshButton.element().disabled, {
-        timeout: 5000,
-      })
-      .toBe(false);
+    await expect.element(refreshButton).not.toBeDisabled();
   });
 
   it("refresh button reloads datastream list", async () => {
@@ -97,11 +93,7 @@ describe("Datastream Selector - Refresh Button", () => {
     await refreshButton.click();
 
     // Wait for reload to complete by polling the button's disabled state
-    await expect
-      .poll(() => refreshButton.element().disabled, {
-        timeout: 5000,
-      })
-      .toBe(false);
+    await expect.element(refreshButton).not.toBeDisabled();
 
     // Verify the field is still functional after refresh
     await expect.element(datastreamField).toBeVisible();
@@ -129,10 +121,6 @@ describe("Datastream Selector - Refresh Button", () => {
     const firstRefreshButton = allRefreshButtons.nth(0);
     await firstRefreshButton.click();
 
-    await expect
-      .poll(() => firstRefreshButton.element().disabled, {
-        timeout: 5000,
-      })
-      .toBe(false);
+    await expect.element(firstRefreshButton).not.toBeDisabled();
   });
 });

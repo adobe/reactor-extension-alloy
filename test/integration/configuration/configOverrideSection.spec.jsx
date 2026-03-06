@@ -252,6 +252,7 @@ describe("Config overrides section", () => {
     // Enable Experience Platform and set dataset
     await experiencePlatformEnabled.selectOption("Enabled");
     await eventDatasetOverride.fill("myDatasetId");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].edgeConfigOverrides)
@@ -286,11 +287,13 @@ describe("Config overrides section", () => {
 
     // Set invalid ID sync container (non-numeric)
     await idSyncContainerOverride.fill("invalid");
+    await driver.tab();
 
     await driver.expectValidate().toBe(false);
 
     // Set valid ID sync container
     await idSyncContainerOverride.fill("12345");
+    await driver.tab();
 
     await driver.expectValidate().toBe(true);
   });
@@ -312,6 +315,7 @@ describe("Config overrides section", () => {
 
     await experiencePlatformEnabled.selectOption("Enabled");
     await eventDatasetOverride.fill("%myDatasetDataElement%");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].edgeConfigOverrides)
@@ -355,6 +359,7 @@ describe("Config overrides section", () => {
     // Add third report suite
     await addReportSuite.click();
     await reportSuitesOverride[2].fill("reportSuite3");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].edgeConfigOverrides)
@@ -391,6 +396,7 @@ describe("Config overrides section", () => {
     await reportSuitesOverride[0].fill("devReportSuite");
     await targetEnabled.selectOption("Enabled");
     await targetPropertyTokenOverride.fill("devTargetToken");
+    await driver.tab();
 
     // Switch to production tab
     await productionOverridesTab.click();
@@ -449,6 +455,7 @@ describe("Config overrides section", () => {
 
     // Set analytics to disabled
     await analyticsEnabled.selectOption("Disabled");
+    await driver.tab();
 
     // Report suite fields should not be visible
     await expect.element(reportSuitesOverride[0]).not.toBeInTheDocument();
@@ -456,6 +463,7 @@ describe("Config overrides section", () => {
 
     // Enable analytics
     await analyticsEnabled.selectOption("Enabled");
+    await driver.tab();
 
     // Report suite fields should now be visible
     await expect.element(reportSuitesOverride[0]).toBeVisible();
@@ -470,12 +478,14 @@ describe("Config overrides section", () => {
 
     // Set target to disabled
     await targetEnabled.selectOption("Disabled");
+    await driver.tab();
 
     // Target property token field should not be visible
     await expect.element(targetPropertyTokenOverride).not.toBeInTheDocument();
 
     // Enable target
     await targetEnabled.selectOption("Enabled");
+    await driver.tab();
 
     // Target property token field should now be visible
     await expect.element(targetPropertyTokenOverride).toBeVisible();
@@ -504,6 +514,7 @@ describe("Config overrides section", () => {
 
     // Set to "No override"
     await overridesEnabled.selectOption("No override");
+    await driver.tab();
 
     // When no override is selected, edgeConfigOverrides should be undefined
     await driver
@@ -534,6 +545,7 @@ describe("Config overrides section", () => {
 
     // Enable SSEF
     await ssefEnabled.selectOption("Enabled");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].edgeConfigOverrides)
@@ -591,6 +603,7 @@ describe("Config overrides section", () => {
 
     // Disable AJO
     await ajoEnabled.selectOption("Disabled");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].edgeConfigOverrides)

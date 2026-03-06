@@ -35,7 +35,7 @@ locators.extend({
     await expect
       .poll(async () => {
         if (this.element().getAttribute("aria-expanded") !== "true") {
-          await this.click();
+          await this.click({ timeout: 0 });
         }
         await expect.element(this).toHaveAttribute("aria-expanded", "true");
       })

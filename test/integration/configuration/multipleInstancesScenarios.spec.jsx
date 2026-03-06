@@ -69,6 +69,7 @@ describe("Config Multiple Instances", () => {
 
     // Change the name back to "alloy" to create a duplicate
     await nameField.fill("alloy");
+    await driver.tab();
 
     await driver.expectValidate().toBe(false);
 
@@ -102,6 +103,7 @@ describe("Config Multiple Instances", () => {
     await secondTab.click();
 
     await nameField.fill("alloy2");
+    await driver.tab();
 
     await driver.expectValidate().toBe(false);
 
@@ -143,6 +145,7 @@ describe("Config Multiple Instances", () => {
     await productionEnvironmentTextfield.fill(
       "2fdb3763-0507-42ea-8856-e91bf3b64faa",
     );
+    await driver.tab();
 
     await driver.expectValidate().toBe(false);
 

@@ -52,6 +52,7 @@ describe("Config advanced section", () => {
     await driver.init(buildSettings());
 
     await edgeBasePathField.fill("my-custom-path");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].edgeBasePath)
@@ -110,6 +111,7 @@ describe("Config advanced section", () => {
       await driver.expectValidate().toBe(true);
 
       await edgeBasePathField.fill("");
+      await driver.tab();
 
       await expect.element(edgeBasePathField).not.toBeValid();
       await expect

@@ -58,6 +58,7 @@ describe("Config Identity section", () => {
     await idMigrationEnabledField.click();
 
     await thirdPartyCookiesEnabledField.fill("Disabled");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].idMigrationEnabled)
@@ -111,6 +112,7 @@ describe("Config Identity section", () => {
       await driver.init(buildSettings());
 
       await thirdPartyCookiesEnabledField.fill("invalid%DataElement");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 

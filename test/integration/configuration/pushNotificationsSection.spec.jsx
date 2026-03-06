@@ -77,6 +77,7 @@ describe("Config push notifications section", () => {
     await vapidPublicKeyField.fill("new-vapid-key");
     await appIdField.fill("new-app-id");
     await trackingDatasetIdField.fill("new-dataset-id");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].pushNotifications)
@@ -158,6 +159,7 @@ describe("Config push notifications section", () => {
       await appIdField.fill("test-app-id");
       await trackingDatasetIdField.fill("test-dataset-id");
       await vapidPublicKeyField.fill("");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 
@@ -176,6 +178,7 @@ describe("Config push notifications section", () => {
       await vapidPublicKeyField.fill("test-vapid-key");
       await trackingDatasetIdField.fill("test-dataset-id");
       await appIdField.fill("");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 
@@ -194,6 +197,7 @@ describe("Config push notifications section", () => {
       await vapidPublicKeyField.fill("test-vapid-key");
       await appIdField.fill("test-app-id");
       await trackingDatasetIdField.fill("");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 

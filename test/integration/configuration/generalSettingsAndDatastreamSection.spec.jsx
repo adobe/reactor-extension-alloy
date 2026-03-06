@@ -143,6 +143,7 @@ describe("Config general settings and datastream section", () => {
     await productionEnvironmentTextfield.fill("new-prod-datastream");
     await stagingEnvironmentTextfield.fill("new-staging-datastream");
     await developmentEnvironmentTextfield.fill("new-dev-datastream");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0])
@@ -176,6 +177,7 @@ describe("Config general settings and datastream section", () => {
     await productionDatastreamField.selectOption("analytics enabled");
     await stagingDatastreamField.selectOption("datastream enabled");
     await developmentDatastreamField.selectOption("aep-edge-samples");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0])
@@ -208,6 +210,7 @@ describe("Config general settings and datastream section", () => {
     await driver.init(buildSettings());
 
     await nameField.fill("%instanceName%");
+    await driver.tab();
 
     await expect.element(nameField).toHaveValue("%instanceName%");
 
@@ -345,6 +348,7 @@ describe("Config general settings and datastream section", () => {
       await driver.expectValidate().toBe(true);
 
       await nameField.fill("");
+      await driver.tab();
 
       await expect.element(nameField).not.toBeValid();
       await expect
@@ -360,6 +364,7 @@ describe("Config general settings and datastream section", () => {
       await driver.expectValidate().toBe(true);
 
       await orgIdField.fill("");
+      await driver.tab();
 
       await expect.element(orgIdField).not.toBeValid();
       await expect
@@ -375,6 +380,7 @@ describe("Config general settings and datastream section", () => {
       await driver.expectValidate().toBe(true);
 
       await edgeDomainField.fill("");
+      await driver.tab();
 
       await expect.element(edgeDomainField).not.toBeValid();
       await expect
@@ -390,6 +396,7 @@ describe("Config general settings and datastream section", () => {
       await driver.expectValidate().toBe(true);
 
       await nameField.fill("123");
+      await driver.tab();
 
       await expect.element(nameField).not.toBeValid();
       await expect
@@ -405,6 +412,7 @@ describe("Config general settings and datastream section", () => {
       await driver.expectValidate().toBe(true);
 
       await nameField.fill("addEventListener");
+      await driver.tab();
 
       await expect.element(nameField).not.toBeValid();
       await expect
@@ -424,6 +432,7 @@ describe("Config general settings and datastream section", () => {
       await edgeConfigInputMethodFreeformRadio.click();
 
       await productionEnvironmentTextfield.fill("");
+      await driver.tab();
 
       await expect.element(productionEnvironmentTextfield).not.toBeValid();
       await expect
@@ -447,6 +456,7 @@ describe("Config general settings and datastream section", () => {
 
       await developmentEnvironmentTextfield.fill("");
       await expect.element(developmentEnvironmentTextfield).toBeValid();
+      await driver.tab();
 
       await driver.expectValidate().toBe(true);
     });
@@ -463,6 +473,7 @@ describe("Config general settings and datastream section", () => {
       await productionEnvironmentTextfield.fill("%prodDatastream%");
       await stagingEnvironmentTextfield.fill("%stagingDatastream%");
       await developmentEnvironmentTextfield.fill("%devDatastream%");
+      await driver.tab();
 
       await driver.expectValidate().toBe(true);
     });
@@ -474,6 +485,7 @@ describe("Config general settings and datastream section", () => {
 
       const originalOrgId = orgIdField.element().value;
       await orgIdField.fill("custom@AdobeOrg");
+      await driver.tab();
 
       await expect.element(orgIdField).toHaveValue("custom@AdobeOrg");
 
@@ -487,6 +499,7 @@ describe("Config general settings and datastream section", () => {
 
       const originalEdgeDomain = edgeDomainField.element().value;
       await edgeDomainField.fill("custom.example.com");
+      await driver.tab();
 
       await expect.element(edgeDomainField).toHaveValue("custom.example.com");
 
@@ -506,6 +519,7 @@ describe("Config general settings and datastream section", () => {
       });
 
       await edgeDomainField.fill("custom.example.com");
+      await driver.tab();
 
       await edgeDomainRestoreButton.click();
 
@@ -536,6 +550,7 @@ describe("Config general settings and datastream section", () => {
       });
 
       await edgeDomainField.fill("custom.example.com");
+      await driver.tab();
 
       await edgeDomainRestoreButton.click();
 
@@ -558,6 +573,7 @@ describe("Config general settings and datastream section", () => {
       );
 
       await nameField.fill("newName");
+      await driver.tab();
 
       await expect
         .element(
@@ -572,6 +588,7 @@ describe("Config general settings and datastream section", () => {
       await driver.init({ settings: null });
 
       await nameField.fill("newName");
+      await driver.tab();
 
       await expect
         .element(

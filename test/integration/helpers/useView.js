@@ -65,29 +65,23 @@ export default async function useView(View) {
     });
     return driver.ready;
   };
-  driver.validate = async (...args) => {
-    return registration.validate(...args);
+  driver.validate = async () => {
+    return registration.validate();
   };
-  driver.getSettings = async (...args) => {
-    return registration.getSettings(...args);
+  driver.getSettings = async () => {
+    return registration.getSettings();
+  };
+  driver.tab = async () => {
+    await userEvent.keyboard("{Tab}");
   };
   driver.expectSettings = (getProperty = identity) => {
     return expect.poll(
-      async () => {
-        await userEvent.keyboard("{Tab}");
-        return getProperty(await registration.getSettings());
-      },
-      { timeout: 500, interval: 50 },
+      async () => getProperty(await registration.getSettings()),
+      { timeout: 500 },
     );
   };
   driver.expectValidate = () => {
-    return expect.poll(
-      async () => {
-        await userEvent.keyboard("{Tab}");
-        return registration.validate();
-      },
-      { timeout: 500, interval: 50 },
-    );
+    return expect.poll(() => registration.validate(), { timeout: 500 });
   };
 
   const cleanup = () => {

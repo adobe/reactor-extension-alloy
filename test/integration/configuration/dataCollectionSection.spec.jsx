@@ -382,6 +382,7 @@ describe("Config data collection section", () => {
     await driver.init(buildSettings());
 
     await downloadLinkQualifierField.fill("\\.(zip|exe)$");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].downloadLinkQualifier)
@@ -500,6 +501,7 @@ describe("Config data collection section", () => {
       const originalDownloadLinkQualifier =
         downloadLinkQualifierField.element().value;
       await downloadLinkQualifierField.fill("\\.(exe|zip)$");
+      await driver.tab();
 
       await expect
         .element(downloadLinkQualifierField)
@@ -562,6 +564,7 @@ describe("Config data collection section", () => {
       );
 
       await downloadLinkQualifierField.fill("");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
     });

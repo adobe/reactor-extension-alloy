@@ -12,7 +12,6 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { userEvent } from "vitest/browser";
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { expandAccordion } from "../helpers/ui";
@@ -75,7 +74,7 @@ describe("Config brand concierge section", () => {
     await stickyConversationSessionField.click();
 
     await streamTimeoutField.fill("30");
-    await userEvent.keyboard("{Tab}");
+    await driver.tab();
 
     await driver
       .expectSettings(

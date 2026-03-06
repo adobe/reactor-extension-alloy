@@ -131,6 +131,7 @@ describe("Config consent section", () => {
       await defaultConsentDataElementRadio.click();
 
       await defaultConsentDataElementField.fill("%consentDataElement%");
+      await driver.tab();
 
       await driver.expectValidate().toBe(true);
     });
@@ -143,6 +144,7 @@ describe("Config consent section", () => {
       await defaultConsentDataElementRadio.click();
 
       await defaultConsentDataElementField.fill("%consentDataElement");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 

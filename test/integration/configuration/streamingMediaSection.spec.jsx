@@ -77,6 +77,7 @@ describe("Config streaming media section", () => {
     await mediaVersionField.fill("2.0");
     await mediaAdPingIntervalField.fill("5");
     await mediaMainPingIntervalField.fill("30");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].streamingMedia)
@@ -94,6 +95,7 @@ describe("Config streaming media section", () => {
 
     await mediaChannelField.fill("test-channel");
     await mediaPlayerNameField.fill("test-player");
+    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].streamingMedia)
@@ -142,6 +144,7 @@ describe("Config streaming media section", () => {
 
       await mediaPlayerNameField.fill("test-player");
       await mediaChannelField.fill("");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 
@@ -159,6 +162,7 @@ describe("Config streaming media section", () => {
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 
@@ -177,6 +181,7 @@ describe("Config streaming media section", () => {
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await mediaAdPingIntervalField.fill("0");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 
@@ -195,6 +200,7 @@ describe("Config streaming media section", () => {
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await mediaAdPingIntervalField.fill("11");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 
@@ -213,6 +219,7 @@ describe("Config streaming media section", () => {
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await mediaMainPingIntervalField.fill("9");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 
@@ -231,6 +238,7 @@ describe("Config streaming media section", () => {
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await mediaMainPingIntervalField.fill("61");
+      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 
@@ -249,6 +257,7 @@ describe("Config streaming media section", () => {
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await mediaAdPingIntervalField.fill("5");
+      await driver.tab();
 
       await driver.expectValidate().toBe(true);
     });
@@ -260,6 +269,7 @@ describe("Config streaming media section", () => {
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await mediaMainPingIntervalField.fill("30");
+      await driver.tab();
 
       await driver.expectValidate().toBe(true);
     });
