@@ -29,6 +29,7 @@ const STREAM_TIMEOUT_SECONDS = STREAM_TIMEOUT_MS / 1000;
 const getDefaultSettings = () => ({
   conversation: {
     stickyConversationSession: false,
+    voiceEnabled: false,
     streamTimeout: STREAM_TIMEOUT_SECONDS,
   },
 });
@@ -45,7 +46,7 @@ export const bridge = {
       toObj: conversation,
       fromObj: instanceSettings.conversation || {},
       defaultsObj: getDefaultSettings().conversation,
-      keys: ["stickyConversationSession"],
+      keys: ["stickyConversationSession", "voiceEnabled"],
     });
 
     // Convert streamTimeout from milliseconds to seconds for display
@@ -66,7 +67,7 @@ export const bridge = {
         toObj: conversation,
         fromObj: instanceValues.conversation,
         defaultsObj: getDefaultSettings().conversation,
-        keys: ["stickyConversationSession"],
+        keys: ["stickyConversationSession", "voiceEnabled"],
       });
 
       // Convert streamTimeout from seconds to milliseconds for storage
@@ -92,6 +93,7 @@ export const bridge = {
       then: (conciergeSchema) =>
         conciergeSchema.shape({
           stickyConversationSession: boolean(),
+          voiceEnabled: boolean(),
           streamTimeout: number()
             .min(10, "The stream timeout must be at least 10 seconds.")
             .default(STREAM_TIMEOUT_SECONDS),
@@ -137,6 +139,14 @@ const BrandConciergeSection = ({ instanceFieldName }) => {
           width="size-5000"
         >
           Sticky conversation session
+        </FormikCheckbox>
+        <FormikCheckbox
+          data-test-id="voiceEnabledField"
+          name={`${instanceFieldName}.conversation.voiceEnabled`}
+          description="Enable voice responses for Adobe Brand Concierge conversations."
+          width="size-5000"
+        >
+          Enable voice features
         </FormikCheckbox>
         <FormikNumberField
           data-test-id="streamTimeoutDataTestId"
