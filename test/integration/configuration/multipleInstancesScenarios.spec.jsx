@@ -308,12 +308,7 @@ describe("Config Multiple Instances", () => {
     await expect.element(nameField).toHaveValue("alloy2");
 
     // Check that the confirmation dialog is closed
-    await new Promise((resolve) => {
-      setTimeout(resolve, 500);
-    });
-    expect(() => {
-      confirmDeleteInstanceButton.element();
-    }).toThrow();
+    await expect.element(confirmDeleteInstanceButton).not.toBeInTheDocument();
   });
 
   it("allows deleting last instance", async () => {
@@ -364,12 +359,7 @@ describe("Config Multiple Instances", () => {
     await expect.element(nameField).toHaveValue("alloy2");
 
     // Check that the confirmation dialog is closed
-    await new Promise((resolve) => {
-      setTimeout(resolve, 500);
-    });
-    expect(() => {
-      confirmDeleteInstanceButton.element();
-    }).toThrow();
+    await expect.element(confirmDeleteInstanceButton).not.toBeInTheDocument();
   });
 
   it("allows deleting the middle instance", async () => {
@@ -420,11 +410,6 @@ describe("Config Multiple Instances", () => {
     await expect.element(nameField).toHaveValue("alloy");
 
     // Check that the confirmation dialog is closed
-    await new Promise((resolve) => {
-      setTimeout(resolve, 500);
-    });
-    expect(() => {
-      confirmDeleteInstanceButton.element();
-    }).toThrow();
+    await expect.element(confirmDeleteInstanceButton).not.toBeInTheDocument();
   });
 });

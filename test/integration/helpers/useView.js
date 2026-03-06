@@ -77,7 +77,7 @@ export default async function useView(View) {
         await userEvent.keyboard("{Tab}");
         return getProperty(await registration.getSettings());
       },
-      { timeout: 500, interval: 100 },
+      { timeout: 500, interval: 50 },
     );
   };
   driver.expectValidate = () => {
@@ -86,7 +86,7 @@ export default async function useView(View) {
         await userEvent.keyboard("{Tab}");
         return registration.validate();
       },
-      { timeout: 500, interval: 100 },
+      { timeout: 500, interval: 50 },
     );
   };
 
