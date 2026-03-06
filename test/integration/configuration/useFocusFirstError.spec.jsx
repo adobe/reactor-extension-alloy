@@ -21,15 +21,6 @@ let cleanup;
 let nameField;
 let edgeBasePathField;
 
-const expectValidateWithoutTab = () => {
-  return expect.poll(
-    () => {
-      return driver.validate();
-    },
-    { timeout: 500, interval: 100 },
-  );
-};
-
 describe("useFocusFirstError hook", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
@@ -177,7 +168,7 @@ describe("useFocusFirstError hook", () => {
     const initialFocusedElement = document.activeElement;
 
     // Trigger validation (should succeed with default settings)
-    await expectValidateWithoutTab().toBe(true);
+    await driver.expectValidate().toBe(true);
 
     // Wait to ensure no focus changes occur
     await new Promise((resolve) => {
@@ -205,7 +196,6 @@ describe("useFocusFirstError hook", () => {
 
     // Fix the name field
     await nameField.fill("alloy");
-    await driver.tab();
 
     // Create a different validation error - clear edge base path
     await edgeBasePathField.fill("");
@@ -244,7 +234,6 @@ describe("useFocusFirstError hook", () => {
     );
 
     await nameField.fill("");
-    await driver.tab();
 
     // Switch to the third tab
     const thirdTab = view.getByRole("tab").nth(2);

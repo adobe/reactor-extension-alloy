@@ -680,6 +680,7 @@ describe("Config advertising section", () => {
 
     // Toggle back to enabled
     await advertiserEnabled0Field.selectOption("Enabled");
+    await expect.element(advertiserEnabled0Field).toHaveValue("Enabled");
     await driver.tab();
 
     // Verify settings
