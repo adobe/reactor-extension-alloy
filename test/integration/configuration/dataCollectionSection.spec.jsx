@@ -12,73 +12,85 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad, toggleComponent } from "../helpers/ui";
+import { toggleComponent } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
-let extensionBridge;
-
-const internalLinkEnabledField = page.getByTestId("internalLinkEnabledField");
-const externalLinkEnabledField = page.getByTestId("externalLinkEnabledField");
-const downloadLinkEnabledField = page.getByTestId("downloadLinkEnabledField");
-const downloadLinkQualifierField = page.getByTestId(
-  "downloadLinkQualifierField",
-);
-const contextGranularitySpecificField = page.getByTestId(
-  "contextGranularitySpecificField",
-);
-const contextGranularityAllField = page.getByTestId(
-  "contextGranularityAllField",
-);
-const contextWebField = page.getByTestId("contextWebField");
-const contextDeviceField = page.getByTestId("contextDeviceField");
-const contextEnvironmentField = page.getByTestId("contextEnvironmentField");
-const contextPlaceContextField = page.getByTestId("contextPlaceContextField");
-const contextHighEntropyUserAgentHintsField = page.getByTestId(
-  "contextHighEntropyUserAgentHintsField",
-);
-const contextOneTimeAnalyticsReferrerField = page.getByTestId(
-  "contextOneTimeAnalyticsReferrerField",
-);
-const eventGroupingNoneField = page.getByTestId("eventGroupingNoneField");
-const eventGroupingSessionStorageField = page.getByTestId(
-  "eventGroupingSessionStorageField",
-);
-const eventGroupingMemoryField = page.getByTestId("eventGroupingMemoryField");
-const downloadLinkQualifierTestButton = page.getByTestId(
-  "downloadLinkQualifierTestButton",
-);
-const downloadLinkQualifierRestoreButton = page.getByTestId(
-  "downloadLinkQualifierRestoreButton",
-);
-const onBeforeEventSendEditButton = page.getByTestId(
-  "onBeforeEventSendEditButton",
-);
-const filterClickDetailsEditButton = page.getByTestId(
-  "filterClickDetailsEditButton",
-);
-
-const eventGroupingRadio = (name) =>
-  page.getByTestId(`eventGrouping${name}Field`);
-const contextCheckbox = (name) => page.getByTestId(`context${name}Field`);
+let view;
+let driver;
+let cleanup;
+let internalLinkEnabledField;
+let externalLinkEnabledField;
+let downloadLinkEnabledField;
+let downloadLinkQualifierField;
+let contextGranularitySpecificField;
+let contextGranularityAllField;
+let contextWebField;
+let contextDeviceField;
+let contextEnvironmentField;
+let contextPlaceContextField;
+let contextHighEntropyUserAgentHintsField;
+let contextOneTimeAnalyticsReferrerField;
+let eventGroupingNoneField;
+let eventGroupingSessionStorageField;
+let eventGroupingMemoryField;
+let downloadLinkQualifierTestButton;
+let downloadLinkQualifierRestoreButton;
+let onBeforeEventSendEditButton;
+let filterClickDetailsEditButton;
+let eventGroupingRadio;
+let contextCheckbox;
 
 describe("Config data collection section", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    internalLinkEnabledField = view.getByTestId("internalLinkEnabledField");
+    externalLinkEnabledField = view.getByTestId("externalLinkEnabledField");
+    downloadLinkEnabledField = view.getByTestId("downloadLinkEnabledField");
+    downloadLinkQualifierField = view.getByTestId("downloadLinkQualifierField");
+    contextGranularitySpecificField = view.getByTestId(
+      "contextGranularitySpecificField",
+    );
+    contextGranularityAllField = view.getByTestId("contextGranularityAllField");
+    contextWebField = view.getByTestId("contextWebField");
+    contextDeviceField = view.getByTestId("contextDeviceField");
+    contextEnvironmentField = view.getByTestId("contextEnvironmentField");
+    contextPlaceContextField = view.getByTestId("contextPlaceContextField");
+    contextHighEntropyUserAgentHintsField = view.getByTestId(
+      "contextHighEntropyUserAgentHintsField",
+    );
+    contextOneTimeAnalyticsReferrerField = view.getByTestId(
+      "contextOneTimeAnalyticsReferrerField",
+    );
+    eventGroupingNoneField = view.getByTestId("eventGroupingNoneField");
+    eventGroupingSessionStorageField = view.getByTestId(
+      "eventGroupingSessionStorageField",
+    );
+    eventGroupingMemoryField = view.getByTestId("eventGroupingMemoryField");
+    downloadLinkQualifierTestButton = view.getByTestId(
+      "downloadLinkQualifierTestButton",
+    );
+    downloadLinkQualifierRestoreButton = view.getByTestId(
+      "downloadLinkQualifierRestoreButton",
+    );
+    onBeforeEventSendEditButton = view.getByTestId(
+      "onBeforeEventSendEditButton",
+    );
+    filterClickDetailsEditButton = view.getByTestId(
+      "filterClickDetailsEditButton",
+    );
+    eventGroupingRadio = (name) =>
+      view.getByTestId(`eventGrouping${name}Field`);
+    contextCheckbox = (name) => view.getByTestId(`context${name}Field`);
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("sets form values from settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -92,8 +104,6 @@ describe("Config data collection section", () => {
         ],
       }),
     );
-
-    await waitForConfigurationViewToLoad();
 
     await expect.element(internalLinkEnabledField).toBeChecked();
 
@@ -121,9 +131,7 @@ describe("Config data collection section", () => {
   });
 
   it("sets form values from settings with event grouping session storage", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -137,8 +145,6 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(internalLinkEnabledField).toBeChecked();
 
     await expect.element(eventGroupingRadio("None")).not.toBeChecked();
@@ -147,9 +153,7 @@ describe("Config data collection section", () => {
   });
 
   it("sets form values from settings with event grouping memory", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -162,8 +166,6 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(internalLinkEnabledField).toBeChecked();
 
     await expect.element(eventGroupingRadio("None")).not.toBeChecked();
@@ -174,9 +176,7 @@ describe("Config data collection section", () => {
   });
 
   it("sets form values from settings with download link enabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -187,8 +187,6 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(downloadLinkEnabledField).toBeChecked();
     await expect
       .element(downloadLinkQualifierField)
@@ -196,9 +194,7 @@ describe("Config data collection section", () => {
   });
 
   it("sets form values from settings with all link types disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -209,17 +205,13 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(internalLinkEnabledField).not.toBeChecked();
     await expect.element(externalLinkEnabledField).not.toBeChecked();
     await expect.element(downloadLinkEnabledField).not.toBeChecked();
   });
 
   it("sets form values from settings with some link types disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -233,19 +225,13 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(internalLinkEnabledField).toBeChecked();
     await expect.element(externalLinkEnabledField).not.toBeChecked();
     await expect.element(downloadLinkEnabledField).not.toBeChecked();
   });
 
   it("updates form values and saves to settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await externalLinkEnabledField.click();
     await downloadLinkEnabledField.click();
@@ -254,7 +240,7 @@ describe("Config data collection section", () => {
 
     await contextWebField.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].clickCollection.externalLinkEnabled).toBe(
       false,
     );
@@ -269,51 +255,31 @@ describe("Config data collection section", () => {
   });
 
   it("shows and hides download link qualifier based on download link enabled", async () => {
-    await renderView(ConfigurationView);
+    await driver.init(buildSettings());
 
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
-
-    await expect
-      .element(page.getByTestId("downloadLinkQualifierField"))
-      .toBeInTheDocument();
+    await expect.element(downloadLinkQualifierField).toBeInTheDocument();
 
     await downloadLinkEnabledField.click();
 
-    await expect
-      .element(page.getByTestId("downloadLinkQualifierField"))
-      .not.toBeInTheDocument();
+    await expect.element(downloadLinkQualifierField).not.toBeInTheDocument();
   });
 
   it("shows and hides event grouping options based on internal link enabled", async () => {
-    await renderView(ConfigurationView);
+    await driver.init(buildSettings());
 
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
-
-    await expect
-      .element(page.getByTestId("eventGroupingNoneField"))
-      .toBeInTheDocument();
+    await expect.element(eventGroupingNoneField).toBeInTheDocument();
 
     await internalLinkEnabledField.click();
 
-    await expect
-      .element(page.getByTestId("eventGroupingNoneField"))
-      .not.toBeInTheDocument();
+    await expect.element(eventGroupingNoneField).not.toBeInTheDocument();
   });
 
   it("saves event grouping settings when session storage is selected", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await eventGroupingSessionStorageField.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].clickCollection.eventGroupingEnabled).toBe(
       true,
     );
@@ -323,15 +289,11 @@ describe("Config data collection section", () => {
   });
 
   it("saves event grouping settings when memory is selected", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await eventGroupingMemoryField.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].clickCollection.eventGroupingEnabled).toBe(
       true,
     );
@@ -341,9 +303,7 @@ describe("Config data collection section", () => {
   });
 
   it("does not emit click collection settings when activity collector is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -360,42 +320,32 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await toggleComponent("activityCollector");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].clickCollectionEnabled).toBeUndefined();
     expect(settings.instances[0].clickCollection).toBeUndefined();
     expect(settings.instances[0].downloadLinkQualifier).toBeUndefined();
   });
 
   it("hides click collection fields and shows alert when activity collector is disabled", async () => {
-    await renderView(ConfigurationView);
+    await driver.init(buildSettings({}));
 
-    extensionBridge.init(buildSettings({}));
-
-    await waitForConfigurationViewToLoad();
     await toggleComponent("activityCollector");
 
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /activity collector component disabled/i,
         }),
       )
       .toBeVisible();
 
-    await expect
-      .element(page.getByTestId("internalLinkEnabledField"))
-      .not.toBeInTheDocument();
+    await expect.element(internalLinkEnabledField).not.toBeInTheDocument();
   });
 
   it("shows default values when no settings are provided", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await expect.element(internalLinkEnabledField).toBeChecked();
     await expect.element(externalLinkEnabledField).toBeChecked();
@@ -406,13 +356,9 @@ describe("Config data collection section", () => {
   });
 
   it("does not save default values to settings", async () => {
-    await renderView(ConfigurationView);
+    await driver.init(buildSettings());
 
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
-
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].onBeforeEventSend).toBeUndefined();
     expect(settings.instances[0].clickCollection).toBeUndefined();
     expect(settings.instances[0].downloadLinkQualifier).toBeUndefined();
@@ -420,57 +366,35 @@ describe("Config data collection section", () => {
   });
 
   it("updates download link qualifier", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await downloadLinkQualifierField.fill("\\.(zip|exe)$");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].downloadLinkQualifier).toBe("\\.(zip|exe)$");
   });
 
   it("shows context checkboxes when specific context is selected", async () => {
-    await renderView(ConfigurationView);
+    await driver.init(buildSettings());
 
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
-
-    await expect
-      .element(page.getByTestId("contextWebField"))
-      .not.toBeInTheDocument();
+    await expect.element(contextWebField).not.toBeInTheDocument();
 
     await contextGranularitySpecificField.click();
 
+    await expect.element(contextWebField).toBeInTheDocument();
+    await expect.element(contextDeviceField).toBeInTheDocument();
+    await expect.element(contextEnvironmentField).toBeInTheDocument();
+    await expect.element(contextPlaceContextField).toBeInTheDocument();
     await expect
-      .element(page.getByTestId("contextWebField"))
+      .element(contextHighEntropyUserAgentHintsField)
       .toBeInTheDocument();
     await expect
-      .element(page.getByTestId("contextDeviceField"))
-      .toBeInTheDocument();
-    await expect
-      .element(page.getByTestId("contextEnvironmentField"))
-      .toBeInTheDocument();
-    await expect
-      .element(page.getByTestId("contextPlaceContextField"))
-      .toBeInTheDocument();
-    await expect
-      .element(page.getByTestId("contextHighEntropyUserAgentHintsField"))
-      .toBeInTheDocument();
-    await expect
-      .element(page.getByTestId("contextOneTimeAnalyticsReferrerField"))
+      .element(contextOneTimeAnalyticsReferrerField)
       .toBeInTheDocument();
   });
 
   it("saves non-default context when specific is selected", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await contextGranularitySpecificField.click();
 
@@ -480,7 +404,7 @@ describe("Config data collection section", () => {
 
     await contextOneTimeAnalyticsReferrerField.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].context).toEqual([
       "web",
       "device",
@@ -491,9 +415,7 @@ describe("Config data collection section", () => {
   });
 
   it("loads context options from settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -503,8 +425,6 @@ describe("Config data collection section", () => {
         ],
       }),
     );
-
-    await waitForConfigurationViewToLoad();
 
     await expect.element(contextGranularitySpecificField).toBeChecked();
 
@@ -519,26 +439,18 @@ describe("Config data collection section", () => {
   });
 
   it("disables click collection when all link types are disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await internalLinkEnabledField.click();
     await externalLinkEnabledField.click();
     await downloadLinkEnabledField.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].clickCollectionEnabled).toBe(false);
   });
 
   it("sets download link qualifier when test button is clicked", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await downloadLinkQualifierTestButton.click();
 
@@ -546,42 +458,24 @@ describe("Config data collection section", () => {
   });
 
   it("does not save onBeforeEventSend code if it matches placeholder", async () => {
-    const testExtensionBridge = createExtensionBridge({
-      openCodeEditor: ({ code }) => {
-        return code;
-      },
-    });
-    window.extensionBridge = testExtensionBridge;
+    driver.openCodeEditorMock = async ({ code }) => code;
 
-    await renderView(ConfigurationView);
-
-    testExtensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await onBeforeEventSendEditButton.click();
 
-    const settings = await testExtensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].onBeforeEventSend).toBeUndefined();
   });
 
   it("does not save filterClickDetails code if it matches placeholder", async () => {
-    const testExtensionBridge = createExtensionBridge({
-      openCodeEditor: ({ code }) => {
-        return code;
-      },
-    });
-    window.extensionBridge = testExtensionBridge;
+    driver.openCodeEditorMock = async ({ code }) => code;
 
-    await renderView(ConfigurationView);
-
-    testExtensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await filterClickDetailsEditButton.click();
 
-    const settings = await testExtensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(
       settings.instances[0].clickCollection?.filterClickDetails,
     ).toBeUndefined();
@@ -589,11 +483,7 @@ describe("Config data collection section", () => {
 
   describe("restore default buttons", () => {
     it("restores default download link qualifier when button is clicked", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
+      await driver.init(buildSettings());
 
       const originalDownloadLinkQualifier =
         downloadLinkQualifierField.element().value;
@@ -615,9 +505,7 @@ describe("Config data collection section", () => {
 
   describe("validation", () => {
     it("validates download link qualifier regex format", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           instances: [
             {
@@ -628,15 +516,11 @@ describe("Config data collection section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
     });
 
     it("accepts valid download link qualifier regex", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           instances: [
             {
@@ -647,15 +531,11 @@ describe("Config data collection section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
     });
 
     it("requires download link qualifier when download link is enabled", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           instances: [
             {
@@ -669,11 +549,9 @@ describe("Config data collection section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
-
       await downloadLinkQualifierField.fill("");
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
     });
   });
 });

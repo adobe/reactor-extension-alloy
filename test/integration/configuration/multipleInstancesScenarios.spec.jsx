@@ -12,43 +12,43 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
-let extensionBridge;
-
-const nameField = page.getByTestId("nameField");
-const orgIdField = page.getByTestId("orgIdField");
-const productionEnvironmentTextfield = page.getByTestId(
-  "productionEnvironmentTextfield",
-);
-const addInstanceButton = page.getByTestId("addInstanceButton");
-const deleteInstanceButton = page.getByTestId("deleteInstanceButton");
-const cancelDeleteInstanceButton = page.getByTestId(
-  "cancelDeleteInstanceButton",
-);
-const confirmDeleteInstanceButton = page.getByTestId(
-  "confirmDeleteInstanceButton",
-);
+let view;
+let driver;
+let cleanup;
+let nameField;
+let orgIdField;
+let productionEnvironmentTextfield;
+let addInstanceButton;
+let deleteInstanceButton;
+let cancelDeleteInstanceButton;
+let confirmDeleteInstanceButton;
 
 describe("Config Multiple Instances", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    nameField = view.getByTestId("nameField");
+    orgIdField = view.getByTestId("orgIdField");
+    productionEnvironmentTextfield = view.getByTestId(
+      "productionEnvironmentTextfield",
+    );
+    addInstanceButton = view.getByTestId("addInstanceButton");
+    deleteInstanceButton = view.getByTestId("deleteInstanceButton");
+    cancelDeleteInstanceButton = view.getByTestId("cancelDeleteInstanceButton");
+    confirmDeleteInstanceButton = view.getByTestId(
+      "confirmDeleteInstanceButton",
+    );
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("prevents creating two instances with the same name", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -60,19 +60,17 @@ describe("Config Multiple Instances", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
-    expect(await extensionBridge.validate()).toBe(true);
+    expect(await driver.validate()).toBe(true);
 
     await addInstanceButton.click();
 
-    const secondTab = page.getByRole("tab", { name: "alloy2" });
+    const secondTab = view.getByRole("tab", { name: "alloy2" });
     await secondTab.click();
 
     // Change the name back to "alloy" to create a duplicate
     await nameField.fill("alloy");
 
-    expect(await extensionBridge.validate()).toBe(false);
+    expect(await driver.validate()).toBe(false);
 
     await expect.element(nameField).not.toBeValid();
     await expect
@@ -83,9 +81,7 @@ describe("Config Multiple Instances", () => {
   });
 
   it("prevents creating two instances with the org name", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -97,19 +93,17 @@ describe("Config Multiple Instances", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
-    expect(await extensionBridge.validate()).toBe(true);
+    expect(await driver.validate()).toBe(true);
 
     await addInstanceButton.click();
 
-    const secondTab = page.getByRole("tab", { name: "alloy" }).nth(1);
+    const secondTab = view.getByRole("tab", { name: "alloy" }).nth(1);
     await expect.element(secondTab).toBeVisible();
     await secondTab.click();
 
     await nameField.fill("alloy2");
 
-    expect(await extensionBridge.validate()).toBe(false);
+    expect(await driver.validate()).toBe(false);
 
     await expect.element(orgIdField).not.toBeValid();
     await expect
@@ -120,9 +114,7 @@ describe("Config Multiple Instances", () => {
   });
 
   it("prevents creating two instances with the same edge config id", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -140,21 +132,19 @@ describe("Config Multiple Instances", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
+    expect(await driver.validate()).toBe(true);
 
-    expect(await extensionBridge.validate()).toBe(true);
-
-    const secondTab = page.getByRole("tab", { name: "alloy" }).nth(1);
+    const secondTab = view.getByRole("tab", { name: "alloy" }).nth(1);
     await expect.element(secondTab).toBeVisible();
     await secondTab.click();
 
-    expect(await extensionBridge.validate()).toBe(true);
+    expect(await driver.validate()).toBe(true);
 
     await productionEnvironmentTextfield.fill(
       "2fdb3763-0507-42ea-8856-e91bf3b64faa",
     );
 
-    expect(await extensionBridge.validate()).toBe(false);
+    expect(await driver.validate()).toBe(false);
 
     await expect.element(productionEnvironmentTextfield).not.toBeValid();
     await expect
@@ -165,10 +155,8 @@ describe("Config Multiple Instances", () => {
   });
 
   it("allows creating two instances with different names and different org ids", async () => {
-    await renderView(ConfigurationView);
-
     // Start with two instances that have different names, different orgIds, and valid configs
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -190,11 +178,9 @@ describe("Config Multiple Instances", () => {
       },
     });
 
-    await waitForConfigurationViewToLoad();
+    expect(await driver.validate()).toBe(true);
 
-    expect(await extensionBridge.validate()).toBe(true);
-
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances).toHaveLength(2);
     expect(settings.instances[0].name).toBe("alloy");
     expect(settings.instances[0].orgId).toBe("ORG1@AdobeOrg");
@@ -203,10 +189,8 @@ describe("Config Multiple Instances", () => {
   });
 
   it("allows deleting an instance", async () => {
-    await renderView(ConfigurationView);
-
     // Start with two instances
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -228,11 +212,9 @@ describe("Config Multiple Instances", () => {
       },
     });
 
-    await waitForConfigurationViewToLoad();
+    expect(await driver.validate()).toBe(true);
 
-    expect(await extensionBridge.validate()).toBe(true);
-
-    const firstTab = page.getByRole("tab", { name: "alloy" }).nth(0);
+    const firstTab = view.getByRole("tab", { name: "alloy" }).nth(0);
     await firstTab.click();
 
     await expect.element(deleteInstanceButton).toBeVisible();
@@ -248,7 +230,7 @@ describe("Config Multiple Instances", () => {
     await cancelDeleteInstanceButton.click();
 
     // Verify we still have two instances after canceling
-    let settings = await extensionBridge.getSettings();
+    let settings = await driver.getSettings();
     expect(settings.instances).toHaveLength(2);
     expect(settings.instances[0].name).toBe("alloy");
     expect(settings.instances[0].orgId).toBe("ORG1@AdobeOrg");
@@ -262,20 +244,18 @@ describe("Config Multiple Instances", () => {
     await confirmDeleteInstanceButton.click();
 
     // Verify we now have only one instance (the second one, "alloy2")
-    settings = await extensionBridge.getSettings();
+    settings = await driver.getSettings();
     expect(settings.instances).toHaveLength(1);
     expect(settings.instances[0].name).toBe("alloy2");
     expect(settings.instances[0].orgId).toBe("ORG2@AdobeOrg");
 
     // Verify the form is still valid
-    expect(await extensionBridge.validate()).toBe(true);
+    expect(await driver.validate()).toBe(true);
   });
 
   it("allows deleting first instance", async () => {
-    await renderView(ConfigurationView);
-
     // Start with two instances
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -303,11 +283,9 @@ describe("Config Multiple Instances", () => {
       },
     });
 
-    await waitForConfigurationViewToLoad();
+    expect(await driver.validate()).toBe(true);
 
-    expect(await extensionBridge.validate()).toBe(true);
-
-    const firstTab = page.getByRole("tab", { name: "alloy" }).nth(0);
+    const firstTab = view.getByRole("tab", { name: "alloy" }).nth(0);
     await firstTab.click();
 
     await expect.element(deleteInstanceButton).toBeVisible();
@@ -316,10 +294,10 @@ describe("Config Multiple Instances", () => {
 
     await confirmDeleteInstanceButton.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
 
     expect(settings.instances).toHaveLength(2);
-    expect(await extensionBridge.validate()).toBe(true);
+    expect(await driver.validate()).toBe(true);
 
     // Check that a tab is still visible in the page
     await expect.element(nameField).toHaveValue("alloy2");
@@ -334,10 +312,8 @@ describe("Config Multiple Instances", () => {
   });
 
   it("allows deleting last instance", async () => {
-    await renderView(ConfigurationView);
-
     // Start with two instances
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -365,11 +341,9 @@ describe("Config Multiple Instances", () => {
       },
     });
 
-    await waitForConfigurationViewToLoad();
+    expect(await driver.validate()).toBe(true);
 
-    expect(await extensionBridge.validate()).toBe(true);
-
-    const lastTab = page.getByRole("tab", { name: "alloy" }).nth(2);
+    const lastTab = view.getByRole("tab", { name: "alloy" }).nth(2);
     await lastTab.click();
 
     await expect.element(deleteInstanceButton).toBeVisible();
@@ -378,10 +352,10 @@ describe("Config Multiple Instances", () => {
 
     await confirmDeleteInstanceButton.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
 
     expect(settings.instances).toHaveLength(2);
-    expect(await extensionBridge.validate()).toBe(true);
+    expect(await driver.validate()).toBe(true);
 
     // Check that a tab is still visible in the page
     await expect.element(nameField).toHaveValue("alloy2");
@@ -396,10 +370,8 @@ describe("Config Multiple Instances", () => {
   });
 
   it("allows deleting the middle instance", async () => {
-    await renderView(ConfigurationView);
-
     // Start with two instances
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -427,11 +399,9 @@ describe("Config Multiple Instances", () => {
       },
     });
 
-    await waitForConfigurationViewToLoad();
+    expect(await driver.validate()).toBe(true);
 
-    expect(await extensionBridge.validate()).toBe(true);
-
-    const middleTab = page.getByRole("tab", { name: "alloy" }).nth(1);
+    const middleTab = view.getByRole("tab", { name: "alloy" }).nth(1);
     await middleTab.click();
 
     await expect.element(deleteInstanceButton).toBeVisible();
@@ -440,10 +410,10 @@ describe("Config Multiple Instances", () => {
 
     await confirmDeleteInstanceButton.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
 
     expect(settings.instances).toHaveLength(2);
-    expect(await extensionBridge.validate()).toBe(true);
+    expect(await driver.validate()).toBe(true);
 
     // Check that a tab is still visible in the page
     await expect.element(nameField).toHaveValue("alloy");

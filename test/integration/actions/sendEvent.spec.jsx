@@ -12,38 +12,37 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import SendEventView from "../../../src/view/actions/sendEventView";
 
-let extensionBridge;
-
-const handleAdvertisingDataDisabledOption = page.getByTestId(
-  "handleAdvertisingDatadisabledOption",
-);
-const handleAdvertisingDataAutoOption = page.getByTestId(
-  "handleAdvertisingDataautoOption",
-);
-const handleAdvertisingDataWaitOption = page.getByTestId(
-  "handleAdvertisingDatawaitOption",
-);
+let view;
+let driver;
+let cleanup;
+let handleAdvertisingDataDisabledOption;
+let handleAdvertisingDataAutoOption;
+let handleAdvertisingDataWaitOption;
 
 describe("Send Event Action", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(SendEventView));
+    handleAdvertisingDataDisabledOption = view.getByTestId(
+      "handleAdvertisingDatadisabledOption",
+    );
+    handleAdvertisingDataAutoOption = view.getByTestId(
+      "handleAdvertisingDataautoOption",
+    );
+    handleAdvertisingDataWaitOption = view.getByTestId(
+      "handleAdvertisingDatawaitOption",
+    );
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   describe("Component visibility based on configuration", () => {
     it("hides advertising section when advertising component is not enabled", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: {}, // advertising not enabled
@@ -52,19 +51,17 @@ describe("Send Event Action", () => {
 
       await expect
         .element(
-          page.getByText("enable the Advertising component in the custom"),
+          view.getByText("enable the Advertising component in the custom"),
         )
         .toBeVisible();
 
       await expect
-        .element(page.getByRole("heading", { name: /Advertising/ }))
+        .element(view.getByRole("heading", { name: /Advertising/ }))
         .toBeVisible();
     });
 
     it("shows advertising section when advertising component is enabled", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: {
@@ -74,24 +71,22 @@ describe("Send Event Action", () => {
       });
 
       await expect
-        .element(page.getByRole("heading", { name: /Advertising/ }))
+        .element(view.getByRole("heading", { name: /Advertising/ }))
         .toBeVisible();
 
       await expect
-        .element(page.getByText("Request default Advertising data"))
+        .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
       await expect
         .element(
-          page.getByText("enable the Advertising component in the custom"),
+          view.getByText("enable the Advertising component in the custom"),
         )
         .not.toBeInTheDocument();
     });
 
     it("hides advertising section when advertising component is explicitly disabled", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: {
@@ -102,19 +97,17 @@ describe("Send Event Action", () => {
 
       await expect
         .element(
-          page.getByText("enable the Advertising component in the custom"),
+          view.getByText("enable the Advertising component in the custom"),
         )
         .toBeVisible();
 
       await expect
-        .element(page.getByRole("heading", { name: /Advertising/ }))
+        .element(view.getByRole("heading", { name: /Advertising/ }))
         .toBeVisible();
     });
 
     it("shows personalization section by default (default component)", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: {},
@@ -122,20 +115,18 @@ describe("Send Event Action", () => {
       });
 
       await expect
-        .element(page.getByRole("heading", { name: /Personalization/ }))
+        .element(view.getByRole("heading", { name: /Personalization/ }))
         .toBeVisible();
 
       await expect
         .element(
-          page.getByText("enable the Personalization component in the custom"),
+          view.getByText("enable the Personalization component in the custom"),
         )
         .not.toBeInTheDocument();
     });
 
     it("hides personalization section when explicitly disabled", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: {
@@ -145,12 +136,12 @@ describe("Send Event Action", () => {
       });
 
       await expect
-        .element(page.getByRole("heading", { name: /Personalization/ }))
+        .element(view.getByRole("heading", { name: /Personalization/ }))
         .toBeVisible();
 
       await expect
         .element(
-          page
+          view
             .getByText("enable the Personalization component in the custom")
             .first(),
         )
@@ -160,9 +151,7 @@ describe("Send Event Action", () => {
 
   describe("Advertising settings functionality", () => {
     it("initializes with default disabled value", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: { advertising: true },
@@ -170,16 +159,14 @@ describe("Send Event Action", () => {
       });
 
       await expect
-        .element(page.getByText("Request default Advertising data"))
+        .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
       await expect.element(handleAdvertisingDataDisabledOption).toBeChecked();
     });
 
     it("does not save advertising settings when default disabled value is selected", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: { advertising: true },
@@ -187,17 +174,15 @@ describe("Send Event Action", () => {
       });
 
       await expect
-        .element(page.getByText("Request default Advertising data"))
+        .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
-      const settings = await extensionBridge.getSettings();
+      const settings = await driver.getSettings();
       expect(settings.advertising).toBeUndefined();
     });
 
     it("saves advertising settings when automatic is selected", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: { advertising: true },
@@ -205,20 +190,18 @@ describe("Send Event Action", () => {
       });
 
       await expect
-        .element(page.getByText("Request default Advertising data"))
+        .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
       await handleAdvertisingDataAutoOption.click();
 
-      const settings = await extensionBridge.getSettings();
+      const settings = await driver.getSettings();
       expect(settings.advertising).toBeDefined();
       expect(settings.advertising.handleAdvertisingData).toBe("auto");
     });
 
     it("saves advertising settings when wait is selected", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: { advertising: true },
@@ -226,20 +209,18 @@ describe("Send Event Action", () => {
       });
 
       await expect
-        .element(page.getByText("Request default Advertising data"))
+        .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
       await handleAdvertisingDataWaitOption.click();
 
-      const settings = await extensionBridge.getSettings();
+      const settings = await driver.getSettings();
       expect(settings.advertising).toBeDefined();
       expect(settings.advertising.handleAdvertisingData).toBe("wait");
     });
 
     it("loads existing advertising settings - automatic", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: { advertising: true },
@@ -252,16 +233,14 @@ describe("Send Event Action", () => {
       });
 
       await expect
-        .element(page.getByText("Request default Advertising data"))
+        .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
       await expect.element(handleAdvertisingDataAutoOption).toBeChecked();
     });
 
     it("loads existing advertising settings - wait", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: { advertising: true },
@@ -274,16 +253,14 @@ describe("Send Event Action", () => {
       });
 
       await expect
-        .element(page.getByText("Request default Advertising data"))
+        .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
       await expect.element(handleAdvertisingDataWaitOption).toBeChecked();
     });
 
     it("removes advertising settings when switching back to disabled", async () => {
-      await renderView(SendEventView);
-
-      extensionBridge.init({
+      await driver.init({
         extensionSettings: {
           instances: [{ name: "alloy", edgeConfigId: "PR123" }],
           components: { advertising: true },
@@ -296,12 +273,12 @@ describe("Send Event Action", () => {
       });
 
       await expect
-        .element(page.getByText("Request default Advertising data"))
+        .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
       await handleAdvertisingDataDisabledOption.click();
 
-      const settings = await extensionBridge.getSettings();
+      const settings = await driver.getSettings();
       expect(settings.advertising).toBeUndefined();
     });
   });

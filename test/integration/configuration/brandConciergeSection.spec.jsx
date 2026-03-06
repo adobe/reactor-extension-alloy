@@ -12,37 +12,37 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page, userEvent } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import { userEvent } from "vitest/browser";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad, expandAccordion } from "../helpers/ui";
+import { expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
-let extensionBridge;
-
-const stickyConversationSessionField = page.getByTestId(
-  "stickyConversationSessionField",
-);
-const streamTimeoutField = page.getByTestId("streamTimeoutDataTestId");
-const brandConciergeComponentCheckbox = page.getByTestId(
-  "brandConciergeComponentCheckbox",
-);
+let view;
+let driver;
+let cleanup;
+let stickyConversationSessionField;
+let streamTimeoutField;
+let brandConciergeComponentCheckbox;
 
 describe("Config brand concierge section", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    stickyConversationSessionField = view.getByTestId(
+      "stickyConversationSessionField",
+    );
+    streamTimeoutField = view.getByTestId("streamTimeoutDataTestId");
+    brandConciergeComponentCheckbox = view.getByTestId(
+      "brandConciergeComponentCheckbox",
+    );
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("sets form values from settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           brandConcierge: true,
@@ -59,16 +59,12 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(stickyConversationSessionField).toBeChecked();
     await expect.element(streamTimeoutField).toHaveValue("20");
   });
 
   it("updates form values and saves to settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           brandConcierge: true,
@@ -76,14 +72,12 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await stickyConversationSessionField.click();
 
     await streamTimeoutField.fill("30");
     await userEvent.keyboard("{Tab}");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].conversation.stickyConversationSession).toBe(
       true,
     );
@@ -91,9 +85,7 @@ describe("Config brand concierge section", () => {
   });
 
   it("does not emit brand concierge settings when component is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           brandConcierge: true,
@@ -110,23 +102,18 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await expandAccordion("Build options");
     await brandConciergeComponentCheckbox.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].conversation).toBeUndefined();
   });
 
   it("shows alert panel when brand concierge component is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-    await waitForConfigurationViewToLoad();
-
+    await driver.init(buildSettings());
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /brand concierge component disabled/i,
         }),
       )
@@ -134,9 +121,7 @@ describe("Config brand concierge section", () => {
   });
 
   it("shows alert when component is toggled off", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           brandConcierge: true,
@@ -144,13 +129,12 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await expandAccordion("Build options");
     await brandConciergeComponentCheckbox.click();
 
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /brand concierge component disabled/i,
         }),
       )
@@ -158,9 +142,7 @@ describe("Config brand concierge section", () => {
   });
 
   it("converts stream timeout from milliseconds to seconds on load", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           brandConcierge: true,
@@ -176,15 +158,11 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(streamTimeoutField).toHaveValue("45");
   });
 
   it("does not save stream timeout when it equals default value", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           brandConcierge: true,
@@ -192,9 +170,7 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].conversation?.streamTimeout).toBeUndefined();
   });
 });

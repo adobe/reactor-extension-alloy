@@ -12,59 +12,49 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { worker } from "../helpers/mocks/browser";
 import {
   singleSandboxNoDefaultHandlers,
   sandboxUserRegionMissingHandlers,
 } from "../helpers/mocks/defaultHandlers";
 
-let extensionBridge;
-
-const productionSandboxField = page.getByTestId("productionSandboxField");
-const edgeConfigInputMethodSelectRadio = page.getByTestId(
-  "edgeConfigInputMethodSelectRadio",
-);
+let view;
+let driver;
+let cleanup;
+let productionSandboxField;
+let edgeConfigInputMethodSelectRadio;
 
 describe("Config Sandboxes", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    productionSandboxField = view.getByTestId("productionSandboxField");
+    edgeConfigInputMethodSelectRadio = view.getByTestId(
+      "edgeConfigInputMethodSelectRadio",
+    );
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("shows disabled sandbox dropdown when only one non default sandbox is returned", async () => {
     worker.use(...singleSandboxNoDefaultHandlers);
-    await renderView(ConfigurationView);
-
-    extensionBridge.init();
-
-    await waitForConfigurationViewToLoad();
+    await driver.init();
 
     await expect.element(productionSandboxField).toBeDisabled();
   });
 
   it("shows alert panel when user region is missing", async () => {
     worker.use(...sandboxUserRegionMissingHandlers);
-
-    await renderView(ConfigurationView);
-
-    extensionBridge.init();
-
-    await waitForConfigurationViewToLoad();
+    await driver.init();
 
     await edgeConfigInputMethodSelectRadio.click();
 
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /you do not have enough permissions to fetch the organization configurations/i,
         }),
       )

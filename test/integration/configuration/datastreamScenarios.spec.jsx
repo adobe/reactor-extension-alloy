@@ -12,11 +12,8 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { worker } from "../helpers/mocks/browser";
 import {
   datastreamsForbiddenHandlers,
@@ -24,37 +21,39 @@ import {
   singleSandboxNoDefaultHandlers,
 } from "../helpers/mocks/defaultHandlers";
 
-let extensionBridge;
-
-const edgeConfigInputMethodFreeformRadio = page.getByTestId(
-  "edgeConfigInputMethodFreeformRadio",
-);
-const edgeConfigInputMethodSelectRadio = page.getByTestId(
-  "edgeConfigInputMethodSelectRadio",
-);
-const productionEnvironmentTextfield = page.getByTestId(
-  "productionEnvironmentTextfield",
-);
-const datastreamDisabledFieldProduction = page.getByTestId(
-  "datastreamDisabledFieldproduction",
-);
+let view;
+let driver;
+let cleanup;
+let edgeConfigInputMethodFreeformRadio;
+let edgeConfigInputMethodSelectRadio;
+let productionEnvironmentTextfield;
+let datastreamDisabledFieldProduction;
 
 describe("Config Sandboxes", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    edgeConfigInputMethodFreeformRadio = view.getByTestId(
+      "edgeConfigInputMethodFreeformRadio",
+    );
+    edgeConfigInputMethodSelectRadio = view.getByTestId(
+      "edgeConfigInputMethodSelectRadio",
+    );
+    productionEnvironmentTextfield = view.getByTestId(
+      "productionEnvironmentTextfield",
+    );
+    datastreamDisabledFieldProduction = view.getByTestId(
+      "datastreamDisabledFieldproduction",
+    );
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("does not show alert panel and uses freeform input method with forbidden datastream access", async () => {
     worker.use(...datastreamForbiddenHandlers);
 
-    await renderView(ConfigurationView);
-
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -69,8 +68,6 @@ describe("Config Sandboxes", () => {
         ],
       },
     });
-    await waitForConfigurationViewToLoad();
-
     await expect.element(edgeConfigInputMethodFreeformRadio).toBeChecked();
 
     await expect
@@ -79,7 +76,7 @@ describe("Config Sandboxes", () => {
 
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /you do not have enough permissions to fetch the organization configurations/i,
         }),
       )
@@ -89,9 +86,7 @@ describe("Config Sandboxes", () => {
   it("does show a disabled data stream field input with forbidden datastreams access", async () => {
     worker.use(...datastreamsForbiddenHandlers);
 
-    await renderView(ConfigurationView);
-
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -107,11 +102,9 @@ describe("Config Sandboxes", () => {
         ],
       },
     });
-    await waitForConfigurationViewToLoad();
-
     await expect
       .element(
-        page.getByText(
+        view.getByText(
           /You do not have enough permissions to fetch the Prod sandbox configurations/i,
         ),
       )
@@ -129,16 +122,12 @@ describe("Config Sandboxes", () => {
       ...datastreamsForbiddenHandlers,
     );
 
-    await renderView(ConfigurationView);
-
-    extensionBridge.init();
-    await waitForConfigurationViewToLoad();
-
+    await driver.init();
     await edgeConfigInputMethodSelectRadio.click();
 
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /you do not have enough permissions to fetch the organization configurations/i,
         }),
       )

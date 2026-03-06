@@ -12,25 +12,21 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page, userEvent } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import { userEvent } from "vitest/browser";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad, expandAccordion } from "../helpers/ui";
+import { expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
-let extensionBridge;
-
-const mediaChannelField = page.getByTestId("mediaChannelField");
-const mediaPlayerNameField = page.getByTestId("mediaPlayerNameField");
-const mediaVersionField = page.getByTestId("mediaVersionField");
-const mediaAdPingIntervalField = page.getByTestId("mediaAdPingIntervalField");
-const mediaMainPingIntervalField = page.getByTestId(
-  "mediaMainPingIntervalField",
-);
-const streamingMediaComponentCheckbox = page.getByTestId(
-  "streamingMediaComponentCheckbox",
-);
+let view;
+let driver;
+let cleanup;
+let mediaChannelField;
+let mediaPlayerNameField;
+let mediaVersionField;
+let mediaAdPingIntervalField;
+let mediaMainPingIntervalField;
+let streamingMediaComponentCheckbox;
 
 const fillNumberAndBlur = async (locator, value) => {
   await locator.fill(String(value));
@@ -38,19 +34,24 @@ const fillNumberAndBlur = async (locator, value) => {
 };
 
 describe("Config streaming media section", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    mediaChannelField = view.getByTestId("mediaChannelField");
+    mediaPlayerNameField = view.getByTestId("mediaPlayerNameField");
+    mediaVersionField = view.getByTestId("mediaVersionField");
+    mediaAdPingIntervalField = view.getByTestId("mediaAdPingIntervalField");
+    mediaMainPingIntervalField = view.getByTestId("mediaMainPingIntervalField");
+    streamingMediaComponentCheckbox = view.getByTestId(
+      "streamingMediaComponentCheckbox",
+    );
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("sets form values from settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -67,8 +68,6 @@ describe("Config streaming media section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(mediaChannelField).toHaveValue("channel");
     await expect.element(mediaPlayerNameField).toHaveValue("name");
     await expect.element(mediaVersionField).toHaveValue("1.0");
@@ -77,11 +76,7 @@ describe("Config streaming media section", () => {
   });
 
   it("updates form values and saves to settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await mediaChannelField.fill("test-channel");
     await mediaPlayerNameField.fill("test-player");
@@ -89,7 +84,7 @@ describe("Config streaming media section", () => {
     await fillNumberAndBlur(mediaAdPingIntervalField, 5);
     await fillNumberAndBlur(mediaMainPingIntervalField, 30);
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].streamingMedia).toMatchObject({
       channel: "test-channel",
       playerName: "test-player",
@@ -100,16 +95,12 @@ describe("Config streaming media section", () => {
   });
 
   it("saves settings with only channel and player name provided", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await mediaChannelField.fill("test-channel");
     await mediaPlayerNameField.fill("test-player");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].streamingMedia).toMatchObject({
       channel: "test-channel",
       playerName: "test-player",
@@ -117,9 +108,7 @@ describe("Config streaming media section", () => {
   });
 
   it("shows alert panel when component is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           streamingMedia: false,
@@ -127,11 +116,9 @@ describe("Config streaming media section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /streaming media component disabled/i,
         }),
       )
@@ -139,16 +126,13 @@ describe("Config streaming media section", () => {
   });
 
   it("hides form fields and shows alert when component is toggled off", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
     await expandAccordion("Build options");
     await streamingMediaComponentCheckbox.click();
 
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /streaming media component disabled/i,
         }),
       )
@@ -157,16 +141,13 @@ describe("Config streaming media section", () => {
 
   describe("validation", () => {
     it("requires channel when player name is provided", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      await driver.init(buildSettings());
+      expect(await driver.validate()).toBe(true);
 
       await mediaPlayerNameField.fill("test-player");
       await mediaChannelField.fill("");
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(mediaChannelField).not.toBeValid();
       await expect
@@ -177,16 +158,13 @@ describe("Config streaming media section", () => {
     });
 
     it("requires player name when channel is provided", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      await driver.init(buildSettings());
+      expect(await driver.validate()).toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("");
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(mediaPlayerNameField).not.toBeValid();
       await expect
@@ -197,17 +175,14 @@ describe("Config streaming media section", () => {
     });
 
     it("validates ad ping interval minimum value", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      await driver.init(buildSettings());
+      expect(await driver.validate()).toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await fillNumberAndBlur(mediaAdPingIntervalField, 0);
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(mediaAdPingIntervalField).not.toBeValid();
       await expect
@@ -218,17 +193,14 @@ describe("Config streaming media section", () => {
     });
 
     it("validates ad ping interval maximum value", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      await driver.init(buildSettings());
+      expect(await driver.validate()).toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await fillNumberAndBlur(mediaAdPingIntervalField, 11);
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(mediaAdPingIntervalField).not.toBeValid();
       await expect
@@ -239,17 +211,14 @@ describe("Config streaming media section", () => {
     });
 
     it("validates main ping interval minimum value", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      await driver.init(buildSettings());
+      expect(await driver.validate()).toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await fillNumberAndBlur(mediaMainPingIntervalField, 9);
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(mediaMainPingIntervalField).not.toBeValid();
       await expect
@@ -260,17 +229,14 @@ describe("Config streaming media section", () => {
     });
 
     it("validates main ping interval maximum value", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      await driver.init(buildSettings());
+      expect(await driver.validate()).toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await fillNumberAndBlur(mediaMainPingIntervalField, 61);
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(mediaMainPingIntervalField).not.toBeValid();
       await expect
@@ -281,39 +247,30 @@ describe("Config streaming media section", () => {
     });
 
     it("accepts valid ad ping interval values", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      await driver.init(buildSettings());
+      expect(await driver.validate()).toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await fillNumberAndBlur(mediaAdPingIntervalField, 5);
 
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
     });
 
     it("accepts valid main ping interval values", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      await driver.init(buildSettings());
+      expect(await driver.validate()).toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
       await fillNumberAndBlur(mediaMainPingIntervalField, 30);
 
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
     });
 
     it("disables interval fields when channel and player name are not provided", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      await driver.init(buildSettings());
+      expect(await driver.validate()).toBe(true);
 
       await expect.element(mediaAdPingIntervalField).toBeDisabled();
       await expect.element(mediaMainPingIntervalField).toBeDisabled();

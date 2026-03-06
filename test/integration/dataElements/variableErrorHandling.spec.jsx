@@ -10,11 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, beforeEach, afterEach, expect } from "vitest";
+import { describe, it, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import VariableView from "../../../src/view/dataElements/variableView";
 import { worker } from "../helpers/mocks/browser";
 import {
@@ -24,46 +22,43 @@ import {
   schemasServerErrorHandlers,
 } from "../helpers/mocks/defaultHandlers";
 
-let extensionBridge;
+let view;
+let driver;
+let cleanup;
 
 describe("Variable Data Element Error Handling", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
-  });
-
   afterEach(() => {
-    delete window.extensionBridge;
+    if (cleanup) cleanup();
   });
 
   describe("Sandbox errors", () => {
     it("displays error when access token is invalid", async () => {
       worker.use(...sandboxUnauthorizedHandlers);
-      await renderView(VariableView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(VariableView));
+      await driver.init();
 
       await expect
-        .element(page.getByText(/your access token appears to be invalid/i))
+        .element(view.getByText(/your access token appears to be invalid/i))
         .toBeVisible();
     });
 
     it("displays error when sandbox API returns server error", async () => {
       worker.use(...sandboxServerErrorHandlers);
-      await renderView(VariableView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(VariableView));
+      await driver.init();
 
       await expect
-        .element(page.getByText(/failed to load sandboxes/i))
+        .element(view.getByText(/failed to load sandboxes/i))
         .toBeVisible();
     });
 
     it("displays error when user has no access to any sandboxes", async () => {
       worker.use(...sandboxEmptyHandlers);
-      await renderView(VariableView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(VariableView));
+      await driver.init();
 
       await expect
-        .element(page.getByText(/you do not have access to any sandboxes/i))
+        .element(view.getByText(/you do not have access to any sandboxes/i))
         .toBeVisible();
     });
   });
@@ -71,10 +66,10 @@ describe("Variable Data Element Error Handling", () => {
   describe("Schema errors", () => {
     it("gracefully handles schema list API error", async () => {
       worker.use(...schemasServerErrorHandlers);
-      await renderView(VariableView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(VariableView));
+      await driver.init();
 
-      const schemaField = page.getByTestId("schemaField");
+      const schemaField = view.getByTestId("schemaField");
       await expect.element(schemaField).toBeVisible();
     });
   });

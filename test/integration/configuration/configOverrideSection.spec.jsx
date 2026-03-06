@@ -12,47 +12,33 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
-let extensionBridge;
-
-const developmentOverridesTab = page.getByTestId("developmentOverridesTab");
-const stagingOverridesTab = page.getByTestId("stagingOverridesTab");
-const productionOverridesTab = page.getByTestId("productionOverridesTab");
-
-const overridesEnabled = page.getByTestId("overridesEnabled");
-
-const analyticsEnabled = page.getByTestId("analyticsEnabled");
-const reportSuitesOverride = [0, 1, 2].map((index) =>
-  page.getByTestId(`reportSuitesOverride.${index}`),
-);
-const removeReportSuite = [0, 1, 2].map((index) =>
-  page.getByTestId(`removeReportSuite.${index}`),
-);
-const addReportSuite = page.getByTestId("addReportSuite");
-
-const audienceManagerEnabled = page.getByTestId("audienceManagerEnabled");
-
-const idSyncContainerOverride = page.getByTestId("idSyncContainerOverride");
-
-const experiencePlatformEnabled = page.getByTestId("experiencePlatformEnabled");
-const eventDatasetOverride = page.getByTestId("eventDatasetOverride");
-const odeEnabled = page.getByTestId("odeEnabled");
-const edgeSegmentationEnabled = page.getByTestId("edgeSegmentationEnabled");
-const edgeDestinationsEnabled = page.getByTestId("edgeDestinationsEnabled");
-const ajoEnabled = page.getByTestId("ajoEnabled");
-
-const ssefEnabled = page.getByTestId("ssefEnabled");
-const targetEnabled = page.getByTestId("targetEnabled");
-const targetPropertyTokenOverride = page.getByTestId(
-  "targetPropertyTokenOverride",
-);
-const copyFromDevelopmentButton = page.getByTestId("copyFromDevelopmentButton");
+let view;
+let driver;
+let cleanup;
+let developmentOverridesTab;
+let stagingOverridesTab;
+let productionOverridesTab;
+let overridesEnabled;
+let analyticsEnabled;
+let reportSuitesOverride;
+let removeReportSuite;
+let addReportSuite;
+let audienceManagerEnabled;
+let idSyncContainerOverride;
+let experiencePlatformEnabled;
+let eventDatasetOverride;
+let odeEnabled;
+let edgeSegmentationEnabled;
+let edgeDestinationsEnabled;
+let ajoEnabled;
+let ssefEnabled;
+let targetEnabled;
+let targetPropertyTokenOverride;
+let copyFromDevelopmentButton;
 
 const buildSettingsWithDummyDatastream = (o = {}) => {
   o.instances = o.instances || [];
@@ -68,19 +54,43 @@ const buildSettingsWithDummyDatastream = (o = {}) => {
 };
 
 describe("Config overrides section", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+
+    developmentOverridesTab = view.getByTestId("developmentOverridesTab");
+    stagingOverridesTab = view.getByTestId("stagingOverridesTab");
+    productionOverridesTab = view.getByTestId("productionOverridesTab");
+    overridesEnabled = view.getByTestId("overridesEnabled");
+    analyticsEnabled = view.getByTestId("analyticsEnabled");
+    reportSuitesOverride = [0, 1, 2].map((index) =>
+      view.getByTestId(`reportSuitesOverride.${index}`),
+    );
+    removeReportSuite = [0, 1, 2].map((index) =>
+      view.getByTestId(`removeReportSuite.${index}`),
+    );
+    addReportSuite = view.getByTestId("addReportSuite");
+    audienceManagerEnabled = view.getByTestId("audienceManagerEnabled");
+    idSyncContainerOverride = view.getByTestId("idSyncContainerOverride");
+    experiencePlatformEnabled = view.getByTestId("experiencePlatformEnabled");
+    eventDatasetOverride = view.getByTestId("eventDatasetOverride");
+    odeEnabled = view.getByTestId("odeEnabled");
+    edgeSegmentationEnabled = view.getByTestId("edgeSegmentationEnabled");
+    edgeDestinationsEnabled = view.getByTestId("edgeDestinationsEnabled");
+    ajoEnabled = view.getByTestId("ajoEnabled");
+    ssefEnabled = view.getByTestId("ssefEnabled");
+    targetEnabled = view.getByTestId("targetEnabled");
+    targetPropertyTokenOverride = view.getByTestId(
+      "targetPropertyTokenOverride",
+    );
+    copyFromDevelopmentButton = view.getByTestId("copyFromDevelopmentButton");
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("sets form values from settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettingsWithDummyDatastream({
         instances: [
           {
@@ -166,8 +176,6 @@ describe("Config overrides section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(developmentOverridesTab).toBeSelected();
     await expect.element(overridesEnabled).toHaveValue("Enabled");
 
@@ -222,11 +230,7 @@ describe("Config overrides section", () => {
   });
 
   it("updates form values and saves to settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     await overridesEnabled.selectOption("Enabled");
     await expect.element(overridesEnabled).toHaveValue("Enabled");
@@ -249,7 +253,7 @@ describe("Config overrides section", () => {
     await experiencePlatformEnabled.selectOption("Enabled");
     await eventDatasetOverride.fill("myDatasetId");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].edgeConfigOverrides).toEqual({
       development: {
         enabled: true,
@@ -274,11 +278,7 @@ describe("Config overrides section", () => {
   });
 
   it("validates third party id sync container", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -286,20 +286,16 @@ describe("Config overrides section", () => {
     // Set invalid ID sync container (non-numeric)
     await idSyncContainerOverride.fill("invalid");
 
-    expect(await extensionBridge.validate()).toBe(false);
+    expect(await driver.validate()).toBe(false);
 
     // Set valid ID sync container
     await idSyncContainerOverride.fill("12345");
 
-    expect(await extensionBridge.validate()).toBe(true);
+    expect(await driver.validate()).toBe(true);
   });
 
   it("allows you to save data elements", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -316,7 +312,7 @@ describe("Config overrides section", () => {
     await experiencePlatformEnabled.selectOption("Enabled");
     await eventDatasetOverride.fill("%myDatasetDataElement%");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].edgeConfigOverrides).toEqual({
       development: {
         enabled: true,
@@ -341,11 +337,7 @@ describe("Config overrides section", () => {
   });
 
   it("allows you to add and delete report suites", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     // Enable overrides and analytics
     await overridesEnabled.selectOption("Enabled");
@@ -362,7 +354,7 @@ describe("Config overrides section", () => {
     await addReportSuite.click();
     await reportSuitesOverride[2].fill("reportSuite3");
 
-    let settings = await extensionBridge.getSettings();
+    let settings = await driver.getSettings();
     expect(settings.instances[0].edgeConfigOverrides).toEqual({
       development: {
         enabled: true,
@@ -375,7 +367,7 @@ describe("Config overrides section", () => {
     // Remove the middle report suite
     await removeReportSuite[1].click();
 
-    settings = await extensionBridge.getSettings();
+    settings = await driver.getSettings();
     expect(settings.instances[0].edgeConfigOverrides).toEqual({
       development: {
         enabled: true,
@@ -387,11 +379,7 @@ describe("Config overrides section", () => {
   });
 
   it("allows you to copy overrides from one environment to another", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     // Set up development environment with some overrides
     await overridesEnabled.selectOption("Enabled");
@@ -416,7 +404,7 @@ describe("Config overrides section", () => {
       .element(targetPropertyTokenOverride)
       .toHaveValue("devTargetToken");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].edgeConfigOverrides).toEqual({
       development: {
         enabled: true,
@@ -440,11 +428,7 @@ describe("Config overrides section", () => {
   });
 
   it("hides everything when no overrides are enabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     // Analytics, Target, and other override fields should not be visible
     await expect.element(analyticsEnabled).not.toBeInTheDocument();
@@ -453,11 +437,7 @@ describe("Config overrides section", () => {
   });
 
   it("hides report suites when analytics is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -478,11 +458,7 @@ describe("Config overrides section", () => {
   });
 
   it("hides target property token when target is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -501,10 +477,8 @@ describe("Config overrides section", () => {
   });
 
   it("migrates from legacy settings", async () => {
-    await renderView(ConfigurationView);
-
     // Initialize with legacy format (if there's a different format - this is a placeholder)
-    extensionBridge.init(
+    await driver.init(
       buildSettingsWithDummyDatastream({
         instances: [
           {
@@ -516,35 +490,24 @@ describe("Config overrides section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     // After loading, settings should be in the new format
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0]).toBeDefined();
   });
 
   it("saves no override settings correctly", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     // Set to "No override"
     await overridesEnabled.selectOption("No override");
 
-    const settings = await extensionBridge.getSettings();
-
     // When no override is selected, edgeConfigOverrides should be undefined
+    const settings = await driver.getSettings();
     expect(settings.instances[0].edgeConfigOverrides).toEqual(undefined);
   });
 
   it("saves enabled settings correctly", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -567,8 +530,7 @@ describe("Config overrides section", () => {
     // Enable SSEF
     await ssefEnabled.selectOption("Enabled");
 
-    const settings = await extensionBridge.getSettings();
-
+    const settings = await driver.getSettings();
     expect(settings.instances[0].edgeConfigOverrides).toEqual({
       development: {
         enabled: true,
@@ -592,11 +554,7 @@ describe("Config overrides section", () => {
   });
 
   it("saves disabled settings correctly", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettingsWithDummyDatastream());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettingsWithDummyDatastream());
 
     // Enable overrides
     await overridesEnabled.selectOption("Enabled");
@@ -628,8 +586,7 @@ describe("Config overrides section", () => {
     // Disable AJO
     await ajoEnabled.selectOption("Disabled");
 
-    const settings = await extensionBridge.getSettings();
-
+    const settings = await driver.getSettings();
     expect(settings.instances[0].edgeConfigOverrides).toEqual({
       development: {
         enabled: true,

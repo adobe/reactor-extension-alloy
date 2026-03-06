@@ -10,25 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { expect } from "vitest";
-
 import { page } from "vitest/browser";
-
-export const waitForConfigurationViewToLoad = async () => {
-  await expect.element(page.getByText("SDK instances")).toBeVisible();
-};
 
 /**
  * Click on an accordion/disclosure button to expand it, only if not already expanded
  * @param {string} name - The accessible name of the button (text or regex)
  */
 export const expandAccordion = async (name) => {
-  const button = page.getByRole("button", { name });
-  const isExpanded = await button.element().getAttribute("aria-expanded");
-
-  if (isExpanded !== "true") {
-    await button.click();
-  }
+  await page.getByRole("button", { name }).expand();
 };
 
 export const toggleComponent = async (component) => {

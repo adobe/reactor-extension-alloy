@@ -12,34 +12,31 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
-let extensionBridge;
-
-const idMigrationEnabledField = page.getByTestId("idMigrationEnabledField");
-const thirdPartyCookiesEnabledField = page.getByTestId(
-  "thirdPartyCookiesEnabledField",
-);
+let view;
+let driver;
+let cleanup;
+let idMigrationEnabledField;
+let thirdPartyCookiesEnabledField;
 
 describe("Config Identity section", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    idMigrationEnabledField = view.getByTestId("idMigrationEnabledField");
+    thirdPartyCookiesEnabledField = view.getByTestId(
+      "thirdPartyCookiesEnabledField",
+    );
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("sets form values from settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -51,55 +48,39 @@ describe("Config Identity section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(idMigrationEnabledField).not.toBeChecked();
     await expect.element(thirdPartyCookiesEnabledField).toHaveValue("Disabled");
   });
 
   it("updates form values and saves to settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await idMigrationEnabledField.click();
 
     await thirdPartyCookiesEnabledField.fill("Disabled");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].idMigrationEnabled).toBe(false);
     expect(settings.instances[0].thirdPartyCookiesEnabled).toBe(false);
   });
 
   it("shows default values when no settings are provided", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await expect.element(idMigrationEnabledField).toBeChecked();
     await expect.element(thirdPartyCookiesEnabledField).toHaveValue("Enabled");
   });
 
   it("does not save default values to settings", async () => {
-    await renderView(ConfigurationView);
+    await driver.init(buildSettings());
 
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
-
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].idMigrationEnabled).toBeUndefined();
     expect(settings.instances[0].thirdPartyCookiesEnabled).toBeUndefined();
   });
 
   it("allows data element in third-party cookies field", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -110,13 +91,11 @@ describe("Config Identity section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect
       .element(thirdPartyCookiesEnabledField)
       .toHaveValue("%myDataElement%");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].thirdPartyCookiesEnabled).toBe(
       "%myDataElement%",
     );
@@ -124,15 +103,11 @@ describe("Config Identity section", () => {
 
   describe("validation", () => {
     it("validates data element format in third-party cookies field", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
+      await driver.init(buildSettings());
 
       await thirdPartyCookiesEnabledField.fill("invalid%DataElement");
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(thirdPartyCookiesEnabledField).not.toBeValid();
       await expect
@@ -141,9 +116,7 @@ describe("Config Identity section", () => {
     });
 
     it("accepts valid data element format in third-party cookies field", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           instances: [
             {
@@ -154,9 +127,7 @@ describe("Config Identity section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
     });
   });
 });

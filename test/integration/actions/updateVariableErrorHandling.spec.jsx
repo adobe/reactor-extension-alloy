@@ -10,11 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, beforeEach, afterEach, expect } from "vitest";
+import { describe, it, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import UpdateVariableView from "../../../src/view/actions/updateVariableView";
 import { worker } from "../helpers/mocks/browser";
 import {
@@ -23,45 +21,42 @@ import {
   dataElementsEmptyHandlers,
 } from "../helpers/mocks/defaultHandlers";
 
-let extensionBridge;
+let view;
+let driver;
+let cleanup;
 
 describe("Update Variable Action Error Handling", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
-  });
-
   afterEach(() => {
-    delete window.extensionBridge;
+    if (cleanup) cleanup();
   });
 
   describe("Data elements API errors", () => {
     it("displays error when access token is invalid", async () => {
       worker.use(...dataElementsUnauthorizedHandlers);
-      await renderView(UpdateVariableView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(UpdateVariableView));
+      await driver.init();
 
       await expect
-        .element(page.getByText(/your access token appears to be invalid/i))
+        .element(view.getByText(/your access token appears to be invalid/i))
         .toBeVisible();
     });
 
     it("displays error when data elements API returns server error", async () => {
       worker.use(...dataElementsServerErrorHandlers);
-      await renderView(UpdateVariableView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(UpdateVariableView));
+      await driver.init();
 
       await expect
-        .element(page.getByText(/failed to load data elements/i))
+        .element(view.getByText(/failed to load data elements/i))
         .toBeVisible();
     });
 
     it("shows no data elements alert when no variable data elements exist", async () => {
       worker.use(...dataElementsEmptyHandlers);
-      await renderView(UpdateVariableView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(UpdateVariableView));
+      await driver.init();
 
-      await expect.element(page.getByTestId("noDataElements")).toBeVisible();
+      await expect.element(view.getByTestId("noDataElements")).toBeVisible();
     });
   });
 });

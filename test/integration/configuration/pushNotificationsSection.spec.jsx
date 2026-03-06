@@ -12,36 +12,36 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad, expandAccordion } from "../helpers/ui";
+import { expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
-let extensionBridge;
-
-const vapidPublicKeyField = page.getByTestId("vapidPublicKeyField");
-const appIdField = page.getByTestId("appIdField");
-const trackingDatasetIdField = page.getByTestId("trackingDatasetIdField");
-const pushNotificationsComponentCheckbox = page.getByTestId(
-  "pushNotificationsComponentCheckbox",
-);
+let view;
+let driver;
+let cleanup;
+let vapidPublicKeyField;
+let appIdField;
+let trackingDatasetIdField;
+let pushNotificationsComponentCheckbox;
 
 describe("Config push notifications section", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    vapidPublicKeyField = view.getByTestId("vapidPublicKeyField");
+    appIdField = view.getByTestId("appIdField");
+    trackingDatasetIdField = view.getByTestId("trackingDatasetIdField");
+    pushNotificationsComponentCheckbox = view.getByTestId(
+      "pushNotificationsComponentCheckbox",
+    );
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("sets form values from settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           pushNotifications: true,
@@ -60,17 +60,13 @@ describe("Config push notifications section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(vapidPublicKeyField).toHaveValue("test-vapid-key");
     await expect.element(appIdField).toHaveValue("test-app-id");
     await expect.element(trackingDatasetIdField).toHaveValue("test-dataset-id");
   });
 
   it("updates form values and saves to settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           pushNotifications: true,
@@ -78,13 +74,11 @@ describe("Config push notifications section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await vapidPublicKeyField.fill("new-vapid-key");
     await appIdField.fill("new-app-id");
     await trackingDatasetIdField.fill("new-dataset-id");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].pushNotifications).toMatchObject({
       vapidPublicKey: "new-vapid-key",
       appId: "new-app-id",
@@ -93,9 +87,7 @@ describe("Config push notifications section", () => {
   });
 
   it("does not emit push notifications settings when component is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           pushNotifications: true,
@@ -114,23 +106,18 @@ describe("Config push notifications section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await expandAccordion("Build options");
     await pushNotificationsComponentCheckbox.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].pushNotifications).toBeUndefined();
   });
 
   it("shows alert panel when push notifications component is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-    await waitForConfigurationViewToLoad();
-
+    await driver.init(buildSettings());
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /push notifications component disabled/i,
         }),
       )
@@ -138,9 +125,7 @@ describe("Config push notifications section", () => {
   });
 
   it("hides form fields and shows alert when component is toggled off", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           pushNotifications: true,
@@ -148,13 +133,12 @@ describe("Config push notifications section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await expandAccordion("Build options");
     await pushNotificationsComponentCheckbox.click();
 
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /push notifications component disabled/i,
         }),
       )
@@ -163,11 +147,9 @@ describe("Config push notifications section", () => {
 
   describe("validation", () => {
     it("requires VAPID public key", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
+      await driver.init(buildSettings());
 
-      await waitForConfigurationViewToLoad();
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
       await expandAccordion("Build options");
       await pushNotificationsComponentCheckbox.click();
 
@@ -175,7 +157,7 @@ describe("Config push notifications section", () => {
       await trackingDatasetIdField.fill("test-dataset-id");
       await vapidPublicKeyField.fill("");
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(vapidPublicKeyField).not.toBeValid();
       await expect
@@ -184,10 +166,8 @@ describe("Config push notifications section", () => {
     });
 
     it("requires application ID", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
+      await driver.init(buildSettings());
 
-      await waitForConfigurationViewToLoad();
       await expandAccordion("Build options");
       await pushNotificationsComponentCheckbox.click();
 
@@ -195,7 +175,7 @@ describe("Config push notifications section", () => {
       await trackingDatasetIdField.fill("test-dataset-id");
       await appIdField.fill("");
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(appIdField).not.toBeValid();
       await expect
@@ -204,10 +184,8 @@ describe("Config push notifications section", () => {
     });
 
     it("requires tracking dataset ID", async () => {
-      await renderView(ConfigurationView);
-      extensionBridge.init(buildSettings());
+      await driver.init(buildSettings());
 
-      await waitForConfigurationViewToLoad();
       await expandAccordion("Build options");
       await pushNotificationsComponentCheckbox.click();
 
@@ -215,7 +193,7 @@ describe("Config push notifications section", () => {
       await appIdField.fill("test-app-id");
       await trackingDatasetIdField.fill("");
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(trackingDatasetIdField).not.toBeValid();
       await expect

@@ -12,11 +12,9 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad, expandAccordion } from "../helpers/ui";
+import { expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 import { worker } from "../helpers/mocks/browser";
 import {
@@ -24,19 +22,18 @@ import {
   advertisersUnauthorizedHandlers,
 } from "../helpers/mocks/defaultHandlers";
 
-let extensionBridge;
-
-const dspEnabledField = page.getByTestId("dspEnabledField");
-const id5PartnerIdField = page.getByTestId("id5PartnerIdField");
-const rampIdJSPathField = page.getByTestId("rampIdJSPathField");
-const addAdvertiserButton = page.getByTestId("addAdvertiserButton");
-const advertiser0Field = page.getByTestId("advertiser0Field");
-const advertiser1Field = page.getByTestId("advertiser1Field");
-const advertiserEnabled0Field = page.getByTestId("advertiserEnabled0Field");
-const deleteAdvertiser0Button = page.getByTestId("deleteAdvertiser0Button");
-const advertisingComponentCheckbox = page.getByTestId(
-  "advertisingComponentCheckbox",
-);
+let view;
+let driver;
+let cleanup;
+let dspEnabledField;
+let id5PartnerIdField;
+let rampIdJSPathField;
+let addAdvertiserButton;
+let advertiser0Field;
+let advertiser1Field;
+let advertiserEnabled0Field;
+let deleteAdvertiser0Button;
+let advertisingComponentCheckbox;
 
 /**
  * Wait for advertiser fields to load after enabling DSP
@@ -53,19 +50,27 @@ const waitForOptionalFieldsToLoad = async () => {
 };
 
 describe("Config advertising section", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    dspEnabledField = view.getByTestId("dspEnabledField");
+    id5PartnerIdField = view.getByTestId("id5PartnerIdField");
+    rampIdJSPathField = view.getByTestId("rampIdJSPathField");
+    addAdvertiserButton = view.getByTestId("addAdvertiserButton");
+    advertiser0Field = view.getByTestId("advertiser0Field");
+    advertiser1Field = view.getByTestId("advertiser1Field");
+    advertiserEnabled0Field = view.getByTestId("advertiserEnabled0Field");
+    deleteAdvertiser0Button = view.getByTestId("deleteAdvertiser0Button");
+    advertisingComponentCheckbox = view.getByTestId(
+      "advertisingComponentCheckbox",
+    );
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("sets form values from settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -90,8 +95,6 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
@@ -105,9 +108,7 @@ describe("Config advertising section", () => {
   });
 
   it("sets form values from settings with DSP disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -124,23 +125,17 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(dspEnabledField).toHaveValue("Disabled");
   });
 
   it("updates form values and saves to settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
         },
       }),
     );
-
-    await waitForConfigurationViewToLoad();
 
     await dspEnabledField.selectOption("Enabled");
 
@@ -155,7 +150,7 @@ describe("Config advertising section", () => {
     await rampIdJSPathField.fill("https://new.example.com/ats.js");
 
     // Get settings and verify
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].advertising).toMatchObject({
       dspEnabled: true,
       id5PartnerId: "new-id5-partner",
@@ -170,9 +165,7 @@ describe("Config advertising section", () => {
   });
 
   it("does not emit advertising settings when component is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -197,23 +190,18 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await expandAccordion("Build options");
     await advertisingComponentCheckbox.click();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].advertising).toBeUndefined();
   });
 
   it("shows alert panel when advertising component is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-    await waitForConfigurationViewToLoad();
-
+    await driver.init(buildSettings());
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /adobe advertising component disabled/i,
         }),
       )
@@ -221,9 +209,7 @@ describe("Config advertising section", () => {
   });
 
   it("hides form fields and shows alert when component is toggled off", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -231,14 +217,13 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await expandAccordion("Build options");
     await advertisingComponentCheckbox.click();
 
     // Should now show alert panel
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /adobe advertising component disabled/i,
         }),
       )
@@ -246,9 +231,7 @@ describe("Config advertising section", () => {
   });
 
   it("allows data element in DSP enabled field", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -265,21 +248,17 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(dspEnabledField).toHaveValue("%myDataElement%");
 
     // Verify it's saved as string
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].advertising.dspEnabled).toBe(
       "%myDataElement%",
     );
   });
 
   it("allows data element in ID5 Partner ID field", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -297,23 +276,20 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
     await expect.element(id5PartnerIdField).toHaveValue("%id5DataElement%");
 
     // Verify it's saved as string
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].advertising.id5PartnerId).toBe(
       "%id5DataElement%",
     );
   });
 
   it("allows data element in RampID JS Path field", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -331,31 +307,26 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
     await expect.element(rampIdJSPathField).toHaveValue("%rampIdDataElement%");
 
     // Verify it's saved as string
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].advertising.rampIdJSPath).toBe(
       "%rampIdDataElement%",
     );
   });
 
   it("does not save optional fields when empty", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
         },
       }),
     );
-
-    await waitForConfigurationViewToLoad();
 
     await dspEnabledField.selectOption("Enabled");
 
@@ -363,15 +334,13 @@ describe("Config advertising section", () => {
     await waitForAdvertisersToLoad();
 
     // Leave optional fields empty
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].advertising.id5PartnerId).toBeUndefined();
     expect(settings.instances[0].advertising.rampIdJSPath).toBeUndefined();
   });
 
   it("shows default DSP disabled value when no settings provided", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -379,15 +348,11 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(dspEnabledField).toHaveValue("Disabled");
   });
 
   it("converts boolean dspEnabled to string for UI display", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -404,37 +369,29 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(dspEnabledField).toHaveValue("Enabled");
   });
 
   it("converts Enabled string to boolean true when saving", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
         },
       }),
     );
-
-    await waitForConfigurationViewToLoad();
 
     await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
     await waitForAdvertisersToLoad();
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].advertising.dspEnabled).toBe(true);
   });
 
   it("converts Disabled string to boolean false when saving", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -442,26 +399,20 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await dspEnabledField.selectOption("Disabled");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].advertising.dspEnabled).toBe(false);
   });
 
   it("hides DSP fields when DSP is disabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
         },
       }),
     );
-
-    await waitForConfigurationViewToLoad();
 
     await expect.element(dspEnabledField).toHaveValue("Disabled");
 
@@ -472,17 +423,13 @@ describe("Config advertising section", () => {
   });
 
   it("shows DSP fields when DSP is enabled", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
         },
       }),
     );
-
-    await waitForConfigurationViewToLoad();
 
     await dspEnabledField.selectOption("Enabled");
 
@@ -501,9 +448,7 @@ describe("Config advertising section", () => {
     // Override the default handler with no advertisers response
     worker.use(...noAdvertisersHandlers);
 
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -511,14 +456,12 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await dspEnabledField.selectOption("Enabled");
 
     // Wait for the warning alert to appear
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /no dsp advertisers found/i,
         }),
       )
@@ -526,7 +469,7 @@ describe("Config advertising section", () => {
 
     // Verify the alert content
     await expect
-      .element(page.getByText(/no advertisers found for this ims org/i))
+      .element(view.getByText(/no advertisers found for this ims org/i))
       .toBeVisible();
 
     // Verify DSP fields are now visible for manual entry
@@ -535,16 +478,14 @@ describe("Config advertising section", () => {
     await expect.element(rampIdJSPathField).toBeVisible();
 
     // Verify form is invalid without advertiser ID
-    expect(await extensionBridge.validate()).toBe(false);
+    expect(await driver.validate()).toBe(false);
   });
 
   it("shows warning alert when advertiser API fails but allows manual entry", async () => {
     // Override the default handler with unauthorized response
     worker.use(...advertisersUnauthorizedHandlers);
 
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -552,14 +493,12 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await dspEnabledField.selectOption("Enabled");
 
     // Wait for the warning alert to appear
     await expect
       .element(
-        page.getByRole("heading", {
+        view.getByRole("heading", {
           name: /unable to load advertisers/i,
         }),
       )
@@ -567,7 +506,7 @@ describe("Config advertising section", () => {
 
     // Verify the alert content
     await expect
-      .element(page.getByText(/could not retrieve advertiser data from dsp/i))
+      .element(view.getByText(/could not retrieve advertiser data from dsp/i))
       .toBeVisible();
 
     // Verify DSP fields are now visible for manual entry
@@ -576,21 +515,17 @@ describe("Config advertising section", () => {
     await expect.element(rampIdJSPathField).toBeVisible();
 
     // Verify form is invalid without advertiser ID
-    expect(await extensionBridge.validate()).toBe(false);
+    expect(await driver.validate()).toBe(false);
   });
 
   it("shows add advertiser button when advertisers load successfully", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
         },
       }),
     );
-
-    await waitForConfigurationViewToLoad();
 
     await dspEnabledField.selectOption("Enabled");
 
@@ -605,17 +540,13 @@ describe("Config advertising section", () => {
   });
 
   it("allows adding multiple advertisers", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
         },
       }),
     );
-
-    await waitForConfigurationViewToLoad();
 
     await dspEnabledField.selectOption("Enabled");
 
@@ -633,7 +564,7 @@ describe("Config advertising section", () => {
     await advertiser1Field.selectOption("Advertiser BF");
 
     // Verify settings
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].advertising.advertiserSettings).toHaveLength(
       2,
     );
@@ -652,9 +583,7 @@ describe("Config advertising section", () => {
   });
 
   it("allows removing advertisers", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -681,7 +610,6 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
@@ -689,7 +617,7 @@ describe("Config advertising section", () => {
     await deleteAdvertiser0Button.click();
 
     // Verify settings
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].advertising.advertiserSettings).toHaveLength(
       1,
     );
@@ -702,9 +630,7 @@ describe("Config advertising section", () => {
   });
 
   it("allows toggling advertiser enabled state", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         components: {
           advertising: true,
@@ -727,7 +653,6 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
@@ -735,7 +660,7 @@ describe("Config advertising section", () => {
     await advertiserEnabled0Field.selectOption("Disabled");
 
     // Verify settings
-    let settings = await extensionBridge.getSettings();
+    let settings = await driver.getSettings();
     expect(
       settings.instances[0].advertising.advertiserSettings[0].enabled,
     ).toBe(false);
@@ -744,7 +669,7 @@ describe("Config advertising section", () => {
     await advertiserEnabled0Field.selectOption("Enabled");
 
     // Verify settings
-    settings = await extensionBridge.getSettings();
+    settings = await driver.getSettings();
     expect(
       settings.instances[0].advertising.advertiserSettings[0].enabled,
     ).toBe(true);
@@ -752,9 +677,7 @@ describe("Config advertising section", () => {
 
   describe("validation", () => {
     it("requires DSP enabled field", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           components: {
             advertising: true,
@@ -762,11 +685,9 @@ describe("Config advertising section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
-
       await dspEnabledField.fill("");
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(dspEnabledField).not.toBeValid();
       await expect
@@ -777,9 +698,7 @@ describe("Config advertising section", () => {
     });
 
     it("validates data element format in DSP enabled field", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           components: {
             advertising: true,
@@ -802,10 +721,8 @@ describe("Config advertising section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
-
       // Trigger validation
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(dspEnabledField).not.toBeValid();
       await expect
@@ -814,9 +731,7 @@ describe("Config advertising section", () => {
     });
 
     it("accepts valid data element format in DSP enabled field", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           components: {
             advertising: true,
@@ -839,18 +754,14 @@ describe("Config advertising section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
-
       // When DSP is a data element, advertisers will still load
       await waitForAdvertisersToLoad();
 
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
     });
 
     it("validates data element format in ID5 Partner ID field", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           components: {
             advertising: true,
@@ -874,12 +785,11 @@ describe("Config advertising section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
       await waitForAdvertisersToLoad();
       await waitForOptionalFieldsToLoad();
 
       // Trigger validation
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(id5PartnerIdField).not.toBeValid();
       await expect
@@ -888,9 +798,7 @@ describe("Config advertising section", () => {
     });
 
     it("validates data element format in RampID JS Path field", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           components: {
             advertising: true,
@@ -914,12 +822,11 @@ describe("Config advertising section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
       await waitForAdvertisersToLoad();
       await waitForOptionalFieldsToLoad();
 
       // Trigger validation
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(rampIdJSPathField).not.toBeValid();
       await expect
@@ -928,9 +835,7 @@ describe("Config advertising section", () => {
     });
 
     it("shows error when advertiser field is missing while DSP is enabled", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           components: {
             advertising: true,
@@ -948,11 +853,10 @@ describe("Config advertising section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
       await waitForAdvertisersToLoad();
 
       // Trigger validation
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
 
       await expect.element(advertiser0Field).not.toBeValid();
       await expect

@@ -10,11 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, beforeEach, afterEach, expect } from "vitest";
+import { describe, it, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import XdmObjectView from "../../../src/view/dataElements/xdmObjectView";
 import { worker } from "../helpers/mocks/browser";
 import {
@@ -28,53 +26,50 @@ import {
   schemaNotFoundHandlers,
 } from "../helpers/mocks/defaultHandlers";
 
-let extensionBridge;
+let view;
+let driver;
+let cleanup;
 
 describe("XDM Object Data Element Error Handling", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
-  });
-
   afterEach(() => {
-    delete window.extensionBridge;
+    if (cleanup) cleanup();
   });
 
   describe("Sandbox errors", () => {
     it("displays error when access token is invalid", async () => {
       worker.use(...sandboxUnauthorizedHandlers);
-      await renderView(XdmObjectView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(XdmObjectView));
+      await driver.init();
 
       await expect
-        .element(page.getByText(/your access token appears to be invalid/i))
+        .element(view.getByText(/your access token appears to be invalid/i))
         .toBeVisible();
     });
 
     it("displays error when sandbox API returns server error", async () => {
       worker.use(...sandboxServerErrorHandlers);
-      await renderView(XdmObjectView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(XdmObjectView));
+      await driver.init();
 
       await expect
-        .element(page.getByText(/failed to load sandboxes/i))
+        .element(view.getByText(/failed to load sandboxes/i))
         .toBeVisible();
     });
 
     it("displays error when user has no access to any sandboxes", async () => {
       worker.use(...sandboxEmptyHandlers);
-      await renderView(XdmObjectView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(XdmObjectView));
+      await driver.init();
 
       await expect
-        .element(page.getByText(/you do not have access to any sandboxes/i))
+        .element(view.getByText(/you do not have access to any sandboxes/i))
         .toBeVisible();
     });
 
     it("shows missing sandbox alert when loading saved XDM object without sandbox name and user has no access to prod", async () => {
       worker.use(...sandboxWithoutProdHandlers, ...schemasEmptyHandlers);
-      await renderView(XdmObjectView);
-      extensionBridge.init({
+      ({ view, driver, cleanup } = await useView(XdmObjectView));
+      await driver.init({
         settings: {
           schema: {
             id: "https://ns.adobe.com/test/schemas/sch123",
@@ -85,7 +80,7 @@ describe("XDM Object Data Element Error Handling", () => {
       });
 
       await expect
-        .element(page.getByTestId("schemaMissingAlert"))
+        .element(view.getByTestId("schemaMissingAlert"))
         .toBeVisible();
     });
   });
@@ -93,27 +88,27 @@ describe("XDM Object Data Element Error Handling", () => {
   describe("Schema errors", () => {
     it("gracefully handles schema list API error", async () => {
       worker.use(...schemasServerErrorHandlers);
-      await renderView(XdmObjectView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(XdmObjectView));
+      await driver.init();
 
-      const schemaField = page.getByTestId("schemaField");
+      const schemaField = view.getByTestId("schemaField");
       await expect.element(schemaField).toBeVisible();
     });
 
     it("shows missing schema alert when auto-selected single schema returns 404", async () => {
       worker.use(...singleSchemaHandlers, ...schemaNotFoundHandlers);
-      await renderView(XdmObjectView);
-      extensionBridge.init();
+      ({ view, driver, cleanup } = await useView(XdmObjectView));
+      await driver.init();
 
       await expect
-        .element(page.getByTestId("schemaMissingAlert"))
+        .element(view.getByTestId("schemaMissingAlert"))
         .toBeVisible();
     });
 
     it("shows missing schema alert when saved schema cannot be loaded", async () => {
       worker.use(...schemaNotFoundHandlers, ...schemasEmptyHandlers);
-      await renderView(XdmObjectView);
-      extensionBridge.init({
+      ({ view, driver, cleanup } = await useView(XdmObjectView));
+      await driver.init({
         settings: {
           sandbox: { name: "prod" },
           schema: {
@@ -125,7 +120,7 @@ describe("XDM Object Data Element Error Handling", () => {
       });
 
       await expect
-        .element(page.getByTestId("schemaMissingAlert"))
+        .element(view.getByTestId("schemaMissingAlert"))
         .toBeVisible();
     });
   });

@@ -12,55 +12,61 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
-let extensionBridge;
-
-const nameField = page.getByTestId("nameField");
-const orgIdField = page.getByTestId("orgIdField");
-const edgeDomainField = page.getByTestId("edgeDomainField");
-const edgeConfigInputMethodFreeformRadio = page.getByTestId(
-  "edgeConfigInputMethodFreeformRadio",
-);
-const edgeConfigInputMethodSelectRadio = page.getByTestId(
-  "edgeConfigInputMethodSelectRadio",
-);
-const productionEnvironmentTextfield = page.getByTestId(
-  "productionEnvironmentTextfield",
-);
-const stagingEnvironmentTextfield = page.getByTestId(
-  "stagingEnvironmentTextfield",
-);
-const developmentEnvironmentTextfield = page.getByTestId(
-  "developmentEnvironmentTextfield",
-);
-const productionDatastreamField = page.getByTestId("productionDatastreamField");
-const stagingDatastreamField = page.getByTestId("stagingDatastreamField");
-const developmentDatastreamField = page.getByTestId(
-  "developmentDatastreamField",
-);
-const orgIdRestoreButton = page.getByTestId("orgIdRestoreButton");
-const edgeDomainRestoreButton = page.getByTestId("edgeDomainRestoreButton");
+let view;
+let driver;
+let cleanup;
+let nameField;
+let orgIdField;
+let edgeDomainField;
+let edgeConfigInputMethodFreeformRadio;
+let edgeConfigInputMethodSelectRadio;
+let productionEnvironmentTextfield;
+let stagingEnvironmentTextfield;
+let developmentEnvironmentTextfield;
+let productionDatastreamField;
+let stagingDatastreamField;
+let developmentDatastreamField;
+let orgIdRestoreButton;
+let edgeDomainRestoreButton;
 
 describe("Config general settings and datastream section", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    nameField = view.getByTestId("nameField");
+    orgIdField = view.getByTestId("orgIdField");
+    edgeDomainField = view.getByTestId("edgeDomainField");
+    edgeConfigInputMethodFreeformRadio = view.getByTestId(
+      "edgeConfigInputMethodFreeformRadio",
+    );
+    edgeConfigInputMethodSelectRadio = view.getByTestId(
+      "edgeConfigInputMethodSelectRadio",
+    );
+    productionEnvironmentTextfield = view.getByTestId(
+      "productionEnvironmentTextfield",
+    );
+    stagingEnvironmentTextfield = view.getByTestId(
+      "stagingEnvironmentTextfield",
+    );
+    developmentEnvironmentTextfield = view.getByTestId(
+      "developmentEnvironmentTextfield",
+    );
+    productionDatastreamField = view.getByTestId("productionDatastreamField");
+    stagingDatastreamField = view.getByTestId("stagingDatastreamField");
+    developmentDatastreamField = view.getByTestId("developmentDatastreamField");
+    orgIdRestoreButton = view.getByTestId("orgIdRestoreButton");
+    edgeDomainRestoreButton = view.getByTestId("edgeDomainRestoreButton");
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("sets free form values from settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -77,8 +83,6 @@ describe("Config general settings and datastream section", () => {
         ],
       },
     });
-
-    await waitForConfigurationViewToLoad();
 
     await expect.element(nameField).toHaveValue("alloy");
     await expect.element(orgIdField).toHaveValue("123456@AdobeOrg");
@@ -98,9 +102,7 @@ describe("Config general settings and datastream section", () => {
   });
 
   it("sets list form values from settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -118,8 +120,6 @@ describe("Config general settings and datastream section", () => {
       },
     });
 
-    await waitForConfigurationViewToLoad();
-
     await expect
       .element(productionDatastreamField)
       .toHaveTextContent(/analytics enabled/i);
@@ -132,11 +132,7 @@ describe("Config general settings and datastream section", () => {
   });
 
   it("updates free form values and saves to settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await nameField.fill("customInstance");
     await orgIdField.fill("987654@AdobeOrg");
@@ -148,7 +144,7 @@ describe("Config general settings and datastream section", () => {
     await stagingEnvironmentTextfield.fill("new-staging-datastream");
     await developmentEnvironmentTextfield.fill("new-dev-datastream");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0]).toMatchObject({
       name: "customInstance",
       orgId: "987654@AdobeOrg",
@@ -160,9 +156,7 @@ describe("Config general settings and datastream section", () => {
   });
 
   it("updates list form values and saves to settings", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -178,13 +172,11 @@ describe("Config general settings and datastream section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await productionDatastreamField.selectOption("analytics enabled");
     await stagingDatastreamField.selectOption("datastream enabled");
     await developmentDatastreamField.selectOption("aep-edge-samples");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0]).toMatchObject({
       edgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
       stagingEdgeConfigId: "77469821-5ead-4045-97b6-acfd889ded6b",
@@ -193,11 +185,7 @@ describe("Config general settings and datastream section", () => {
   });
 
   it("shows default values when no settings are provided", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init({ settings: null });
-
-    await waitForConfigurationViewToLoad();
+    await driver.init({ settings: null });
 
     await expect.element(nameField).toHaveValue("alloy");
     await expect.element(orgIdField).toHaveValue("1234@AdobeOrg");
@@ -205,37 +193,27 @@ describe("Config general settings and datastream section", () => {
   });
 
   it("does not save default values to settings", async () => {
-    await renderView(ConfigurationView);
+    await driver.init({ settings: null });
 
-    extensionBridge.init({ settings: null });
-
-    await waitForConfigurationViewToLoad();
-
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].name).toBe("alloy");
     expect(settings.instances[0].orgId).toBeUndefined();
     expect(settings.instances[0].edgeDomain).toBeUndefined();
   });
 
   it("allows data element in name field", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(buildSettings());
-
-    await waitForConfigurationViewToLoad();
+    await driver.init(buildSettings());
 
     await nameField.fill("%instanceName%");
 
     await expect.element(nameField).toHaveValue("%instanceName%");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].name).toBe("%instanceName%");
   });
 
   it("allows data element in IMS organization ID field", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -246,18 +224,14 @@ describe("Config general settings and datastream section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(orgIdField).toHaveValue("%myOrgId%");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].orgId).toBe("%myOrgId%");
   });
 
   it("allows data element in edge domain field", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -268,19 +242,15 @@ describe("Config general settings and datastream section", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(edgeDomainField).toHaveValue("%myEdgeDomain%");
 
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].edgeDomain).toBe("%myEdgeDomain%");
   });
 
   ["production", "staging", "development"].forEach((name) => {
     it(`allows data element in ${name} datastream field`, async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init({
+      await driver.init({
         settings: {
           components: {
             eventMerge: false,
@@ -294,14 +264,12 @@ describe("Config general settings and datastream section", () => {
         },
       });
 
-      await waitForConfigurationViewToLoad();
-
       await expect.element(edgeConfigInputMethodFreeformRadio).toBeChecked();
 
-      const field = page.getByTestId(`${name}EnvironmentTextfield`);
+      const field = view.getByTestId(`${name}EnvironmentTextfield`);
       await expect.element(field).toHaveValue(`%${name}Datastream%`);
 
-      const settings = await extensionBridge.getSettings();
+      const settings = await driver.getSettings();
       expect(
         settings.instances[0][
           `${name === "production" ? "edgeConfigId" : `${name}EdgeConfigId`}`
@@ -311,9 +279,7 @@ describe("Config general settings and datastream section", () => {
   });
 
   it("sets default edge domain to tenant-specific domain when tenant ID is provided on new extension", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init({
+    await driver.init({
       company: {
         orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
         tenantId: "mytenant",
@@ -322,17 +288,13 @@ describe("Config general settings and datastream section", () => {
       tokens: { imsAccess: "IMS_ACCESS" },
     });
 
-    await waitForConfigurationViewToLoad();
-
     await expect
       .element(edgeDomainField)
       .toHaveValue("mytenant.data.adobedc.net");
   });
 
   it("sets default edge domain to edge.adobedc.net when editing existing instance without saved edgeDomain", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init({
+    await driver.init({
       company: {
         orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
         tenantId: "mytenant",
@@ -352,15 +314,11 @@ describe("Config general settings and datastream section", () => {
       },
     });
 
-    await waitForConfigurationViewToLoad();
-
     await expect.element(edgeDomainField).toHaveValue("edge.adobedc.net");
   });
 
   it("saves tenant-specific edge domain even when it matches the default on new extension", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init({
+    await driver.init({
       company: {
         orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
         tenantId: "mytenant",
@@ -369,21 +327,15 @@ describe("Config general settings and datastream section", () => {
       tokens: { imsAccess: "IMS_ACCESS" },
     });
 
-    await waitForConfigurationViewToLoad();
-
-    const settings = await extensionBridge.getSettings();
+    const settings = await driver.getSettings();
     expect(settings.instances[0].edgeDomain).toBe("mytenant.data.adobedc.net");
   });
 
   describe("validation", () => {
     it("validates that name is required", async () => {
-      await renderView(ConfigurationView);
+      await driver.init(buildSettings());
 
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
 
       await nameField.fill("");
 
@@ -392,17 +344,13 @@ describe("Config general settings and datastream section", () => {
         .element(nameField)
         .toHaveAccessibleDescription(/please specify a name/i);
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
     });
 
     it("validates that IMS organization ID is required", async () => {
-      await renderView(ConfigurationView);
+      await driver.init(buildSettings());
 
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
 
       await orgIdField.fill("");
 
@@ -411,17 +359,13 @@ describe("Config general settings and datastream section", () => {
         .element(orgIdField)
         .toHaveAccessibleDescription(/please specify an IMS organization ID/i);
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
     });
 
     it("validates that edge domain is required", async () => {
-      await renderView(ConfigurationView);
+      await driver.init(buildSettings());
 
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
 
       await edgeDomainField.fill("");
 
@@ -430,17 +374,13 @@ describe("Config general settings and datastream section", () => {
         .element(edgeDomainField)
         .toHaveAccessibleDescription(/please specify an edge domain/i);
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
     });
 
     it("validates that name cannot be all numeric", async () => {
-      await renderView(ConfigurationView);
+      await driver.init(buildSettings());
 
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
 
       await nameField.fill("123");
 
@@ -449,17 +389,13 @@ describe("Config general settings and datastream section", () => {
         .element(nameField)
         .toHaveAccessibleDescription(/please provide a non-numeric name/i);
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
     });
 
     it("validates that name cannot be property existing on window object", async () => {
-      await renderView(ConfigurationView);
+      await driver.init(buildSettings());
 
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
 
       await nameField.fill("addEventListener");
 
@@ -470,17 +406,13 @@ describe("Config general settings and datastream section", () => {
           /please provide a name that does not conflict with a property already found on the window object/i,
         );
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
     });
 
     it("validates that production datastream is required in freeform mode", async () => {
-      await renderView(ConfigurationView);
+      await driver.init(buildSettings());
 
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
-
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
 
       await edgeConfigInputMethodFreeformRadio.click();
 
@@ -491,16 +423,13 @@ describe("Config general settings and datastream section", () => {
         .element(productionEnvironmentTextfield)
         .toHaveAccessibleDescription(/please specify a datastream/i);
 
-      expect(await extensionBridge.validate()).toBe(false);
+      expect(await driver.validate()).toBe(false);
     });
 
     it("validates staging and development datastreams are optional", async () => {
-      await renderView(ConfigurationView);
+      await driver.init(buildSettings());
 
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
 
       await edgeConfigInputMethodFreeformRadio.click();
 
@@ -512,15 +441,11 @@ describe("Config general settings and datastream section", () => {
       await developmentEnvironmentTextfield.fill("");
       await expect.element(developmentEnvironmentTextfield).toBeValid();
 
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
     });
 
     it("accepts data elements in all fields", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
+      await driver.init(buildSettings());
 
       await nameField.fill("%instanceName%");
       await orgIdField.fill("%myOrgId%");
@@ -532,17 +457,13 @@ describe("Config general settings and datastream section", () => {
       await stagingEnvironmentTextfield.fill("%stagingDatastream%");
       await developmentEnvironmentTextfield.fill("%devDatastream%");
 
-      expect(await extensionBridge.validate()).toBe(true);
+      expect(await driver.validate()).toBe(true);
     });
   });
 
   describe("restore default buttons", () => {
     it("restores default IMS organization ID when button is clicked", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
+      await driver.init(buildSettings());
 
       const originalOrgId = orgIdField.element().value;
       await orgIdField.fill("custom@AdobeOrg");
@@ -555,11 +476,7 @@ describe("Config general settings and datastream section", () => {
     });
 
     it("restores default edge domain when button is clicked", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
+      await driver.init(buildSettings());
 
       const originalEdgeDomain = edgeDomainField.element().value;
       await edgeDomainField.fill("custom.example.com");
@@ -572,9 +489,7 @@ describe("Config general settings and datastream section", () => {
     });
 
     it("restores default edge domain to tenant-specific domain when restore button is clicked on new instance with tenant ID", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init({
+      await driver.init({
         company: {
           orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
           tenantId: "mytenant",
@@ -582,8 +497,6 @@ describe("Config general settings and datastream section", () => {
         propertySettings: { id: "PR1234" },
         tokens: { imsAccess: "IMS_ACCESS" },
       });
-
-      await waitForConfigurationViewToLoad();
 
       await edgeDomainField.fill("custom.example.com");
 
@@ -595,9 +508,7 @@ describe("Config general settings and datastream section", () => {
     });
 
     it("restores to tenant-specific default when restore button is clicked on existing instance with tenant ID", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init({
+      await driver.init({
         company: {
           orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
           tenantId: "mytenant",
@@ -617,8 +528,6 @@ describe("Config general settings and datastream section", () => {
         },
       });
 
-      await waitForConfigurationViewToLoad();
-
       await edgeDomainField.fill("custom.example.com");
 
       await edgeDomainRestoreButton.click();
@@ -631,9 +540,7 @@ describe("Config general settings and datastream section", () => {
 
   describe("name change alert", () => {
     it("shows alert when instance name is changed from persisted value", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(
+      await driver.init(
         buildSettings({
           instances: [
             {
@@ -643,13 +550,11 @@ describe("Config general settings and datastream section", () => {
         }),
       );
 
-      await waitForConfigurationViewToLoad();
-
       await nameField.fill("newName");
 
       await expect
         .element(
-          page.getByRole("heading", {
+          view.getByRole("heading", {
             name: /potential problems due to name change/i,
           }),
         )
@@ -657,17 +562,13 @@ describe("Config general settings and datastream section", () => {
     });
 
     it("does not show alert when name is changed on a new configuration", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init({ settings: null });
-
-      await waitForConfigurationViewToLoad();
+      await driver.init({ settings: null });
 
       await nameField.fill("newName");
 
       await expect
         .element(
-          page.getByRole("heading", {
+          view.getByRole("heading", {
             name: /potential problems due to name change/i,
           }),
         )
@@ -677,11 +578,7 @@ describe("Config general settings and datastream section", () => {
 
   describe("datastream input method switching", () => {
     it("can switch between select and freeform input methods", async () => {
-      await renderView(ConfigurationView);
-
-      extensionBridge.init(buildSettings());
-
-      await waitForConfigurationViewToLoad();
+      await driver.init(buildSettings());
 
       await expect.element(edgeConfigInputMethodSelectRadio).toBeChecked();
 

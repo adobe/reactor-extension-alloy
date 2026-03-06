@@ -12,29 +12,25 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { page } from "vitest/browser";
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
 
-let extensionBridge;
+let view;
+let driver;
+let cleanup;
 
 describe("Datastream Selector - Refresh Button", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("displays refresh button next to datastream field", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -45,9 +41,7 @@ describe("Datastream Selector - Refresh Button", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
-    const refreshButton = page.getByRole("button", {
+    const refreshButton = view.getByRole("button", {
       name: "Refresh datastreams",
     });
 
@@ -56,9 +50,7 @@ describe("Datastream Selector - Refresh Button", () => {
   });
 
   it("refresh button is disabled while loading", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -69,9 +61,7 @@ describe("Datastream Selector - Refresh Button", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
-    const refreshButton = page.getByRole("button", {
+    const refreshButton = view.getByRole("button", {
       name: "Refresh datastreams",
     });
 
@@ -86,9 +76,7 @@ describe("Datastream Selector - Refresh Button", () => {
   });
 
   it("refresh button reloads datastream list", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -99,10 +87,8 @@ describe("Datastream Selector - Refresh Button", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
-    const datastreamField = page.getByTestId("productionDatastreamField");
-    const refreshButton = page.getByRole("button", {
+    const datastreamField = view.getByTestId("productionDatastreamField");
+    const refreshButton = view.getByRole("button", {
       name: "Refresh datastreams",
     });
 
@@ -122,9 +108,7 @@ describe("Datastream Selector - Refresh Button", () => {
   });
 
   it("refresh button works independently for each environment", async () => {
-    await renderView(ConfigurationView);
-
-    extensionBridge.init(
+    await driver.init(
       buildSettings({
         instances: [
           {
@@ -136,9 +120,7 @@ describe("Datastream Selector - Refresh Button", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-
-    const allRefreshButtons = page.getByRole("button", {
+    const allRefreshButtons = view.getByRole("button", {
       name: /Refresh datastreams/,
     });
 
