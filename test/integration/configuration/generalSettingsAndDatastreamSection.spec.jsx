@@ -175,8 +175,17 @@ describe("Config general settings and datastream section", () => {
     );
 
     await productionDatastreamField.selectOption("analytics enabled");
+    await expect
+      .element(productionDatastreamField)
+      .toHaveTextContent(/analytics enabled/i);
     await stagingDatastreamField.selectOption("datastream enabled");
+    await expect
+      .element(stagingDatastreamField)
+      .toHaveTextContent(/datastream enabled/i);
     await developmentDatastreamField.selectOption("aep-edge-samples");
+    await expect
+      .element(developmentDatastreamField)
+      .toHaveTextContent(/aep-edge-samples/i);
     await driver.tab();
 
     await driver
