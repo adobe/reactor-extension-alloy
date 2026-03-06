@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
-
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { buildSettings } from "../helpers/settingsUtils";
@@ -21,6 +20,15 @@ let driver;
 let cleanup;
 let nameField;
 let edgeBasePathField;
+
+const expectValidateWithoutTab = () => {
+  return expect.poll(
+    () => {
+      return driver.validate();
+    },
+    { timeout: 500, interval: 100 },
+  );
+};
 
 describe("useFocusFirstError hook", () => {
   beforeEach(async () => {
@@ -40,12 +48,7 @@ describe("useFocusFirstError hook", () => {
     await nameField.fill("");
 
     // Trigger validation
-    expect(await driver.validate()).toBe(false);
-
-    // Wait for focus to be applied
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
+    await driver.expectValidate().toBe(false);
 
     // Verify the name field is focused and has an error
     await expect.element(nameField).toHaveFocus();
@@ -81,12 +84,7 @@ describe("useFocusFirstError hook", () => {
     await secondTab.click();
 
     // Trigger validation
-    expect(await driver.validate()).toBe(false);
-
-    // Wait for the hook to switch tabs and focus the field
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
+    await driver.expectValidate().toBe(false);
 
     // Verify the first tab is now selected (the hook should have switched to it)
     const firstTab = view.getByRole("tab").nth(0);
@@ -106,11 +104,7 @@ describe("useFocusFirstError hook", () => {
     // Clear multiple fields to create multiple validation errors
     await nameField.fill("");
 
-    expect(await driver.validate()).toBe(false);
-
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
+    await driver.expectValidate().toBe(false);
 
     await expect.element(nameField).toHaveFocus();
     await expect.element(nameField).not.toBeValid();
@@ -136,18 +130,11 @@ describe("useFocusFirstError hook", () => {
 
     await view.getByRole("button", { name: "SDK instances" }).click();
 
-    expect(await driver.validate()).toBe(false);
+    await driver.expectValidate().toBe(false);
 
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
-
-    const accordionButton = view.getByRole("button", {
-      name: "SDK instances",
-    });
-    expect(accordionButton.element().getAttribute("aria-expanded")).toBe(
-      "true",
-    );
+    await expect
+      .element(view.getByRole("button", { name: "SDK instances" }))
+      .toBeExpanded();
 
     // Verify the name field is focused
     await expect.element(nameField).toHaveFocus();
@@ -157,23 +144,17 @@ describe("useFocusFirstError hook", () => {
       .toHaveAccessibleDescription(/please specify a name/i);
   });
 
-  // eslint-disable-next-line vitest/no-disabled-tests
-  it.skip("scrolls the invalid field into view when it's off-screen", async () => {
+  it("scrolls the invalid field into view when it's off-screen", async () => {
     await driver.init(buildSettings());
 
     // Clear the edge base path field (which is lower on the page)
     await edgeBasePathField.fill("");
 
     // Scroll to the top of the page
-    window.scrollTo(0, 0);
+    await nameField.element().scrollIntoView();
 
     // Trigger validation
-    expect(await driver.validate()).toBe(false);
-
-    // Wait for focus and scroll to be applied
-    await new Promise((resolve) => {
-      setTimeout(resolve, 800);
-    });
+    await driver.expectValidate().toBe(false);
 
     // Verify the field is focused
     await expect.element(edgeBasePathField).toHaveFocus();
@@ -191,7 +172,7 @@ describe("useFocusFirstError hook", () => {
     const initialFocusedElement = document.activeElement;
 
     // Trigger validation (should succeed with default settings)
-    expect(await driver.validate()).toBe(true);
+    await expectValidateWithoutTab().toBe(true);
 
     // Wait to ensure no focus changes occur
     await new Promise((resolve) => {
@@ -205,18 +186,13 @@ describe("useFocusFirstError hook", () => {
   it("focuses different field on subsequent validation failures", async () => {
     await driver.init(buildSettings());
 
-    await expect(await driver.validate()).toBe(true);
+    await driver.expectValidate().toBe(true);
 
     // First validation error - clear name field
     await nameField.fill("");
 
     // Trigger validation
-    expect(await driver.validate()).toBe(false);
-
-    // Wait for focus
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
+    await driver.expectValidate().toBe(false);
 
     // Verify name field is focused
     await expect.element(nameField).toHaveFocus();
@@ -228,12 +204,7 @@ describe("useFocusFirstError hook", () => {
     await edgeBasePathField.fill("");
 
     // Trigger validation again
-    expect(await driver.validate()).toBe(false);
-
-    // Wait for focus
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
+    await driver.expectValidate().toBe(false);
 
     // Verify edge base path field is now focused
     await expect.element(edgeBasePathField).toHaveFocus();
@@ -271,12 +242,7 @@ describe("useFocusFirstError hook", () => {
     await thirdTab.click();
 
     // Trigger validation - should switch back to first tab
-    expect(await driver.validate()).toBe(false);
-
-    // Wait for tab switch and focus - backwards tab switches need more time
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
+    await driver.expectValidate().toBe(false);
 
     // Verify the first tab is selected
     const firstTab = view.getByRole("tab").nth(0);

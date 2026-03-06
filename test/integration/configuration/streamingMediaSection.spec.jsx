@@ -12,7 +12,6 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import { userEvent } from "vitest/browser";
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { expandAccordion } from "../helpers/ui";
@@ -27,11 +26,6 @@ let mediaVersionField;
 let mediaAdPingIntervalField;
 let mediaMainPingIntervalField;
 let streamingMediaComponentCheckbox;
-
-const fillNumberAndBlur = async (locator, value) => {
-  await locator.fill(String(value));
-  await userEvent.keyboard("{Tab}");
-};
 
 describe("Config streaming media section", () => {
   beforeEach(async () => {
@@ -81,17 +75,18 @@ describe("Config streaming media section", () => {
     await mediaChannelField.fill("test-channel");
     await mediaPlayerNameField.fill("test-player");
     await mediaVersionField.fill("2.0");
-    await fillNumberAndBlur(mediaAdPingIntervalField, 5);
-    await fillNumberAndBlur(mediaMainPingIntervalField, 30);
+    await mediaAdPingIntervalField.fill("5");
+    await mediaMainPingIntervalField.fill("30");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].streamingMedia).toMatchObject({
-      channel: "test-channel",
-      playerName: "test-player",
-      appVersion: "2.0",
-      adPingInterval: 5,
-      mainPingInterval: 30,
-    });
+    await driver
+      .expectSettings((s) => s.instances[0].streamingMedia)
+      .toMatchObject({
+        channel: "test-channel",
+        playerName: "test-player",
+        appVersion: "2.0",
+        adPingInterval: 5,
+        mainPingInterval: 30,
+      });
   });
 
   it("saves settings with only channel and player name provided", async () => {
@@ -100,11 +95,12 @@ describe("Config streaming media section", () => {
     await mediaChannelField.fill("test-channel");
     await mediaPlayerNameField.fill("test-player");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].streamingMedia).toMatchObject({
-      channel: "test-channel",
-      playerName: "test-player",
-    });
+    await driver
+      .expectSettings((s) => s.instances[0].streamingMedia)
+      .toMatchObject({
+        channel: "test-channel",
+        playerName: "test-player",
+      });
   });
 
   it("shows alert panel when component is disabled", async () => {
@@ -142,12 +138,12 @@ describe("Config streaming media section", () => {
   describe("validation", () => {
     it("requires channel when player name is provided", async () => {
       await driver.init(buildSettings());
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await mediaPlayerNameField.fill("test-player");
       await mediaChannelField.fill("");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(mediaChannelField).not.toBeValid();
       await expect
@@ -159,12 +155,12 @@ describe("Config streaming media section", () => {
 
     it("requires player name when channel is provided", async () => {
       await driver.init(buildSettings());
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(mediaPlayerNameField).not.toBeValid();
       await expect
@@ -176,13 +172,13 @@ describe("Config streaming media section", () => {
 
     it("validates ad ping interval minimum value", async () => {
       await driver.init(buildSettings());
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
-      await fillNumberAndBlur(mediaAdPingIntervalField, 0);
+      await mediaAdPingIntervalField.fill("0");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(mediaAdPingIntervalField).not.toBeValid();
       await expect
@@ -194,13 +190,13 @@ describe("Config streaming media section", () => {
 
     it("validates ad ping interval maximum value", async () => {
       await driver.init(buildSettings());
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
-      await fillNumberAndBlur(mediaAdPingIntervalField, 11);
+      await mediaAdPingIntervalField.fill("11");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(mediaAdPingIntervalField).not.toBeValid();
       await expect
@@ -212,13 +208,13 @@ describe("Config streaming media section", () => {
 
     it("validates main ping interval minimum value", async () => {
       await driver.init(buildSettings());
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
-      await fillNumberAndBlur(mediaMainPingIntervalField, 9);
+      await mediaMainPingIntervalField.fill("9");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(mediaMainPingIntervalField).not.toBeValid();
       await expect
@@ -230,13 +226,13 @@ describe("Config streaming media section", () => {
 
     it("validates main ping interval maximum value", async () => {
       await driver.init(buildSettings());
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
-      await fillNumberAndBlur(mediaMainPingIntervalField, 61);
+      await mediaMainPingIntervalField.fill("61");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(mediaMainPingIntervalField).not.toBeValid();
       await expect
@@ -248,29 +244,29 @@ describe("Config streaming media section", () => {
 
     it("accepts valid ad ping interval values", async () => {
       await driver.init(buildSettings());
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
-      await fillNumberAndBlur(mediaAdPingIntervalField, 5);
+      await mediaAdPingIntervalField.fill("5");
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
     });
 
     it("accepts valid main ping interval values", async () => {
       await driver.init(buildSettings());
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await mediaChannelField.fill("test-channel");
       await mediaPlayerNameField.fill("test-player");
-      await fillNumberAndBlur(mediaMainPingIntervalField, 30);
+      await mediaMainPingIntervalField.fill("30");
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
     });
 
     it("disables interval fields when channel and player name are not provided", async () => {
       await driver.init(buildSettings());
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await expect.element(mediaAdPingIntervalField).toBeDisabled();
       await expect.element(mediaMainPingIntervalField).toBeDisabled();

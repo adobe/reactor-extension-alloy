@@ -27,4 +27,19 @@ expect.extend({
       expected: this.isNot ? "false" : "true",
     };
   },
+  toBeExpanded(received) {
+    const el =
+      typeof received?.element === "function" ? received.element() : received;
+    const expanded = el?.getAttribute?.("aria-expanded") === "true";
+    const pass = this.isNot ? !expanded : expanded;
+    return {
+      pass,
+      message: () =>
+        this.isNot
+          ? `Expected element to not be expanded, but it was`
+          : `Expected element to be expanded, but it was not`,
+      actual: el?.getAttribute?.("aria-expanded"),
+      expected: this.isNot ? "false" : "true",
+    };
+  },
 });

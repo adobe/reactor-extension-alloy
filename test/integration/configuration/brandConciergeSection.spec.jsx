@@ -77,11 +77,14 @@ describe("Config brand concierge section", () => {
     await streamTimeoutField.fill("30");
     await userEvent.keyboard("{Tab}");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].conversation.stickyConversationSession).toBe(
-      true,
-    );
-    expect(settings.instances[0].conversation.streamTimeout).toBe(30000);
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].conversation.stickyConversationSession,
+      )
+      .toBe(true);
+    await driver
+      .expectSettings((s) => s.instances[0].conversation.streamTimeout)
+      .toBe(30000);
   });
 
   it("does not emit brand concierge settings when component is disabled", async () => {
@@ -105,8 +108,9 @@ describe("Config brand concierge section", () => {
     await expandAccordion("Build options");
     await brandConciergeComponentCheckbox.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].conversation).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].conversation)
+      .toBeUndefined();
   });
 
   it("shows alert panel when brand concierge component is disabled", async () => {
@@ -170,7 +174,8 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].conversation?.streamTimeout).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].conversation?.streamTimeout)
+      .toBeUndefined();
   });
 });

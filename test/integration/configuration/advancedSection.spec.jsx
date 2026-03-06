@@ -53,8 +53,9 @@ describe("Config advanced section", () => {
 
     await edgeBasePathField.fill("my-custom-path");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].edgeBasePath).toBe("my-custom-path");
+    await driver
+      .expectSettings((s) => s.instances[0].edgeBasePath)
+      .toBe("my-custom-path");
   });
 
   it("shows default value 'ee' when no setting is provided", async () => {
@@ -66,8 +67,9 @@ describe("Config advanced section", () => {
   it("does not save default value 'ee' to settings", async () => {
     await driver.init(buildSettings());
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].edgeBasePath).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].edgeBasePath)
+      .toBeUndefined();
   });
 
   it("allows data element in edge base path field", async () => {
@@ -84,8 +86,9 @@ describe("Config advanced section", () => {
 
     await expect.element(edgeBasePathField).toHaveValue("%myDataElement%");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].edgeBasePath).toBe("%myDataElement%");
+    await driver
+      .expectSettings((s) => s.instances[0].edgeBasePath)
+      .toBe("%myDataElement%");
   });
 
   it("restores default edge base path when restore button is clicked", async () => {
@@ -104,7 +107,7 @@ describe("Config advanced section", () => {
     it("requires edge base path", async () => {
       await driver.init(buildSettings());
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await edgeBasePathField.fill("");
 
@@ -113,7 +116,7 @@ describe("Config advanced section", () => {
         .element(edgeBasePathField)
         .toHaveAccessibleDescription(/please specify an edge base path/i);
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
     });
 
     it("accepts valid edge base path", async () => {
@@ -128,7 +131,7 @@ describe("Config advanced section", () => {
         }),
       );
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
     });
   });
 });

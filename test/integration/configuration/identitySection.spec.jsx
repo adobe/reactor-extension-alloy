@@ -59,9 +59,12 @@ describe("Config Identity section", () => {
 
     await thirdPartyCookiesEnabledField.fill("Disabled");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].idMigrationEnabled).toBe(false);
-    expect(settings.instances[0].thirdPartyCookiesEnabled).toBe(false);
+    await driver
+      .expectSettings((s) => s.instances[0].idMigrationEnabled)
+      .toBe(false);
+    await driver
+      .expectSettings((s) => s.instances[0].thirdPartyCookiesEnabled)
+      .toBe(false);
   });
 
   it("shows default values when no settings are provided", async () => {
@@ -74,9 +77,12 @@ describe("Config Identity section", () => {
   it("does not save default values to settings", async () => {
     await driver.init(buildSettings());
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].idMigrationEnabled).toBeUndefined();
-    expect(settings.instances[0].thirdPartyCookiesEnabled).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].idMigrationEnabled)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].thirdPartyCookiesEnabled)
+      .toBeUndefined();
   });
 
   it("allows data element in third-party cookies field", async () => {
@@ -95,10 +101,9 @@ describe("Config Identity section", () => {
       .element(thirdPartyCookiesEnabledField)
       .toHaveValue("%myDataElement%");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].thirdPartyCookiesEnabled).toBe(
-      "%myDataElement%",
-    );
+    await driver
+      .expectSettings((s) => s.instances[0].thirdPartyCookiesEnabled)
+      .toBe("%myDataElement%");
   });
 
   describe("validation", () => {
@@ -107,7 +112,7 @@ describe("Config Identity section", () => {
 
       await thirdPartyCookiesEnabledField.fill("invalid%DataElement");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(thirdPartyCookiesEnabledField).not.toBeValid();
       await expect
@@ -127,7 +132,7 @@ describe("Config Identity section", () => {
         }),
       );
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
     });
   });
 });

@@ -78,12 +78,13 @@ describe("Config push notifications section", () => {
     await appIdField.fill("new-app-id");
     await trackingDatasetIdField.fill("new-dataset-id");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].pushNotifications).toMatchObject({
-      vapidPublicKey: "new-vapid-key",
-      appId: "new-app-id",
-      trackingDatasetId: "new-dataset-id",
-    });
+    await driver
+      .expectSettings((s) => s.instances[0].pushNotifications)
+      .toMatchObject({
+        vapidPublicKey: "new-vapid-key",
+        appId: "new-app-id",
+        trackingDatasetId: "new-dataset-id",
+      });
   });
 
   it("does not emit push notifications settings when component is disabled", async () => {
@@ -109,8 +110,9 @@ describe("Config push notifications section", () => {
     await expandAccordion("Build options");
     await pushNotificationsComponentCheckbox.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].pushNotifications).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].pushNotifications)
+      .toBeUndefined();
   });
 
   it("shows alert panel when push notifications component is disabled", async () => {
@@ -149,7 +151,7 @@ describe("Config push notifications section", () => {
     it("requires VAPID public key", async () => {
       await driver.init(buildSettings());
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
       await expandAccordion("Build options");
       await pushNotificationsComponentCheckbox.click();
 
@@ -157,7 +159,7 @@ describe("Config push notifications section", () => {
       await trackingDatasetIdField.fill("test-dataset-id");
       await vapidPublicKeyField.fill("");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(vapidPublicKeyField).not.toBeValid();
       await expect
@@ -175,7 +177,7 @@ describe("Config push notifications section", () => {
       await trackingDatasetIdField.fill("test-dataset-id");
       await appIdField.fill("");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(appIdField).not.toBeValid();
       await expect
@@ -193,7 +195,7 @@ describe("Config push notifications section", () => {
       await appIdField.fill("test-app-id");
       await trackingDatasetIdField.fill("");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(trackingDatasetIdField).not.toBeValid();
       await expect

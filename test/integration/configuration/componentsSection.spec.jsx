@@ -69,12 +69,12 @@ describe("Config components section", () => {
   it("has all necessary components enabled by default", async () => {
     await driver.init();
 
-    const settings = await driver.getSettings();
-
     // Only non-default components should be in settings (eventMerge is deprecated/not default)
-    expect(settings.components).toEqual({
-      eventMerge: false,
-    });
+    await driver
+      .expectSettings((s) => s.components)
+      .toEqual({
+        eventMerge: false,
+      });
   });
 
   it("tracks disabled state for components enabled by default", async () => {
@@ -84,11 +84,11 @@ describe("Config components section", () => {
     await toggleComponent("consent");
     await toggleComponent("personalization");
 
-    const settings = await driver.getSettings();
-
-    expect(settings.components).toBeDefined();
-    expect(settings.components.personalization).toBe(false);
-    expect(settings.components.consent).toBe(false);
+    await driver.expectSettings((s) => s.components).toBeDefined();
+    await driver
+      .expectSettings((s) => s.components.personalization)
+      .toBe(false);
+    await driver.expectSettings((s) => s.components.consent).toBe(false);
   });
 
   it("restores disabled components from settings", async () => {
@@ -113,11 +113,10 @@ describe("Config components section", () => {
     await expect.element(pushNotificationsComponentCheckbox).not.toBeChecked();
     await expect.element(advertisingComponentCheckbox).not.toBeChecked();
 
-    const settings = await driver.getSettings();
-    expect(settings.components).toBeDefined();
+    await driver.expectSettings((s) => s.components).toBeDefined();
     // Only eventMerge is saved as false (it's deprecated/not default)
     // Other beta components are not saved if they match their default (false)
-    expect(settings.components.eventMerge).toBe(false);
+    await driver.expectSettings((s) => s.components.eventMerge).toBe(false);
   });
 
   it("does not include new components when upgrading existing configuration", async () => {
@@ -139,9 +138,8 @@ describe("Config components section", () => {
     await expect.element(pushNotificationsComponentCheckbox).not.toBeChecked();
     await expect.element(advertisingComponentCheckbox).not.toBeChecked();
 
-    const settings = await driver.getSettings();
-    expect(settings.components).toBeDefined();
-    expect(settings.components.eventMerge).toBe(false);
+    await driver.expectSettings((s) => s.components).toBeDefined();
+    await driver.expectSettings((s) => s.components.eventMerge).toBe(false);
   });
 
   it("enables default components by default for new configuration", async () => {
@@ -163,14 +161,12 @@ describe("Config components section", () => {
     // Toggle off a component
     await toggleComponent("audiences");
 
-    let settings = await driver.getSettings();
-    expect(settings.components.audiences).toBe(false);
+    await driver.expectSettings((s) => s.components.audiences).toBe(false);
 
     // Toggle it back on
     await toggleComponent("audiences");
 
-    settings = await driver.getSettings();
-    expect(settings.components.audiences).toBeUndefined();
+    await driver.expectSettings((s) => s.components.audiences).toBeUndefined();
   });
 
   it("allows enabling beta components", async () => {
@@ -179,8 +175,7 @@ describe("Config components section", () => {
     // Enable advertising component
     await toggleComponent("advertising");
 
-    const settings = await driver.getSettings();
-    expect(settings.components.advertising).toBe(true);
+    await driver.expectSettings((s) => s.components.advertising).toBe(true);
 
     // Verify checkbox is checked
     await expect.element(advertisingComponentCheckbox).toBeChecked();
@@ -200,9 +195,10 @@ describe("Config components section", () => {
     await expect.element(advertisingComponentCheckbox).toBeChecked();
     await expect.element(pushNotificationsComponentCheckbox).toBeChecked();
 
-    const settings = await driver.getSettings();
-    expect(settings.components.advertising).toBe(true);
-    expect(settings.components.pushNotifications).toBe(true);
+    await driver.expectSettings((s) => s.components.advertising).toBe(true);
+    await driver
+      .expectSettings((s) => s.components.pushNotifications)
+      .toBe(true);
   });
 
   it("allows disabling all components", async () => {
@@ -217,15 +213,20 @@ describe("Config components section", () => {
     await toggleComponent("streamingMedia");
     await toggleComponent("mediaAnalyticsBridge");
 
-    const settings = await driver.getSettings();
-    expect(settings.components).toBeDefined();
-    expect(settings.components.activityCollector).toBe(false);
-    expect(settings.components.audiences).toBe(false);
-    expect(settings.components.consent).toBe(false);
-    expect(settings.components.personalization).toBe(false);
-    expect(settings.components.rulesEngine).toBe(false);
-    expect(settings.components.streamingMedia).toBe(false);
-    expect(settings.components.mediaAnalyticsBridge).toBe(false);
+    await driver.expectSettings((s) => s.components).toBeDefined();
+    await driver
+      .expectSettings((s) => s.components.activityCollector)
+      .toBe(false);
+    await driver.expectSettings((s) => s.components.audiences).toBe(false);
+    await driver.expectSettings((s) => s.components.consent).toBe(false);
+    await driver
+      .expectSettings((s) => s.components.personalization)
+      .toBe(false);
+    await driver.expectSettings((s) => s.components.rulesEngine).toBe(false);
+    await driver.expectSettings((s) => s.components.streamingMedia).toBe(false);
+    await driver
+      .expectSettings((s) => s.components.mediaAnalyticsBridge)
+      .toBe(false);
   });
 
   it("handles deprecated components correctly", async () => {
@@ -234,8 +235,7 @@ describe("Config components section", () => {
     // eventMerge is deprecated and should be disabled by default for new configs
     await expect.element(eventMergeComponentCheckbox).not.toBeChecked();
 
-    const settings = await driver.getSettings();
-    expect(settings.components.eventMerge).toBe(false);
+    await driver.expectSettings((s) => s.components.eventMerge).toBe(false);
   });
 
   it("preserves deprecated components from existing configuration", async () => {
@@ -250,26 +250,25 @@ describe("Config components section", () => {
     // Verify deprecated component is enabled from settings
     await expect.element(eventMergeComponentCheckbox).toBeChecked();
 
-    const settings = await driver.getSettings();
     // When eventMerge is true (its default value), it won't be in settings
     // because only non-default values are saved
-    expect(settings.components).toBeUndefined();
+    await driver.expectSettings((s) => s.components).toBeUndefined();
   });
 
   it("only saves non-default component states to settings", async () => {
     await driver.init();
 
     // All default components are enabled, so no explicit component settings
-    const settings = await driver.getSettings();
-
     // The settings should only contain non-default values
     // eventMerge is deprecated (not default), so it's saved as false
-    expect(settings.components).toBeDefined();
-    expect(settings.components.eventMerge).toBe(false);
+    await driver.expectSettings((s) => s.components).toBeDefined();
+    await driver.expectSettings((s) => s.components.eventMerge).toBe(false);
 
     // Default components should not be in settings when enabled
-    expect(settings.components.activityCollector).toBeUndefined();
-    expect(settings.components.audiences).toBeUndefined();
-    expect(settings.components.consent).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.components.activityCollector)
+      .toBeUndefined();
+    await driver.expectSettings((s) => s.components.audiences).toBeUndefined();
+    await driver.expectSettings((s) => s.components.consent).toBeUndefined();
   });
 });

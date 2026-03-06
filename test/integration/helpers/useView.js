@@ -9,11 +9,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { expect } from "vitest";
 import { userEvent } from "vitest/browser";
 import defer from "../../../src/view/utils/defer";
 import renderView from "./renderView";
 
 const READY_EVENT = "extension-reactor-alloy:rendered";
+const identity = (x) => x;
 
 export default async function useView(View) {
   const deferredRegistration = defer();
@@ -63,13 +65,29 @@ export default async function useView(View) {
     });
     return driver.ready;
   };
-  driver.validate = (...args) => {
+  driver.validate = async (...args) => {
     return registration.validate(...args);
   };
   driver.getSettings = async (...args) => {
-    // Click on the body to give the onBlur event a chance to fire
-    await userEvent.click(document.body);
     return registration.getSettings(...args);
+  };
+  driver.expectSettings = (getProperty = identity) => {
+    return expect.poll(
+      async () => {
+        await userEvent.keyboard("{Tab}");
+        return getProperty(await registration.getSettings());
+      },
+      { timeout: 500, interval: 100 },
+    );
+  };
+  driver.expectValidate = () => {
+    return expect.poll(
+      async () => {
+        await userEvent.keyboard("{Tab}");
+        return registration.validate();
+      },
+      { timeout: 500, interval: 100 },
+    );
   };
 
   const cleanup = () => {

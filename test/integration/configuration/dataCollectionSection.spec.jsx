@@ -240,18 +240,15 @@ describe("Config data collection section", () => {
 
     await contextWebField.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].clickCollection.externalLinkEnabled).toBe(
-      false,
-    );
-    expect(settings.instances[0].clickCollection.downloadLinkEnabled).toBe(
-      false,
-    );
-    expect(settings.instances[0].context).toEqual([
-      "device",
-      "environment",
-      "placeContext",
-    ]);
+    await driver
+      .expectSettings((s) => s.instances[0].clickCollection.externalLinkEnabled)
+      .toBe(false);
+    await driver
+      .expectSettings((s) => s.instances[0].clickCollection.downloadLinkEnabled)
+      .toBe(false);
+    await driver
+      .expectSettings((s) => s.instances[0].context)
+      .toEqual(["device", "environment", "placeContext"]);
   });
 
   it("shows and hides download link qualifier based on download link enabled", async () => {
@@ -279,13 +276,16 @@ describe("Config data collection section", () => {
 
     await eventGroupingSessionStorageField.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].clickCollection.eventGroupingEnabled).toBe(
-      true,
-    );
-    expect(settings.instances[0].clickCollection.sessionStorageEnabled).toBe(
-      true,
-    );
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].clickCollection.eventGroupingEnabled,
+      )
+      .toBe(true);
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].clickCollection.sessionStorageEnabled,
+      )
+      .toBe(true);
   });
 
   it("saves event grouping settings when memory is selected", async () => {
@@ -293,13 +293,16 @@ describe("Config data collection section", () => {
 
     await eventGroupingMemoryField.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].clickCollection.eventGroupingEnabled).toBe(
-      true,
-    );
-    expect(
-      settings.instances[0].clickCollection.sessionStorageEnabled,
-    ).toBeUndefined();
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].clickCollection.eventGroupingEnabled,
+      )
+      .toBe(true);
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].clickCollection.sessionStorageEnabled,
+      )
+      .toBeUndefined();
   });
 
   it("does not emit click collection settings when activity collector is disabled", async () => {
@@ -322,10 +325,15 @@ describe("Config data collection section", () => {
 
     await toggleComponent("activityCollector");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].clickCollectionEnabled).toBeUndefined();
-    expect(settings.instances[0].clickCollection).toBeUndefined();
-    expect(settings.instances[0].downloadLinkQualifier).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].clickCollectionEnabled)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].clickCollection)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].downloadLinkQualifier)
+      .toBeUndefined();
   });
 
   it("hides click collection fields and shows alert when activity collector is disabled", async () => {
@@ -358,11 +366,16 @@ describe("Config data collection section", () => {
   it("does not save default values to settings", async () => {
     await driver.init(buildSettings());
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].onBeforeEventSend).toBeUndefined();
-    expect(settings.instances[0].clickCollection).toBeUndefined();
-    expect(settings.instances[0].downloadLinkQualifier).toBeUndefined();
-    expect(settings.instances[0].context).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].onBeforeEventSend)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].clickCollection)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].downloadLinkQualifier)
+      .toBeUndefined();
+    await driver.expectSettings((s) => s.instances[0].context).toBeUndefined();
   });
 
   it("updates download link qualifier", async () => {
@@ -370,8 +383,9 @@ describe("Config data collection section", () => {
 
     await downloadLinkQualifierField.fill("\\.(zip|exe)$");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].downloadLinkQualifier).toBe("\\.(zip|exe)$");
+    await driver
+      .expectSettings((s) => s.instances[0].downloadLinkQualifier)
+      .toBe("\\.(zip|exe)$");
   });
 
   it("shows context checkboxes when specific context is selected", async () => {
@@ -400,14 +414,15 @@ describe("Config data collection section", () => {
 
     await contextOneTimeAnalyticsReferrerField.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].context).toEqual([
-      "web",
-      "device",
-      "placeContext",
-      "highEntropyUserAgentHints",
-      "oneTimeAnalyticsReferrer",
-    ]);
+    await driver
+      .expectSettings((s) => s.instances[0].context)
+      .toEqual([
+        "web",
+        "device",
+        "placeContext",
+        "highEntropyUserAgentHints",
+        "oneTimeAnalyticsReferrer",
+      ]);
   });
 
   it("loads context options from settings", async () => {
@@ -441,8 +456,9 @@ describe("Config data collection section", () => {
     await externalLinkEnabledField.click();
     await downloadLinkEnabledField.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].clickCollectionEnabled).toBe(false);
+    await driver
+      .expectSettings((s) => s.instances[0].clickCollectionEnabled)
+      .toBe(false);
   });
 
   it("sets download link qualifier when test button is clicked", async () => {
@@ -460,8 +476,9 @@ describe("Config data collection section", () => {
 
     await onBeforeEventSendEditButton.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].onBeforeEventSend).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].onBeforeEventSend)
+      .toBeUndefined();
   });
 
   it("does not save filterClickDetails code if it matches placeholder", async () => {
@@ -471,10 +488,9 @@ describe("Config data collection section", () => {
 
     await filterClickDetailsEditButton.click();
 
-    const settings = await driver.getSettings();
-    expect(
-      settings.instances[0].clickCollection?.filterClickDetails,
-    ).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].clickCollection?.filterClickDetails)
+      .toBeUndefined();
   });
 
   describe("restore default buttons", () => {
@@ -512,7 +528,7 @@ describe("Config data collection section", () => {
         }),
       );
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
     });
 
     it("accepts valid download link qualifier regex", async () => {
@@ -527,7 +543,7 @@ describe("Config data collection section", () => {
         }),
       );
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
     });
 
     it("requires download link qualifier when download link is enabled", async () => {
@@ -547,7 +563,7 @@ describe("Config data collection section", () => {
 
       await downloadLinkQualifierField.fill("");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
     });
   });
 });

@@ -177,8 +177,7 @@ describe("Send Event Action", () => {
         .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
-      const settings = await driver.getSettings();
-      expect(settings.advertising).toBeUndefined();
+      await driver.expectSettings((s) => s.advertising).toBeUndefined();
     });
 
     it("saves advertising settings when automatic is selected", async () => {
@@ -195,9 +194,10 @@ describe("Send Event Action", () => {
 
       await handleAdvertisingDataAutoOption.click();
 
-      const settings = await driver.getSettings();
-      expect(settings.advertising).toBeDefined();
-      expect(settings.advertising.handleAdvertisingData).toBe("auto");
+      await driver.expectSettings((s) => s.advertising).toBeDefined();
+      await driver
+        .expectSettings((s) => s.advertising.handleAdvertisingData)
+        .toBe("auto");
     });
 
     it("saves advertising settings when wait is selected", async () => {
@@ -214,9 +214,10 @@ describe("Send Event Action", () => {
 
       await handleAdvertisingDataWaitOption.click();
 
-      const settings = await driver.getSettings();
-      expect(settings.advertising).toBeDefined();
-      expect(settings.advertising.handleAdvertisingData).toBe("wait");
+      await driver.expectSettings((s) => s.advertising).toBeDefined();
+      await driver
+        .expectSettings((s) => s.advertising.handleAdvertisingData)
+        .toBe("wait");
     });
 
     it("loads existing advertising settings - automatic", async () => {
@@ -278,8 +279,7 @@ describe("Send Event Action", () => {
 
       await handleAdvertisingDataDisabledOption.click();
 
-      const settings = await driver.getSettings();
-      expect(settings.advertising).toBeUndefined();
+      await driver.expectSettings((s) => s.advertising).toBeUndefined();
     });
   });
 });

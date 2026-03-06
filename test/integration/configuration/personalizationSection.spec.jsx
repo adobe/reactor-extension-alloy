@@ -95,18 +95,27 @@ describe("Config personalization section", () => {
       .getByRole("option", { name: /decorated elements only/i })
       .click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].targetMigrationEnabled).toBe(true);
-    expect(settings.instances[0].personalizationStorageEnabled).toBe(true);
-    expect(settings.instances[0].prehidingStyle).toBe(
-      "/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/ + modified code",
-    );
-    expect(settings.instances[0].autoCollectPropositionInteractions.AJO).toBe(
-      "never",
-    );
-    expect(settings.instances[0].autoCollectPropositionInteractions.TGT).toBe(
-      "decoratedElementsOnly",
-    );
+    await driver
+      .expectSettings((s) => s.instances[0].targetMigrationEnabled)
+      .toBe(true);
+    await driver
+      .expectSettings((s) => s.instances[0].personalizationStorageEnabled)
+      .toBe(true);
+    await driver
+      .expectSettings((s) => s.instances[0].prehidingStyle)
+      .toBe(
+        "/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/ + modified code",
+      );
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].autoCollectPropositionInteractions.AJO,
+      )
+      .toBe("never");
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].autoCollectPropositionInteractions.TGT,
+      )
+      .toBe("decoratedElementsOnly");
   });
 
   it("does not emit personalization settings when component is disabled", async () => {
@@ -130,13 +139,18 @@ describe("Config personalization section", () => {
     await expandAccordion("Build options");
     await personalizationComponentCheckbox.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].targetMigrationEnabled).toBeUndefined();
-    expect(settings.instances[0].prehidingStyle).toBeUndefined();
-    expect(settings.instances[0].personalizationStorageEnabled).toBeUndefined();
-    expect(
-      settings.instances[0].autoCollectPropositionInteractions,
-    ).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].targetMigrationEnabled)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].prehidingStyle)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].personalizationStorageEnabled)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].autoCollectPropositionInteractions)
+      .toBeUndefined();
   });
 
   it("does not emit personalization storage when rules engine is disabled", async () => {
@@ -155,9 +169,12 @@ describe("Config personalization section", () => {
     await expandAccordion("Build options");
     await rulesEngineComponentCheckbox.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].targetMigrationEnabled).toBe(true);
-    expect(settings.instances[0].personalizationStorageEnabled).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].targetMigrationEnabled)
+      .toBe(true);
+    await driver
+      .expectSettings((s) => s.instances[0].personalizationStorageEnabled)
+      .toBeUndefined();
   });
 
   it("hides personalization storage checkbox when rules engine is disabled", async () => {
@@ -192,13 +209,18 @@ describe("Config personalization section", () => {
   it("does not save default values to settings", async () => {
     await driver.init(buildSettings());
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].targetMigrationEnabled).toBeUndefined();
-    expect(settings.instances[0].prehidingStyle).toBeUndefined();
-    expect(settings.instances[0].personalizationStorageEnabled).toBeUndefined();
-    expect(
-      settings.instances[0].autoCollectPropositionInteractions,
-    ).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].targetMigrationEnabled)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].prehidingStyle)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].personalizationStorageEnabled)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].autoCollectPropositionInteractions)
+      .toBeUndefined();
   });
 
   it("saves non-default auto-collect values", async () => {
@@ -213,13 +235,16 @@ describe("Config personalization section", () => {
     await tgtPicker.click();
     await view.getByRole("option", { name: /^always$/i }).click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].autoCollectPropositionInteractions?.TGT).toBe(
-      "always",
-    );
-    expect(
-      settings.instances[0].autoCollectPropositionInteractions?.AJO,
-    ).toBeUndefined();
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].autoCollectPropositionInteractions?.TGT,
+      )
+      .toBe("always");
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].autoCollectPropositionInteractions?.AJO,
+      )
+      .toBeUndefined();
   });
 
   it("does not save prehidingStyle code if it matches placeholder", async () => {
@@ -235,7 +260,8 @@ describe("Config personalization section", () => {
 
     await prehidingStyleEditButton.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].prehidingStyle).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].prehidingStyle)
+      .toBeUndefined();
   });
 });

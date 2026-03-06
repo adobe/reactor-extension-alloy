@@ -66,8 +66,9 @@ describe("Config consent section", () => {
 
     await defaultConsentPendingRadio.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].defaultConsent).toBe("pending");
+    await driver
+      .expectSettings((s) => s.instances[0].defaultConsent)
+      .toBe("pending");
   });
 
   it("does not emit consent settings when component is disabled", async () => {
@@ -85,8 +86,9 @@ describe("Config consent section", () => {
     await expandAccordion("Build options");
     await consentComponentCheckbox.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].defaultConsent).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].defaultConsent)
+      .toBeUndefined();
   });
 
   it("hides form fields and shows alert when component is toggled off", async () => {
@@ -115,33 +117,34 @@ describe("Config consent section", () => {
   it("does not save default value 'in' to settings", async () => {
     await driver.init(buildSettings());
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].defaultConsent).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].defaultConsent)
+      .toBeUndefined();
   });
 
   describe("validation", () => {
     it("accepts data element in default consent field", async () => {
       await driver.init(buildSettings());
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await defaultConsentDataElementRadio.click();
 
       await defaultConsentDataElementField.fill("%consentDataElement%");
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
     });
 
     it("validates data element format in default consent field", async () => {
       await driver.init(buildSettings());
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await defaultConsentDataElementRadio.click();
 
       await defaultConsentDataElementField.fill("%consentDataElement");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(defaultConsentDataElementField).not.toBeValid();
       await expect
@@ -152,11 +155,11 @@ describe("Config consent section", () => {
     it("shows error when value is missing in default consent field", async () => {
       await driver.init(buildSettings());
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
 
       await defaultConsentDataElementRadio.click();
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await defaultConsentDataElementField.clear();
       await expect.element(defaultConsentDataElementField).not.toBeValid();

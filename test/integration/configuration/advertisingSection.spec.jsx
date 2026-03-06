@@ -150,18 +150,19 @@ describe("Config advertising section", () => {
     await rampIdJSPathField.fill("https://new.example.com/ats.js");
 
     // Get settings and verify
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].advertising).toMatchObject({
-      dspEnabled: true,
-      id5PartnerId: "new-id5-partner",
-      rampIdJSPath: "https://new.example.com/ats.js",
-      advertiserSettings: [
-        {
-          advertiserId: "167536",
-          enabled: true,
-        },
-      ],
-    });
+    await driver
+      .expectSettings((s) => s.instances[0].advertising)
+      .toMatchObject({
+        dspEnabled: true,
+        id5PartnerId: "new-id5-partner",
+        rampIdJSPath: "https://new.example.com/ats.js",
+        advertiserSettings: [
+          {
+            advertiserId: "167536",
+            enabled: true,
+          },
+        ],
+      });
   });
 
   it("does not emit advertising settings when component is disabled", async () => {
@@ -193,8 +194,9 @@ describe("Config advertising section", () => {
     await expandAccordion("Build options");
     await advertisingComponentCheckbox.click();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].advertising).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].advertising)
+      .toBeUndefined();
   });
 
   it("shows alert panel when advertising component is disabled", async () => {
@@ -251,10 +253,9 @@ describe("Config advertising section", () => {
     await expect.element(dspEnabledField).toHaveValue("%myDataElement%");
 
     // Verify it's saved as string
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].advertising.dspEnabled).toBe(
-      "%myDataElement%",
-    );
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.dspEnabled)
+      .toBe("%myDataElement%");
   });
 
   it("allows data element in ID5 Partner ID field", async () => {
@@ -282,10 +283,9 @@ describe("Config advertising section", () => {
     await expect.element(id5PartnerIdField).toHaveValue("%id5DataElement%");
 
     // Verify it's saved as string
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].advertising.id5PartnerId).toBe(
-      "%id5DataElement%",
-    );
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.id5PartnerId)
+      .toBe("%id5DataElement%");
   });
 
   it("allows data element in RampID JS Path field", async () => {
@@ -313,10 +313,9 @@ describe("Config advertising section", () => {
     await expect.element(rampIdJSPathField).toHaveValue("%rampIdDataElement%");
 
     // Verify it's saved as string
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].advertising.rampIdJSPath).toBe(
-      "%rampIdDataElement%",
-    );
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.rampIdJSPath)
+      .toBe("%rampIdDataElement%");
   });
 
   it("does not save optional fields when empty", async () => {
@@ -334,9 +333,12 @@ describe("Config advertising section", () => {
     await waitForAdvertisersToLoad();
 
     // Leave optional fields empty
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].advertising.id5PartnerId).toBeUndefined();
-    expect(settings.instances[0].advertising.rampIdJSPath).toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.id5PartnerId)
+      .toBeUndefined();
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.rampIdJSPath)
+      .toBeUndefined();
   });
 
   it("shows default DSP disabled value when no settings provided", async () => {
@@ -386,8 +388,9 @@ describe("Config advertising section", () => {
     // Wait for advertisers to load
     await waitForAdvertisersToLoad();
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].advertising.dspEnabled).toBe(true);
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.dspEnabled)
+      .toBe(true);
   });
 
   it("converts Disabled string to boolean false when saving", async () => {
@@ -401,8 +404,9 @@ describe("Config advertising section", () => {
 
     await dspEnabledField.selectOption("Disabled");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].advertising.dspEnabled).toBe(false);
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.dspEnabled)
+      .toBe(false);
   });
 
   it("hides DSP fields when DSP is disabled", async () => {
@@ -478,7 +482,7 @@ describe("Config advertising section", () => {
     await expect.element(rampIdJSPathField).toBeVisible();
 
     // Verify form is invalid without advertiser ID
-    expect(await driver.validate()).toBe(false);
+    await driver.expectValidate().toBe(false);
   });
 
   it("shows warning alert when advertiser API fails but allows manual entry", async () => {
@@ -515,7 +519,7 @@ describe("Config advertising section", () => {
     await expect.element(rampIdJSPathField).toBeVisible();
 
     // Verify form is invalid without advertiser ID
-    expect(await driver.validate()).toBe(false);
+    await driver.expectValidate().toBe(false);
   });
 
   it("shows add advertiser button when advertisers load successfully", async () => {
@@ -564,22 +568,21 @@ describe("Config advertising section", () => {
     await advertiser1Field.selectOption("Advertiser BF");
 
     // Verify settings
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].advertising.advertiserSettings).toHaveLength(
-      2,
-    );
-    expect(
-      settings.instances[0].advertising.advertiserSettings[0],
-    ).toMatchObject({
-      advertiserId: "167536",
-      enabled: true,
-    });
-    expect(
-      settings.instances[0].advertising.advertiserSettings[1],
-    ).toMatchObject({
-      advertiserId: "167524",
-      enabled: true,
-    });
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.advertiserSettings)
+      .toHaveLength(2);
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.advertiserSettings[0])
+      .toMatchObject({
+        advertiserId: "167536",
+        enabled: true,
+      });
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.advertiserSettings[1])
+      .toMatchObject({
+        advertiserId: "167524",
+        enabled: true,
+      });
   });
 
   it("allows removing advertisers", async () => {
@@ -617,16 +620,15 @@ describe("Config advertising section", () => {
     await deleteAdvertiser0Button.click();
 
     // Verify settings
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].advertising.advertiserSettings).toHaveLength(
-      1,
-    );
-    expect(
-      settings.instances[0].advertising.advertiserSettings[0],
-    ).toMatchObject({
-      advertiserId: "167524",
-      enabled: true,
-    });
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.advertiserSettings)
+      .toHaveLength(1);
+    await driver
+      .expectSettings((s) => s.instances[0].advertising.advertiserSettings[0])
+      .toMatchObject({
+        advertiserId: "167524",
+        enabled: true,
+      });
   });
 
   it("allows toggling advertiser enabled state", async () => {
@@ -660,19 +662,21 @@ describe("Config advertising section", () => {
     await advertiserEnabled0Field.selectOption("Disabled");
 
     // Verify settings
-    let settings = await driver.getSettings();
-    expect(
-      settings.instances[0].advertising.advertiserSettings[0].enabled,
-    ).toBe(false);
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].advertising.advertiserSettings[0].enabled,
+      )
+      .toBe(false);
 
     // Toggle back to enabled
     await advertiserEnabled0Field.selectOption("Enabled");
 
     // Verify settings
-    settings = await driver.getSettings();
-    expect(
-      settings.instances[0].advertising.advertiserSettings[0].enabled,
-    ).toBe(true);
+    await driver
+      .expectSettings(
+        (s) => s.instances[0].advertising.advertiserSettings[0].enabled,
+      )
+      .toBe(true);
   });
 
   describe("validation", () => {
@@ -687,7 +691,7 @@ describe("Config advertising section", () => {
 
       await dspEnabledField.fill("");
 
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(dspEnabledField).not.toBeValid();
       await expect
@@ -722,7 +726,7 @@ describe("Config advertising section", () => {
       );
 
       // Trigger validation
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(dspEnabledField).not.toBeValid();
       await expect
@@ -757,7 +761,7 @@ describe("Config advertising section", () => {
       // When DSP is a data element, advertisers will still load
       await waitForAdvertisersToLoad();
 
-      expect(await driver.validate()).toBe(true);
+      await driver.expectValidate().toBe(true);
     });
 
     it("validates data element format in ID5 Partner ID field", async () => {
@@ -789,7 +793,7 @@ describe("Config advertising section", () => {
       await waitForOptionalFieldsToLoad();
 
       // Trigger validation
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(id5PartnerIdField).not.toBeValid();
       await expect
@@ -826,7 +830,7 @@ describe("Config advertising section", () => {
       await waitForOptionalFieldsToLoad();
 
       // Trigger validation
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(rampIdJSPathField).not.toBeValid();
       await expect
@@ -856,7 +860,7 @@ describe("Config advertising section", () => {
       await waitForAdvertisersToLoad();
 
       // Trigger validation
-      expect(await driver.validate()).toBe(false);
+      await driver.expectValidate().toBe(false);
 
       await expect.element(advertiser0Field).not.toBeValid();
       await expect

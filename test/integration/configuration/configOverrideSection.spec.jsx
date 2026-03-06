@@ -253,28 +253,29 @@ describe("Config overrides section", () => {
     await experiencePlatformEnabled.selectOption("Enabled");
     await eventDatasetOverride.fill("myDatasetId");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].edgeConfigOverrides).toEqual({
-      development: {
-        enabled: true,
-        com_adobe_analytics: {
-          reportSuites: ["myReportSuite1", "myReportSuite2"],
-        },
-        com_adobe_identity: {
-          idSyncContainerId: 5555,
-        },
-        com_adobe_target: {
-          propertyToken: "myTargetToken",
-        },
-        com_adobe_experience_platform: {
-          datasets: {
-            event: {
-              datasetId: "myDatasetId",
+    await driver
+      .expectSettings((s) => s.instances[0].edgeConfigOverrides)
+      .toEqual({
+        development: {
+          enabled: true,
+          com_adobe_analytics: {
+            reportSuites: ["myReportSuite1", "myReportSuite2"],
+          },
+          com_adobe_identity: {
+            idSyncContainerId: 5555,
+          },
+          com_adobe_target: {
+            propertyToken: "myTargetToken",
+          },
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "myDatasetId",
+              },
             },
           },
         },
-      },
-    });
+      });
   });
 
   it("validates third party id sync container", async () => {
@@ -286,12 +287,12 @@ describe("Config overrides section", () => {
     // Set invalid ID sync container (non-numeric)
     await idSyncContainerOverride.fill("invalid");
 
-    expect(await driver.validate()).toBe(false);
+    await driver.expectValidate().toBe(false);
 
     // Set valid ID sync container
     await idSyncContainerOverride.fill("12345");
 
-    expect(await driver.validate()).toBe(true);
+    await driver.expectValidate().toBe(true);
   });
 
   it("allows you to save data elements", async () => {
@@ -312,28 +313,29 @@ describe("Config overrides section", () => {
     await experiencePlatformEnabled.selectOption("Enabled");
     await eventDatasetOverride.fill("%myDatasetDataElement%");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].edgeConfigOverrides).toEqual({
-      development: {
-        enabled: true,
-        com_adobe_analytics: {
-          reportSuites: ["%myReportSuiteDataElement%"],
-        },
-        com_adobe_identity: {
-          idSyncContainerId: "%myContainerIdDataElement%",
-        },
-        com_adobe_target: {
-          propertyToken: "%myTargetTokenDataElement%",
-        },
-        com_adobe_experience_platform: {
-          datasets: {
-            event: {
-              datasetId: "%myDatasetDataElement%",
+    await driver
+      .expectSettings((s) => s.instances[0].edgeConfigOverrides)
+      .toEqual({
+        development: {
+          enabled: true,
+          com_adobe_analytics: {
+            reportSuites: ["%myReportSuiteDataElement%"],
+          },
+          com_adobe_identity: {
+            idSyncContainerId: "%myContainerIdDataElement%",
+          },
+          com_adobe_target: {
+            propertyToken: "%myTargetTokenDataElement%",
+          },
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "%myDatasetDataElement%",
+              },
             },
           },
         },
-      },
-    });
+      });
   });
 
   it("allows you to add and delete report suites", async () => {
@@ -354,28 +356,30 @@ describe("Config overrides section", () => {
     await addReportSuite.click();
     await reportSuitesOverride[2].fill("reportSuite3");
 
-    let settings = await driver.getSettings();
-    expect(settings.instances[0].edgeConfigOverrides).toEqual({
-      development: {
-        enabled: true,
-        com_adobe_analytics: {
-          reportSuites: ["reportSuite1", "reportSuite2", "reportSuite3"],
+    await driver
+      .expectSettings((s) => s.instances[0].edgeConfigOverrides)
+      .toEqual({
+        development: {
+          enabled: true,
+          com_adobe_analytics: {
+            reportSuites: ["reportSuite1", "reportSuite2", "reportSuite3"],
+          },
         },
-      },
-    });
+      });
 
     // Remove the middle report suite
     await removeReportSuite[1].click();
 
-    settings = await driver.getSettings();
-    expect(settings.instances[0].edgeConfigOverrides).toEqual({
-      development: {
-        enabled: true,
-        com_adobe_analytics: {
-          reportSuites: ["reportSuite1", "reportSuite3"],
+    await driver
+      .expectSettings((s) => s.instances[0].edgeConfigOverrides)
+      .toEqual({
+        development: {
+          enabled: true,
+          com_adobe_analytics: {
+            reportSuites: ["reportSuite1", "reportSuite3"],
+          },
         },
-      },
-    });
+      });
   });
 
   it("allows you to copy overrides from one environment to another", async () => {
@@ -404,27 +408,28 @@ describe("Config overrides section", () => {
       .element(targetPropertyTokenOverride)
       .toHaveValue("devTargetToken");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].edgeConfigOverrides).toEqual({
-      development: {
-        enabled: true,
-        com_adobe_analytics: {
-          reportSuites: ["devReportSuite"],
+    await driver
+      .expectSettings((s) => s.instances[0].edgeConfigOverrides)
+      .toEqual({
+        development: {
+          enabled: true,
+          com_adobe_analytics: {
+            reportSuites: ["devReportSuite"],
+          },
+          com_adobe_target: {
+            propertyToken: "devTargetToken",
+          },
         },
-        com_adobe_target: {
-          propertyToken: "devTargetToken",
+        production: {
+          enabled: true,
+          com_adobe_analytics: {
+            reportSuites: ["devReportSuite"],
+          },
+          com_adobe_target: {
+            propertyToken: "devTargetToken",
+          },
         },
-      },
-      production: {
-        enabled: true,
-        com_adobe_analytics: {
-          reportSuites: ["devReportSuite"],
-        },
-        com_adobe_target: {
-          propertyToken: "devTargetToken",
-        },
-      },
-    });
+      });
   });
 
   it("hides everything when no overrides are enabled", async () => {
@@ -491,8 +496,7 @@ describe("Config overrides section", () => {
     );
 
     // After loading, settings should be in the new format
-    const settings = await driver.getSettings();
-    expect(settings.instances[0]).toBeDefined();
+    await driver.expectSettings((s) => s.instances[0]).toBeDefined();
   });
 
   it("saves no override settings correctly", async () => {
@@ -502,8 +506,9 @@ describe("Config overrides section", () => {
     await overridesEnabled.selectOption("No override");
 
     // When no override is selected, edgeConfigOverrides should be undefined
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].edgeConfigOverrides).toEqual(undefined);
+    await driver
+      .expectSettings((s) => s.instances[0].edgeConfigOverrides)
+      .toEqual(undefined);
   });
 
   it("saves enabled settings correctly", async () => {
@@ -530,27 +535,28 @@ describe("Config overrides section", () => {
     // Enable SSEF
     await ssefEnabled.selectOption("Enabled");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].edgeConfigOverrides).toEqual({
-      development: {
-        enabled: true,
-        com_adobe_analytics: {
-          reportSuites: ["enabledReportSuite"],
-        },
-        com_adobe_target: {
-          propertyToken: "enabledToken",
-        },
-        com_adobe_experience_platform: {
-          datasets: {
-            event: {
-              datasetId: "enabledDataset",
+    await driver
+      .expectSettings((s) => s.instances[0].edgeConfigOverrides)
+      .toEqual({
+        development: {
+          enabled: true,
+          com_adobe_analytics: {
+            reportSuites: ["enabledReportSuite"],
+          },
+          com_adobe_target: {
+            propertyToken: "enabledToken",
+          },
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "enabledDataset",
+              },
             },
           },
+          com_adobe_audiencemanager: {},
+          com_adobe_launch_ssf: {},
         },
-        com_adobe_audiencemanager: {},
-        com_adobe_launch_ssf: {},
-      },
-    });
+      });
   });
 
   it("saves disabled settings correctly", async () => {
@@ -586,37 +592,38 @@ describe("Config overrides section", () => {
     // Disable AJO
     await ajoEnabled.selectOption("Disabled");
 
-    const settings = await driver.getSettings();
-    expect(settings.instances[0].edgeConfigOverrides).toEqual({
-      development: {
-        enabled: true,
-        com_adobe_analytics: {
-          enabled: false,
-        },
-        com_adobe_target: {
-          enabled: false,
-        },
-        com_adobe_experience_platform: {
-          com_adobe_edge_ode: {
+    await driver
+      .expectSettings((s) => s.instances[0].edgeConfigOverrides)
+      .toEqual({
+        development: {
+          enabled: true,
+          com_adobe_analytics: {
             enabled: false,
           },
-          com_adobe_edge_segmentation: {
+          com_adobe_target: {
             enabled: false,
           },
-          com_adobe_edge_destinations: {
+          com_adobe_experience_platform: {
+            com_adobe_edge_ode: {
+              enabled: false,
+            },
+            com_adobe_edge_segmentation: {
+              enabled: false,
+            },
+            com_adobe_edge_destinations: {
+              enabled: false,
+            },
+            com_adobe_edge_ajo: {
+              enabled: false,
+            },
+          },
+          com_adobe_audiencemanager: {
             enabled: false,
           },
-          com_adobe_edge_ajo: {
+          com_adobe_launch_ssf: {
             enabled: false,
           },
         },
-        com_adobe_audiencemanager: {
-          enabled: false,
-        },
-        com_adobe_launch_ssf: {
-          enabled: false,
-        },
-      },
-    });
+      });
   });
 });

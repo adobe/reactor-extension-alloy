@@ -437,6 +437,9 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
 
   // Fetch advertisers from Adobe Advertising API when component is enabled
   useEffect(() => {
+    const abortController = new AbortController();
+    const { signal } = abortController;
+
     const fetchAdvertisersData = async () => {
       if (!advertisingComponentEnabled || !initInfo) return;
 
@@ -452,8 +455,10 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
         const response = await fetchAdvertisers({
           orgId,
           imsAccess,
-          signal: null,
+          signal,
         });
+
+        if (signal.aborted) return;
 
         const advertisersList =
           response?.items || response?.data || response || [];
@@ -467,17 +472,24 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
           advertisersList.map((adv) => adv.advertiser_id),
         );
       } catch {
+        if (signal.aborted) return;
         setError(
           "Unable to retrieve advertiser data. Please contact your system administrator for assistance.",
         );
         // API failed - use manual entry mode
         setFieldValue(`${instanceFieldName}.advertising.useManualEntry`, true);
       } finally {
-        setLoading(false);
+        if (!signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchAdvertisersData();
+
+    return () => {
+      abortController.abort();
+    };
   }, [advertisingComponentEnabled, initInfo, instanceFieldName, setFieldValue]);
 
   const disabledView = (
