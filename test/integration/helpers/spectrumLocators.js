@@ -16,10 +16,15 @@ locators.extend({
   async selectOption(name) {
     await expect
       .poll(async () => {
+        await this.element().scrollIntoView();
+        // Trigger: input (Spectrum ComboBox), or button, or ancestor button for Picker-style components
+        const trigger = this.locator("input")
+          .or(this.getByRole("combobox"))
+          .or(this.getByRole("button"))
+          .or(this.locator("xpath=..").getByRole("button"))
+          .or(this.locator("xpath=../../..").getByRole("button"));
         if (this.element().getAttribute("aria-expanded") === "false") {
-          await this.locator("xpath=../../..")
-            .getByRole("button")
-            .click({ timeout: 0 });
+          await trigger.click({ timeout: 0 });
           await expect.element(this).toHaveAttribute("aria-expanded", "true");
         }
         await page

@@ -248,6 +248,7 @@ describe("Config overrides section", () => {
     // Enable Target and set property token
     await targetEnabled.selectOption("Enabled");
     await expect.element(targetEnabled).toHaveValue("Enabled");
+    await driver.tab();
     await targetPropertyTokenOverride.fill("myTargetToken");
 
     // Enable Experience Platform and set dataset
@@ -558,6 +559,7 @@ describe("Config overrides section", () => {
     // Enable Target
     await targetEnabled.selectOption("Enabled");
     await expect.element(targetEnabled).toHaveValue("Enabled");
+    await driver.tab();
     await targetPropertyTokenOverride.fill("enabledToken");
 
     // Enable Experience Platform

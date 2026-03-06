@@ -195,6 +195,7 @@ describe("Config advertising section", () => {
     );
 
     await expandAccordion("Build options");
+    await advertisingComponentCheckbox.element().scrollIntoView();
     await advertisingComponentCheckbox.click();
 
     await driver
@@ -223,6 +224,7 @@ describe("Config advertising section", () => {
     );
 
     await expandAccordion("Build options");
+    await advertisingComponentCheckbox.element().scrollIntoView();
     await advertisingComponentCheckbox.click();
 
     // Should now show alert panel
