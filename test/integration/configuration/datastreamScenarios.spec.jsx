@@ -12,36 +12,48 @@ governing permissions and limitations under the License.
 
 import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
-import renderView from "../helpers/renderView";
-import createExtensionBridge from "../helpers/createExtensionBridge";
+import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad } from "../helpers/ui";
 import { worker } from "../helpers/mocks/browser";
-import { spectrumRadio, spectrumTextField } from "../helpers/form";
 import {
   datastreamsForbiddenHandlers,
   datastreamForbiddenHandlers,
   singleSandboxNoDefaultHandlers,
 } from "../helpers/mocks/defaultHandlers";
 
-let extensionBridge;
+let view;
+let driver;
+let cleanup;
+let edgeConfigInputMethodFreeformRadio;
+let edgeConfigInputMethodSelectRadio;
+let productionEnvironmentTextfield;
+let datastreamDisabledFieldProduction;
 
 describe("Config Sandboxes", () => {
-  beforeEach(() => {
-    extensionBridge = createExtensionBridge();
-    window.extensionBridge = extensionBridge;
+  beforeEach(async () => {
+    ({ view, driver, cleanup } = await useView(ConfigurationView));
+    edgeConfigInputMethodFreeformRadio = view.getByTestId(
+      "edgeConfigInputMethodFreeformRadio",
+    );
+    edgeConfigInputMethodSelectRadio = view.getByTestId(
+      "edgeConfigInputMethodSelectRadio",
+    );
+    productionEnvironmentTextfield = view.getByTestId(
+      "productionEnvironmentTextfield",
+    );
+    datastreamDisabledFieldProduction = view.getByTestId(
+      "datastreamDisabledFieldproduction",
+    );
   });
 
   afterEach(() => {
-    delete window.extensionBridge;
+    cleanup();
   });
 
   it("does not show alert panel and uses freeform input method with forbidden datastream access", async () => {
     worker.use(...datastreamForbiddenHandlers);
 
-    const view = await renderView(ConfigurationView);
-
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -56,15 +68,11 @@ describe("Config Sandboxes", () => {
         ],
       },
     });
-    await waitForConfigurationViewToLoad(view);
+    await expect.element(edgeConfigInputMethodFreeformRadio).toBeChecked();
 
-    const selectRadio = spectrumRadio("edgeConfigInputMethodFreeformRadio");
-    expect(await selectRadio.isSelected()).toBe(true);
-
-    const dataStreamInput = spectrumTextField("productionEnvironmentTextfield");
-    expect(await dataStreamInput.getValue()).toBe(
-      "2fdb3763-0507-42ea-8856-e91bf3b64faa",
-    );
+    await expect
+      .element(productionEnvironmentTextfield)
+      .toHaveValue("2fdb3763-0507-42ea-8856-e91bf3b64faa");
 
     await expect
       .element(
@@ -78,9 +86,7 @@ describe("Config Sandboxes", () => {
   it("does show a disabled data stream field input with forbidden datastreams access", async () => {
     worker.use(...datastreamsForbiddenHandlers);
 
-    const view = await renderView(ConfigurationView);
-
-    extensionBridge.init({
+    await driver.init({
       settings: {
         components: {
           eventMerge: false,
@@ -96,23 +102,18 @@ describe("Config Sandboxes", () => {
         ],
       },
     });
-    await waitForConfigurationViewToLoad(view);
-
     await expect
       .element(
         view.getByText(
           /You do not have enough permissions to fetch the Prod sandbox configurations/i,
         ),
       )
-      .toBeInTheDocument();
+      .toBeVisible();
 
-    const dataStreamInput = spectrumTextField(
-      "datastreamDisabledFieldproduction",
-    );
-    expect(await dataStreamInput.isDisabled()).toBe(true);
-    expect(await dataStreamInput.getValue()).toBe(
-      "2fdb3763-0507-42ea-8856-e91bf3b64faa",
-    );
+    await expect.element(datastreamDisabledFieldProduction).toBeDisabled();
+    await expect
+      .element(datastreamDisabledFieldProduction)
+      .toHaveValue("2fdb3763-0507-42ea-8856-e91bf3b64faa");
   });
 
   it("shows alert panel with one non-default sandbox and forbidden datastreams access", async () => {
@@ -121,13 +122,8 @@ describe("Config Sandboxes", () => {
       ...datastreamsForbiddenHandlers,
     );
 
-    const view = await renderView(ConfigurationView);
-
-    extensionBridge.init();
-    await waitForConfigurationViewToLoad(view);
-
-    const selectRadio = spectrumRadio("edgeConfigInputMethodSelectRadio");
-    await selectRadio.click();
+    await driver.init();
+    await edgeConfigInputMethodSelectRadio.click();
 
     await expect
       .element(
@@ -135,6 +131,6 @@ describe("Config Sandboxes", () => {
           name: /you do not have enough permissions to fetch the organization configurations/i,
         }),
       )
-      .toBeInTheDocument();
+      .toBeVisible();
   });
 });
