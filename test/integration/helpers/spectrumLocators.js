@@ -27,9 +27,9 @@ locators.extend({
           await trigger.click({ timeout: 0 });
           await expect.element(this).toHaveAttribute("aria-expanded", "true");
         }
-        await page
-          .getByRole("listbox")
-          .nth(0)
+        // Use the last listbox in DOM so we target the one we just opened, not a stale one from a previous combobox
+        const listbox = page.getByRole("listbox").last();
+        await listbox
           .getByRole("option", { name, exact: true })
           .nth(0)
           .click({ timeout: 0 });
