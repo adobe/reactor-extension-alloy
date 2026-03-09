@@ -11,13 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import { page } from "vitest/browser";
+import { expand } from "./spectrum";
 
 /**
  * Click on an accordion/disclosure button to expand it, only if not already expanded
  * @param {string} name - The accessible name of the button (text or regex)
  */
 export const expandAccordion = async (name) => {
-  await page.getByRole("button", { name }).expand();
+  await expand(page.getByRole("button", { name }));
 };
 
 export const toggleComponent = async (component) => {

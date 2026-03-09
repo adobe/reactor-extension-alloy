@@ -10,40 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { locators, page } from "vitest/browser";
-import { expect } from "vitest";
 
 locators.extend({
-  async selectOption(name) {
-    await expect
-      .poll(async () => {
-        await this.element().scrollIntoView();
-        // Trigger: input (Spectrum ComboBox), or button, or ancestor button for Picker-style components
-        const trigger = this.locator("input")
-          .or(this.getByRole("combobox"))
-          .or(this.getByRole("button"))
-          .or(this.locator("xpath=..").getByRole("button"))
-          .or(this.locator("xpath=../../..").getByRole("button"));
-        if (this.element().getAttribute("aria-expanded") === "false") {
-          await trigger.click({ timeout: 0 });
-          await expect.element(this).toHaveAttribute("aria-expanded", "true");
-        }
-        // Use the last listbox in DOM so we target the one we just opened, not a stale one from a previous combobox
-        const listbox = page.getByRole("listbox").last();
-        await listbox
-          .getByRole("option", { name, exact: true })
-          .nth(0)
-          .click({ timeout: 0 });
-      })
-      .toBe();
+  getById(id) {
+    return `#${CSS.escape(id)}`;
   },
-  async expand() {
-    await expect
-      .poll(async () => {
-        if (this.element().getAttribute("aria-expanded") !== "true") {
-          await this.click({ timeout: 0 });
-        }
-        await expect.element(this).toHaveAttribute("aria-expanded", "true");
-      })
-      .toBe();
+  controls() {
+    const id = this.element().getAttribute("aria-controls");
+    return page.getById(id);
   },
 });

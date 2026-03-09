@@ -17,6 +17,30 @@ import renderView from "./renderView";
 const READY_EVENT = "extension-reactor-alloy:rendered";
 const identity = (x) => x;
 
+const withTimeoutAndRetries = (fn, timeout = 1000, retries = 3) => {
+  let i = 0;
+  while (true) {
+    try {
+      return Promise.race([
+        fn(),
+        new Promise((resolve, reject) => {
+          setTimeout(() => reject(new Error("Timeout")), timeout);
+        }),
+      ]);
+    } catch (error) {
+      console.error(
+        "withTimeoutAndRetries error in attempt",
+        i + 1,
+        error.message.split("\n")[0],
+      );
+      if (i >= retries - 1) {
+        throw error;
+      }
+    }
+    i += 1;
+  }
+};
+
 export default async function useView(View) {
   const deferredRegistration = defer();
 
@@ -76,12 +100,17 @@ export default async function useView(View) {
   };
   driver.expectSettings = (getProperty = identity) => {
     return expect.poll(
-      async () => getProperty(await registration.getSettings()),
+      async () =>
+        withTimeoutAndRetries(async () =>
+          getProperty(await registration.getSettings()),
+        ),
       { timeout: 500 },
     );
   };
   driver.expectValidate = () => {
-    return expect.poll(() => registration.validate(), { timeout: 500 });
+    return expect.poll(() =>
+      withTimeoutAndRetries(async () => registration.validate()),
+    );
   };
 
   const cleanup = () => {

@@ -15,6 +15,7 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { expandAccordion } from "../helpers/ui";
+import { selectOption } from "../helpers/spectrum";
 import { buildSettings } from "../helpers/settingsUtils";
 import { worker } from "../helpers/mocks/browser";
 import {
@@ -137,15 +138,19 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await dspEnabledField.selectOption("Enabled");
-    await expect.element(dspEnabledField).toHaveValue("Enabled");
+    await selectOption(dspEnabledField, "Enabled");
+    await expect
+      .element(dspEnabledField, { timeout: 1000 })
+      .toHaveValue("Enabled");
 
     // Wait for advertisers to load after enabling DSP
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
-    await advertiser0Field.selectOption("test");
-    await expect.element(advertiser0Field).toHaveValue("test");
+    await selectOption(advertiser0Field, "test");
+    await expect
+      .element(advertiser0Field, { timeout: 1000 })
+      .toHaveValue("test");
 
     await id5PartnerIdField.fill("new-id5-partner");
 
@@ -332,8 +337,10 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await dspEnabledField.selectOption("Enabled");
-    await expect.element(dspEnabledField).toHaveValue("Enabled");
+    await selectOption(dspEnabledField, "Enabled");
+    await expect
+      .element(dspEnabledField, { timeout: 1000 })
+      .toHaveValue("Enabled");
 
     // Wait for advertisers to load
     await waitForAdvertisersToLoad();
@@ -390,8 +397,10 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await dspEnabledField.selectOption("Enabled");
-    await expect.element(dspEnabledField).toHaveValue("Enabled");
+    await selectOption(dspEnabledField, "Enabled");
+    await expect
+      .element(dspEnabledField, { timeout: 1000 })
+      .toHaveValue("Enabled");
 
     // Wait for advertisers to load
     await waitForAdvertisersToLoad();
@@ -411,8 +420,10 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await dspEnabledField.selectOption("Disabled");
-    await expect.element(dspEnabledField).toHaveValue("Disabled");
+    await selectOption(dspEnabledField, "Disabled");
+    await expect
+      .element(dspEnabledField, { timeout: 1000 })
+      .toHaveValue("Disabled");
     await driver.tab();
 
     await driver
@@ -446,8 +457,10 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await dspEnabledField.selectOption("Enabled");
-    await expect.element(dspEnabledField).toHaveValue("Enabled");
+    await selectOption(dspEnabledField, "Enabled");
+    await expect
+      .element(dspEnabledField, { timeout: 1000 })
+      .toHaveValue("Enabled");
     await driver.tab();
 
     // Wait for advertisers to load
@@ -473,8 +486,10 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await dspEnabledField.selectOption("Enabled");
-    await expect.element(dspEnabledField).toHaveValue("Enabled");
+    await selectOption(dspEnabledField, "Enabled");
+    await expect
+      .element(dspEnabledField, { timeout: 1000 })
+      .toHaveValue("Enabled");
     await driver.tab();
 
     // Wait for the warning alert to appear
@@ -512,8 +527,10 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await dspEnabledField.selectOption("Enabled");
-    await expect.element(dspEnabledField).toHaveValue("Enabled");
+    await selectOption(dspEnabledField, "Enabled");
+    await expect
+      .element(dspEnabledField, { timeout: 1000 })
+      .toHaveValue("Enabled");
     await driver.tab();
 
     // Wait for the warning alert to appear
@@ -548,8 +565,10 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await dspEnabledField.selectOption("Enabled");
-    await expect.element(dspEnabledField).toHaveValue("Enabled");
+    await selectOption(dspEnabledField, "Enabled");
+    await expect
+      .element(dspEnabledField, { timeout: 1000 })
+      .toHaveValue("Enabled");
     await driver.tab();
 
     // Wait for advertisers to load
@@ -571,23 +590,29 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await dspEnabledField.selectOption("Enabled");
-    await expect.element(dspEnabledField).toHaveValue("Enabled");
+    await selectOption(dspEnabledField, "Enabled");
+    await expect
+      .element(dspEnabledField, { timeout: 1000 })
+      .toHaveValue("Enabled");
 
     // Wait for advertisers to load
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
     // Select first advertiser
-    await advertiser0Field.selectOption("test");
-    await expect.element(advertiser0Field).toHaveValue("test");
+    await selectOption(advertiser0Field, "test");
+    await expect
+      .element(advertiser0Field, { timeout: 1000 })
+      .toHaveValue("test");
 
     // Add second advertiser
     await addAdvertiserButton.click();
 
     // Select second advertiser
-    await advertiser1Field.selectOption("Advertiser BF");
-    await expect.element(advertiser1Field).toHaveValue("Advertiser BF");
+    await selectOption(advertiser1Field, "Advertiser BF");
+    await expect
+      .element(advertiser1Field, { timeout: 1000 })
+      .toHaveValue("Advertiser BF");
     await driver.tab();
 
     // Verify settings
@@ -682,8 +707,10 @@ describe("Config advertising section", () => {
     await waitForOptionalFieldsToLoad();
 
     // Toggle to disabled
-    await advertiserEnabled0Field.selectOption("Disabled");
-    await expect.element(advertiserEnabled0Field).toHaveValue("Disabled");
+    await selectOption(advertiserEnabled0Field, "Disabled");
+    await expect
+      .element(advertiserEnabled0Field, { timeout: 1000 })
+      .toHaveValue("Disabled");
     await driver.tab();
 
     // Verify settings
@@ -694,8 +721,10 @@ describe("Config advertising section", () => {
       .toBe(false);
 
     // Toggle back to enabled
-    await advertiserEnabled0Field.selectOption("Enabled");
-    await expect.element(advertiserEnabled0Field).toHaveValue("Enabled");
+    await selectOption(advertiserEnabled0Field, "Enabled");
+    await expect
+      .element(advertiserEnabled0Field, { timeout: 1000 })
+      .toHaveValue("Enabled");
     await driver.tab();
 
     // Verify settings

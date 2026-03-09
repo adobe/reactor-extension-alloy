@@ -15,6 +15,7 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { buildSettings } from "../helpers/settingsUtils";
+import { selectOption } from "../helpers/spectrum";
 
 let view;
 let driver;
@@ -174,17 +175,17 @@ describe("Config general settings and datastream section", () => {
       }),
     );
 
-    await productionDatastreamField.selectOption("analytics enabled");
+    await selectOption(productionDatastreamField, "analytics enabled");
     await expect
-      .element(productionDatastreamField)
+      .element(productionDatastreamField, { timeout: 1000 })
       .toHaveTextContent(/analytics enabled/i);
-    await stagingDatastreamField.selectOption("datastream enabled");
+    await selectOption(stagingDatastreamField, "datastream enabled");
     await expect
-      .element(stagingDatastreamField)
+      .element(stagingDatastreamField, { timeout: 1000 })
       .toHaveTextContent(/datastream enabled/i);
-    await developmentDatastreamField.selectOption("aep-edge-samples");
+    await selectOption(developmentDatastreamField, "aep-edge-samples");
     await expect
-      .element(developmentDatastreamField)
+      .element(developmentDatastreamField, { timeout: 1000 })
       .toHaveTextContent(/aep-edge-samples/i);
     await driver.tab();
 
