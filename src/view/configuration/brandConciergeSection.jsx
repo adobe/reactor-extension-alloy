@@ -143,7 +143,7 @@ const BrandConciergeSection = ({ instanceFieldName }) => {
         <FormikCheckbox
           data-test-id="voiceEnabledField"
           name={`${instanceFieldName}.conversation.voiceEnabled`}
-          description="Enable voice responses for Adobe Brand Concierge conversations."
+          description="Enable voice features for Adobe Brand Concierge conversations."
           width="size-5000"
         >
           Enable voice features
