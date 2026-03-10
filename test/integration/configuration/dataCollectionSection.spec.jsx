@@ -16,8 +16,10 @@ import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { toggleComponent } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 
 let view;
+let bridge;
 let driver;
 let cleanup;
 let internalLinkEnabledField;
@@ -44,45 +46,61 @@ let contextCheckbox;
 
 describe("Config data collection section", () => {
   beforeEach(async () => {
-    ({ view, driver, cleanup } = await useView(ConfigurationView));
-    internalLinkEnabledField = view.getByTestId("internalLinkEnabledField");
-    externalLinkEnabledField = view.getByTestId("externalLinkEnabledField");
-    downloadLinkEnabledField = view.getByTestId("downloadLinkEnabledField");
-    downloadLinkQualifierField = view.getByTestId("downloadLinkQualifierField");
-    contextGranularitySpecificField = view.getByTestId(
-      "contextGranularitySpecificField",
+    ({ view, bridge, driver, cleanup } = await useView(ConfigurationView));
+    internalLinkEnabledField = field(
+      view.getByTestId("internalLinkEnabledField"),
     );
-    contextGranularityAllField = view.getByTestId("contextGranularityAllField");
-    contextWebField = view.getByTestId("contextWebField");
-    contextDeviceField = view.getByTestId("contextDeviceField");
-    contextEnvironmentField = view.getByTestId("contextEnvironmentField");
-    contextPlaceContextField = view.getByTestId("contextPlaceContextField");
-    contextHighEntropyUserAgentHintsField = view.getByTestId(
-      "contextHighEntropyUserAgentHintsField",
+    externalLinkEnabledField = field(
+      view.getByTestId("externalLinkEnabledField"),
     );
-    contextOneTimeAnalyticsReferrerField = view.getByTestId(
-      "contextOneTimeAnalyticsReferrerField",
+    downloadLinkEnabledField = field(
+      view.getByTestId("downloadLinkEnabledField"),
     );
-    eventGroupingNoneField = view.getByTestId("eventGroupingNoneField");
-    eventGroupingSessionStorageField = view.getByTestId(
-      "eventGroupingSessionStorageField",
+    downloadLinkQualifierField = field(
+      view.getByTestId("downloadLinkQualifierField"),
     );
-    eventGroupingMemoryField = view.getByTestId("eventGroupingMemoryField");
-    downloadLinkQualifierTestButton = view.getByTestId(
-      "downloadLinkQualifierTestButton",
+    contextGranularitySpecificField = field(
+      view.getByTestId("contextGranularitySpecificField"),
     );
-    downloadLinkQualifierRestoreButton = view.getByTestId(
-      "downloadLinkQualifierRestoreButton",
+    contextGranularityAllField = field(
+      view.getByTestId("contextGranularityAllField"),
     );
-    onBeforeEventSendEditButton = view.getByTestId(
-      "onBeforeEventSendEditButton",
+    contextWebField = field(view.getByTestId("contextWebField"));
+    contextDeviceField = field(view.getByTestId("contextDeviceField"));
+    contextEnvironmentField = field(
+      view.getByTestId("contextEnvironmentField"),
     );
-    filterClickDetailsEditButton = view.getByTestId(
-      "filterClickDetailsEditButton",
+    contextPlaceContextField = field(
+      view.getByTestId("contextPlaceContextField"),
+    );
+    contextHighEntropyUserAgentHintsField = field(
+      view.getByTestId("contextHighEntropyUserAgentHintsField"),
+    );
+    contextOneTimeAnalyticsReferrerField = field(
+      view.getByTestId("contextOneTimeAnalyticsReferrerField"),
+    );
+    eventGroupingNoneField = field(view.getByTestId("eventGroupingNoneField"));
+    eventGroupingSessionStorageField = field(
+      view.getByTestId("eventGroupingSessionStorageField"),
+    );
+    eventGroupingMemoryField = field(
+      view.getByTestId("eventGroupingMemoryField"),
+    );
+    downloadLinkQualifierTestButton = field(
+      view.getByTestId("downloadLinkQualifierTestButton"),
+    );
+    downloadLinkQualifierRestoreButton = field(
+      view.getByTestId("downloadLinkQualifierRestoreButton"),
+    );
+    onBeforeEventSendEditButton = field(
+      view.getByTestId("onBeforeEventSendEditButton"),
+    );
+    filterClickDetailsEditButton = field(
+      view.getByTestId("filterClickDetailsEditButton"),
     );
     eventGroupingRadio = (name) =>
-      view.getByTestId(`eventGrouping${name}Field`);
-    contextCheckbox = (name) => view.getByTestId(`context${name}Field`);
+      field(view.getByTestId(`eventGrouping${name}Field`));
+    contextCheckbox = (name) => field(view.getByTestId(`context${name}Field`));
   });
 
   afterEach(() => {
@@ -105,29 +123,23 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await expect.element(internalLinkEnabledField).toBeChecked();
+    await internalLinkEnabledField.expectChecked();
 
-    await expect.element(eventGroupingRadio("None")).toBeChecked();
-    await expect
-      .element(eventGroupingRadio("SessionStorage"))
-      .not.toBeChecked();
-    await expect.element(eventGroupingRadio("Memory")).not.toBeChecked();
+    await eventGroupingRadio("None").expectChecked();
+    await eventGroupingRadio("SessionStorage").expectUnchecked();
+    await eventGroupingRadio("Memory").expectUnchecked();
 
-    await expect.element(externalLinkEnabledField).toBeChecked();
-    await expect.element(downloadLinkEnabledField).toBeChecked();
+    await externalLinkEnabledField.expectChecked();
+    await downloadLinkEnabledField.expectChecked();
 
-    await expect.element(contextGranularitySpecificField).toBeChecked();
+    await contextGranularitySpecificField.expectChecked();
 
-    await expect.element(contextCheckbox("Web")).toBeChecked();
-    await expect.element(contextCheckbox("Device")).toBeChecked();
-    await expect.element(contextCheckbox("Environment")).not.toBeChecked();
-    await expect.element(contextCheckbox("PlaceContext")).not.toBeChecked();
-    await expect
-      .element(contextHighEntropyUserAgentHintsField)
-      .not.toBeChecked();
-    await expect
-      .element(contextOneTimeAnalyticsReferrerField)
-      .not.toBeChecked();
+    await contextCheckbox("Web").expectChecked();
+    await contextCheckbox("Device").expectChecked();
+    await contextCheckbox("Environment").expectUnchecked();
+    await contextCheckbox("PlaceContext").expectUnchecked();
+    await contextHighEntropyUserAgentHintsField.expectUnchecked();
+    await contextOneTimeAnalyticsReferrerField.expectUnchecked();
   });
 
   it("sets form values from settings with event grouping session storage", async () => {
@@ -145,11 +157,11 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await expect.element(internalLinkEnabledField).toBeChecked();
+    await internalLinkEnabledField.expectChecked();
 
-    await expect.element(eventGroupingRadio("None")).not.toBeChecked();
-    await expect.element(eventGroupingRadio("SessionStorage")).toBeChecked();
-    await expect.element(eventGroupingRadio("Memory")).not.toBeChecked();
+    await eventGroupingRadio("None").expectUnchecked();
+    await eventGroupingRadio("SessionStorage").expectChecked();
+    await eventGroupingRadio("Memory").expectUnchecked();
   });
 
   it("sets form values from settings with event grouping memory", async () => {
@@ -166,13 +178,11 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await expect.element(internalLinkEnabledField).toBeChecked();
+    await internalLinkEnabledField.expectChecked();
 
-    await expect.element(eventGroupingRadio("None")).not.toBeChecked();
-    await expect
-      .element(eventGroupingRadio("SessionStorage"))
-      .not.toBeChecked();
-    await expect.element(eventGroupingRadio("Memory")).toBeChecked();
+    await eventGroupingRadio("None").expectUnchecked();
+    await eventGroupingRadio("SessionStorage").expectUnchecked();
+    await eventGroupingRadio("Memory").expectChecked();
   });
 
   it("sets form values from settings with download link enabled", async () => {
@@ -187,10 +197,8 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await expect.element(downloadLinkEnabledField).toBeChecked();
-    await expect
-      .element(downloadLinkQualifierField)
-      .toHaveValue("\\.(exe|zip)$");
+    await downloadLinkEnabledField.expectChecked();
+    await downloadLinkQualifierField.expectValue("\\.(exe|zip)$");
   });
 
   it("sets form values from settings with all link types disabled", async () => {
@@ -205,9 +213,9 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await expect.element(internalLinkEnabledField).not.toBeChecked();
-    await expect.element(externalLinkEnabledField).not.toBeChecked();
-    await expect.element(downloadLinkEnabledField).not.toBeChecked();
+    await internalLinkEnabledField.expectUnchecked();
+    await externalLinkEnabledField.expectUnchecked();
+    await downloadLinkEnabledField.expectUnchecked();
   });
 
   it("sets form values from settings with some link types disabled", async () => {
@@ -225,9 +233,9 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await expect.element(internalLinkEnabledField).toBeChecked();
-    await expect.element(externalLinkEnabledField).not.toBeChecked();
-    await expect.element(downloadLinkEnabledField).not.toBeChecked();
+    await internalLinkEnabledField.expectChecked();
+    await externalLinkEnabledField.expectUnchecked();
+    await downloadLinkEnabledField.expectUnchecked();
   });
 
   it("updates form values and saves to settings", async () => {
@@ -254,21 +262,21 @@ describe("Config data collection section", () => {
   it("shows and hides download link qualifier based on download link enabled", async () => {
     await driver.init(buildSettings());
 
-    await expect.element(downloadLinkQualifierField).toBeVisible();
+    await downloadLinkQualifierField.expectVisible();
 
     await downloadLinkEnabledField.click();
 
-    await expect.element(downloadLinkQualifierField).not.toBeInTheDocument();
+    await downloadLinkQualifierField.expectHidden();
   });
 
   it("shows and hides event grouping options based on internal link enabled", async () => {
     await driver.init(buildSettings());
 
-    await expect.element(eventGroupingNoneField).toBeVisible();
+    await eventGroupingNoneField.expectVisible();
 
     await internalLinkEnabledField.click();
 
-    await expect.element(eventGroupingNoneField).not.toBeInTheDocument();
+    await eventGroupingNoneField.expectHidden();
   });
 
   it("saves event grouping settings when session storage is selected", async () => {
@@ -349,18 +357,18 @@ describe("Config data collection section", () => {
       )
       .toBeVisible();
 
-    await expect.element(internalLinkEnabledField).not.toBeInTheDocument();
+    await internalLinkEnabledField.expectHidden();
   });
 
   it("shows default values when no settings are provided", async () => {
     await driver.init(buildSettings());
 
-    await expect.element(internalLinkEnabledField).toBeChecked();
-    await expect.element(externalLinkEnabledField).toBeChecked();
-    await expect.element(downloadLinkEnabledField).toBeChecked();
+    await internalLinkEnabledField.expectChecked();
+    await externalLinkEnabledField.expectChecked();
+    await downloadLinkEnabledField.expectChecked();
 
-    await expect.element(contextGranularityAllField).toBeChecked();
-    await expect.element(eventGroupingNoneField).toBeChecked();
+    await contextGranularityAllField.expectChecked();
+    await eventGroupingNoneField.expectChecked();
   });
 
   it("does not save default values to settings", async () => {
@@ -382,7 +390,6 @@ describe("Config data collection section", () => {
     await driver.init(buildSettings());
 
     await downloadLinkQualifierField.fill("\\.(zip|exe)$");
-    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].downloadLinkQualifier)
@@ -392,16 +399,16 @@ describe("Config data collection section", () => {
   it("shows context checkboxes when specific context is selected", async () => {
     await driver.init(buildSettings());
 
-    await expect.element(contextWebField).not.toBeInTheDocument();
+    await contextWebField.expectHidden();
 
     await contextGranularitySpecificField.click();
 
-    await expect.element(contextWebField).toBeVisible();
-    await expect.element(contextDeviceField).toBeVisible();
-    await expect.element(contextEnvironmentField).toBeVisible();
-    await expect.element(contextPlaceContextField).toBeVisible();
-    await expect.element(contextHighEntropyUserAgentHintsField).toBeVisible();
-    await expect.element(contextOneTimeAnalyticsReferrerField).toBeVisible();
+    await contextWebField.expectVisible();
+    await contextDeviceField.expectVisible();
+    await contextEnvironmentField.expectVisible();
+    await contextPlaceContextField.expectVisible();
+    await contextHighEntropyUserAgentHintsField.expectVisible();
+    await contextOneTimeAnalyticsReferrerField.expectVisible();
   });
 
   it("saves non-default context when specific is selected", async () => {
@@ -438,16 +445,14 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await expect.element(contextGranularitySpecificField).toBeChecked();
+    await contextGranularitySpecificField.expectChecked();
 
-    await expect.element(contextWebField).toBeChecked();
-    await expect.element(contextDeviceField).toBeChecked();
-    await expect.element(contextEnvironmentField).not.toBeChecked();
-    await expect.element(contextPlaceContextField).not.toBeChecked();
-    await expect
-      .element(contextHighEntropyUserAgentHintsField)
-      .not.toBeChecked();
-    await expect.element(contextOneTimeAnalyticsReferrerField).toBeChecked();
+    await contextWebField.expectChecked();
+    await contextDeviceField.expectChecked();
+    await contextEnvironmentField.expectUnchecked();
+    await contextPlaceContextField.expectUnchecked();
+    await contextHighEntropyUserAgentHintsField.expectUnchecked();
+    await contextOneTimeAnalyticsReferrerField.expectChecked();
   });
 
   it("disables click collection when all link types are disabled", async () => {
@@ -467,11 +472,13 @@ describe("Config data collection section", () => {
 
     await downloadLinkQualifierTestButton.click();
 
-    expect(downloadLinkQualifierField.element().value).toMatch(/edited regex/i);
+    await downloadLinkQualifierField.expectValue(/edited regex/i);
+    // const value = await downloadLinkQualifierField.getValue();
+    // expect(value).toMatch(/edited regex/i);
   });
 
   it("does not save onBeforeEventSend code if it matches placeholder", async () => {
-    driver.openCodeEditorMock = async ({ code }) => code;
+    bridge.openCodeEditorMock = async ({ code }) => code;
 
     await driver.init(buildSettings());
 
@@ -483,7 +490,7 @@ describe("Config data collection section", () => {
   });
 
   it("does not save filterClickDetails code if it matches placeholder", async () => {
-    driver.openCodeEditorMock = async ({ code }) => code;
+    bridge.openCodeEditorMock = async ({ code }) => code;
 
     await driver.init(buildSettings());
 
@@ -499,21 +506,18 @@ describe("Config data collection section", () => {
       await driver.init(buildSettings());
 
       const originalDownloadLinkQualifier =
-        downloadLinkQualifierField.element().value;
+        await downloadLinkQualifierField.getValue();
       await downloadLinkQualifierField.fill("\\.(exe|zip)$");
-      await driver.tab();
 
-      await expect
-        .element(downloadLinkQualifierField)
-        .toHaveValue("\\.(exe|zip)$");
+      await downloadLinkQualifierField.expectValue("\\.(exe|zip)$");
 
       await downloadLinkQualifierRestoreButton.click({
         position: { x: 10, y: 10 },
       });
 
-      await expect
-        .element(downloadLinkQualifierField)
-        .toHaveValue(originalDownloadLinkQualifier);
+      await downloadLinkQualifierField.expectValue(
+        originalDownloadLinkQualifier,
+      );
     });
   });
 
@@ -563,8 +567,7 @@ describe("Config data collection section", () => {
         }),
       );
 
-      await downloadLinkQualifierField.fill("");
-      await driver.tab();
+      await downloadLinkQualifierField.clear();
 
       await driver.expectValidate().toBe(false);
     });

@@ -16,6 +16,7 @@ import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -28,11 +29,11 @@ let pushNotificationsComponentCheckbox;
 describe("Config push notifications section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    vapidPublicKeyField = view.getByTestId("vapidPublicKeyField");
-    appIdField = view.getByTestId("appIdField");
-    trackingDatasetIdField = view.getByTestId("trackingDatasetIdField");
-    pushNotificationsComponentCheckbox = view.getByTestId(
-      "pushNotificationsComponentCheckbox",
+    vapidPublicKeyField = field(view.getByTestId("vapidPublicKeyField"));
+    appIdField = field(view.getByTestId("appIdField"));
+    trackingDatasetIdField = field(view.getByTestId("trackingDatasetIdField"));
+    pushNotificationsComponentCheckbox = field(
+      view.getByTestId("pushNotificationsComponentCheckbox"),
     );
   });
 
@@ -60,9 +61,9 @@ describe("Config push notifications section", () => {
       }),
     );
 
-    await expect.element(vapidPublicKeyField).toHaveValue("test-vapid-key");
-    await expect.element(appIdField).toHaveValue("test-app-id");
-    await expect.element(trackingDatasetIdField).toHaveValue("test-dataset-id");
+    await vapidPublicKeyField.expectValue("test-vapid-key");
+    await appIdField.expectValue("test-app-id");
+    await trackingDatasetIdField.expectValue("test-dataset-id");
   });
 
   it("updates form values and saves to settings", async () => {
@@ -77,7 +78,6 @@ describe("Config push notifications section", () => {
     await vapidPublicKeyField.fill("new-vapid-key");
     await appIdField.fill("new-app-id");
     await trackingDatasetIdField.fill("new-dataset-id");
-    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].pushNotifications)
@@ -158,15 +158,13 @@ describe("Config push notifications section", () => {
 
       await appIdField.fill("test-app-id");
       await trackingDatasetIdField.fill("test-dataset-id");
-      await vapidPublicKeyField.fill("");
-      await driver.tab();
+      await vapidPublicKeyField.clear();
 
       await driver.expectValidate().toBe(false);
 
-      await expect.element(vapidPublicKeyField).not.toBeValid();
-      await expect
-        .element(vapidPublicKeyField)
-        .toHaveAccessibleDescription(/please provide a vapid public key/i);
+      await vapidPublicKeyField.expectError(
+        /please provide a vapid public key/i,
+      );
     });
 
     it("requires application ID", async () => {
@@ -177,15 +175,11 @@ describe("Config push notifications section", () => {
 
       await vapidPublicKeyField.fill("test-vapid-key");
       await trackingDatasetIdField.fill("test-dataset-id");
-      await appIdField.fill("");
-      await driver.tab();
+      await appIdField.clear();
 
       await driver.expectValidate().toBe(false);
 
-      await expect.element(appIdField).not.toBeValid();
-      await expect
-        .element(appIdField)
-        .toHaveAccessibleDescription(/please provide an application id/i);
+      await appIdField.expectError(/please provide an application id/i);
     });
 
     it("requires tracking dataset ID", async () => {
@@ -196,15 +190,13 @@ describe("Config push notifications section", () => {
 
       await vapidPublicKeyField.fill("test-vapid-key");
       await appIdField.fill("test-app-id");
-      await trackingDatasetIdField.fill("");
-      await driver.tab();
+      await trackingDatasetIdField.clear();
 
       await driver.expectValidate().toBe(false);
 
-      await expect.element(trackingDatasetIdField).not.toBeValid();
-      await expect
-        .element(trackingDatasetIdField)
-        .toHaveAccessibleDescription(/please provide a tracking dataset id/i);
+      await trackingDatasetIdField.expectError(
+        /please provide a tracking dataset id/i,
+      );
     });
   });
 });

@@ -15,8 +15,8 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { expandAccordion } from "../helpers/ui";
-import { selectOption } from "../helpers/spectrum";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 import { worker } from "../helpers/mocks/browser";
 import {
   noAdvertisersHandlers,
@@ -40,29 +40,33 @@ let advertisingComponentCheckbox;
  * Wait for advertiser fields to load after enabling DSP
  */
 const waitForAdvertisersToLoad = async () => {
-  await expect.element(advertiser0Field).toBeVisible({ timeout: 10000 });
+  await advertiser0Field.expectVisible();
 };
 
 /**
  * Wait for ID5 and RampID fields to appear (they show after advertisers load)
  */
 const waitForOptionalFieldsToLoad = async () => {
-  await expect.element(id5PartnerIdField).toBeVisible({ timeout: 10000 });
+  await id5PartnerIdField.expectVisible();
 };
 
 describe("Config advertising section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    dspEnabledField = view.getByTestId("dspEnabledField");
-    id5PartnerIdField = view.getByTestId("id5PartnerIdField");
-    rampIdJSPathField = view.getByTestId("rampIdJSPathField");
-    addAdvertiserButton = view.getByTestId("addAdvertiserButton");
-    advertiser0Field = view.getByTestId("advertiser0Field");
-    advertiser1Field = view.getByTestId("advertiser1Field");
-    advertiserEnabled0Field = view.getByTestId("advertiserEnabled0Field");
-    deleteAdvertiser0Button = view.getByTestId("deleteAdvertiser0Button");
-    advertisingComponentCheckbox = view.getByTestId(
-      "advertisingComponentCheckbox",
+    dspEnabledField = field(view.getByTestId("dspEnabledField"));
+    id5PartnerIdField = field(view.getByTestId("id5PartnerIdField"));
+    rampIdJSPathField = field(view.getByTestId("rampIdJSPathField"));
+    addAdvertiserButton = field(view.getByTestId("addAdvertiserButton"));
+    advertiser0Field = field(view.getByTestId("advertiser0Field"));
+    advertiser1Field = field(view.getByTestId("advertiser1Field"));
+    advertiserEnabled0Field = field(
+      view.getByTestId("advertiserEnabled0Field"),
+    );
+    deleteAdvertiser0Button = field(
+      view.getByTestId("deleteAdvertiser0Button"),
+    );
+    advertisingComponentCheckbox = field(
+      view.getByTestId("advertisingComponentCheckbox"),
     );
   });
 
@@ -99,13 +103,11 @@ describe("Config advertising section", () => {
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
-    await expect.element(dspEnabledField).toHaveValue("Enabled");
+    await dspEnabledField.expectValue("Enabled");
 
-    await expect.element(id5PartnerIdField).toHaveValue("test-id5-partner");
+    await id5PartnerIdField.expectValue("test-id5-partner");
 
-    await expect
-      .element(rampIdJSPathField)
-      .toHaveValue("https://example.com/ats.js");
+    await rampIdJSPathField.expectValue("https://example.com/ats.js");
   });
 
   it("sets form values from settings with DSP disabled", async () => {
@@ -126,7 +128,7 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await expect.element(dspEnabledField).toHaveValue("Disabled");
+    await dspEnabledField.expectValue("Disabled");
   });
 
   it("updates form values and saves to settings", async () => {
@@ -138,24 +140,17 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await selectOption(dspEnabledField, "Enabled");
-    await expect
-      .element(dspEnabledField, { timeout: 1000 })
-      .toHaveValue("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load after enabling DSP
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
-    await selectOption(advertiser0Field, "test");
-    await expect
-      .element(advertiser0Field, { timeout: 1000 })
-      .toHaveValue("test");
+    await advertiser0Field.selectOption("test");
 
     await id5PartnerIdField.fill("new-id5-partner");
 
     await rampIdJSPathField.fill("https://new.example.com/ats.js");
-    await driver.tab();
 
     // Get settings and verify
     await driver
@@ -200,7 +195,7 @@ describe("Config advertising section", () => {
     );
 
     await expandAccordion("Build options");
-    await advertisingComponentCheckbox.element().scrollIntoView();
+    await advertisingComponentCheckbox.scrollIntoView();
     await advertisingComponentCheckbox.click();
 
     await driver
@@ -229,7 +224,7 @@ describe("Config advertising section", () => {
     );
 
     await expandAccordion("Build options");
-    await advertisingComponentCheckbox.element().scrollIntoView();
+    await advertisingComponentCheckbox.scrollIntoView();
     await advertisingComponentCheckbox.click();
 
     // Should now show alert panel
@@ -260,7 +255,7 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await expect.element(dspEnabledField).toHaveValue("%myDataElement%");
+    await dspEnabledField.expectValue("%myDataElement%");
 
     // Verify it's saved as string
     await driver
@@ -290,7 +285,7 @@ describe("Config advertising section", () => {
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
-    await expect.element(id5PartnerIdField).toHaveValue("%id5DataElement%");
+    await id5PartnerIdField.expectValue("%id5DataElement%");
 
     // Verify it's saved as string
     await driver
@@ -320,7 +315,7 @@ describe("Config advertising section", () => {
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
-    await expect.element(rampIdJSPathField).toHaveValue("%rampIdDataElement%");
+    await rampIdJSPathField.expectValue("%rampIdDataElement%");
 
     // Verify it's saved as string
     await driver
@@ -337,16 +332,12 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await selectOption(dspEnabledField, "Enabled");
-    await expect
-      .element(dspEnabledField, { timeout: 1000 })
-      .toHaveValue("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
     await waitForAdvertisersToLoad();
 
     // Leave optional fields empty
-    await driver.tab();
     await driver
       .expectSettings((s) => s.instances[0].advertising.id5PartnerId)
       .toBeUndefined();
@@ -364,7 +355,7 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await expect.element(dspEnabledField).toHaveValue("Disabled");
+    await dspEnabledField.expectValue("Disabled");
   });
 
   it("converts boolean dspEnabled to string for UI display", async () => {
@@ -385,7 +376,7 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await expect.element(dspEnabledField).toHaveValue("Enabled");
+    await dspEnabledField.expectValue("Enabled");
   });
 
   it("converts Enabled string to boolean true when saving", async () => {
@@ -397,15 +388,11 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await selectOption(dspEnabledField, "Enabled");
-    await expect
-      .element(dspEnabledField, { timeout: 1000 })
-      .toHaveValue("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
     await waitForAdvertisersToLoad();
 
-    await driver.tab();
     await driver
       .expectSettings((s) => s.instances[0].advertising.dspEnabled)
       .toBe(true);
@@ -420,11 +407,7 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await selectOption(dspEnabledField, "Disabled");
-    await expect
-      .element(dspEnabledField, { timeout: 1000 })
-      .toHaveValue("Disabled");
-    await driver.tab();
+    await dspEnabledField.selectOption("Disabled");
 
     await driver
       .expectSettings((s) => s.instances[0].advertising.dspEnabled)
@@ -440,12 +423,12 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await expect.element(dspEnabledField).toHaveValue("Disabled");
+    await dspEnabledField.expectValue("Disabled");
 
     // Verify DSP-specific fields are not visible
-    await expect.element(addAdvertiserButton).not.toBeInTheDocument();
-    await expect.element(id5PartnerIdField).not.toBeInTheDocument();
-    await expect.element(rampIdJSPathField).not.toBeInTheDocument();
+    await addAdvertiserButton.expectHidden();
+    await id5PartnerIdField.expectHidden();
+    await rampIdJSPathField.expectHidden();
   });
 
   it("shows DSP fields when DSP is enabled", async () => {
@@ -457,21 +440,17 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await selectOption(dspEnabledField, "Enabled");
-    await expect
-      .element(dspEnabledField, { timeout: 1000 })
-      .toHaveValue("Enabled");
-    await driver.tab();
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
     // Verify DSP-specific fields are now visible
-    await expect.element(addAdvertiserButton).toBeVisible();
-    await expect.element(id5PartnerIdField).toBeVisible();
-    await expect.element(rampIdJSPathField).toBeVisible();
-    await expect.element(advertiser0Field).toBeVisible();
+    await addAdvertiserButton.expectVisible();
+    await id5PartnerIdField.expectVisible();
+    await rampIdJSPathField.expectVisible();
+    await advertiser0Field.expectVisible();
   });
 
   it("shows warning alert when no advertisers are found but allows manual entry", async () => {
@@ -486,11 +465,7 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await selectOption(dspEnabledField, "Enabled");
-    await expect
-      .element(dspEnabledField, { timeout: 1000 })
-      .toHaveValue("Enabled");
-    await driver.tab();
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for the warning alert to appear
     await expect
@@ -507,9 +482,9 @@ describe("Config advertising section", () => {
       .toBeVisible();
 
     // Verify DSP fields are now visible for manual entry
-    await expect.element(addAdvertiserButton).toBeVisible();
-    await expect.element(id5PartnerIdField).toBeVisible();
-    await expect.element(rampIdJSPathField).toBeVisible();
+    await addAdvertiserButton.expectVisible();
+    await id5PartnerIdField.expectVisible();
+    await rampIdJSPathField.expectVisible();
 
     // Verify form is invalid without advertiser ID
     await driver.expectValidate().toBe(false);
@@ -527,11 +502,7 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await selectOption(dspEnabledField, "Enabled");
-    await expect
-      .element(dspEnabledField, { timeout: 1000 })
-      .toHaveValue("Enabled");
-    await driver.tab();
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for the warning alert to appear
     await expect
@@ -548,9 +519,9 @@ describe("Config advertising section", () => {
       .toBeVisible();
 
     // Verify DSP fields are now visible for manual entry
-    await expect.element(addAdvertiserButton).toBeVisible();
-    await expect.element(id5PartnerIdField).toBeVisible();
-    await expect.element(rampIdJSPathField).toBeVisible();
+    await addAdvertiserButton.expectVisible();
+    await id5PartnerIdField.expectVisible();
+    await rampIdJSPathField.expectVisible();
 
     // Verify form is invalid without advertiser ID
     await driver.expectValidate().toBe(false);
@@ -565,20 +536,16 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await selectOption(dspEnabledField, "Enabled");
-    await expect
-      .element(dspEnabledField, { timeout: 1000 })
-      .toHaveValue("Enabled");
-    await driver.tab();
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
     await waitForAdvertisersToLoad();
 
     // Verify add advertiser button is visible
-    await expect.element(addAdvertiserButton).toBeVisible();
+    await addAdvertiserButton.expectVisible();
 
     // Verify one advertiser row is visible by default
-    await expect.element(advertiser0Field).toBeVisible();
+    await advertiser0Field.expectVisible();
   });
 
   it("allows adding multiple advertisers", async () => {
@@ -590,30 +557,20 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await selectOption(dspEnabledField, "Enabled");
-    await expect
-      .element(dspEnabledField, { timeout: 1000 })
-      .toHaveValue("Enabled");
+    await dspEnabledField.selectOption("Enabled");
 
     // Wait for advertisers to load
     await waitForAdvertisersToLoad();
     await waitForOptionalFieldsToLoad();
 
     // Select first advertiser
-    await selectOption(advertiser0Field, "test");
-    await expect
-      .element(advertiser0Field, { timeout: 1000 })
-      .toHaveValue("test");
+    await advertiser0Field.selectOption("test");
 
     // Add second advertiser
     await addAdvertiserButton.click();
 
     // Select second advertiser
-    await selectOption(advertiser1Field, "Advertiser BF");
-    await expect
-      .element(advertiser1Field, { timeout: 1000 })
-      .toHaveValue("Advertiser BF");
-    await driver.tab();
+    await advertiser1Field.selectOption("Advertiser BF");
 
     // Verify settings
     await driver
@@ -707,11 +664,7 @@ describe("Config advertising section", () => {
     await waitForOptionalFieldsToLoad();
 
     // Toggle to disabled
-    await selectOption(advertiserEnabled0Field, "Disabled");
-    await expect
-      .element(advertiserEnabled0Field, { timeout: 1000 })
-      .toHaveValue("Disabled");
-    await driver.tab();
+    await advertiserEnabled0Field.selectOption("Disabled");
 
     // Verify settings
     await driver
@@ -721,11 +674,7 @@ describe("Config advertising section", () => {
       .toBe(false);
 
     // Toggle back to enabled
-    await selectOption(advertiserEnabled0Field, "Enabled");
-    await expect
-      .element(advertiserEnabled0Field, { timeout: 1000 })
-      .toHaveValue("Enabled");
-    await driver.tab();
+    await advertiserEnabled0Field.selectOption("Enabled");
 
     // Verify settings
     await driver
@@ -745,17 +694,13 @@ describe("Config advertising section", () => {
         }),
       );
 
-      await dspEnabledField.fill("");
-      await driver.tab();
+      await dspEnabledField.clear();
 
       await driver.expectValidate().toBe(false);
 
-      await expect.element(dspEnabledField).not.toBeValid();
-      await expect
-        .element(dspEnabledField)
-        .toHaveAccessibleDescription(
-          /please choose a value or specify a data element/i,
-        );
+      await dspEnabledField.expectError(
+        /please choose a value or specify a data element/i,
+      );
     });
 
     it("validates data element format in DSP enabled field", async () => {
@@ -785,10 +730,7 @@ describe("Config advertising section", () => {
       // Trigger validation
       await driver.expectValidate().toBe(false);
 
-      await expect.element(dspEnabledField).not.toBeValid();
-      await expect
-        .element(dspEnabledField)
-        .toHaveAccessibleDescription(/please enter a valid data element/i);
+      await dspEnabledField.expectError(/please enter a valid data element/i);
     });
 
     it("accepts valid data element format in DSP enabled field", async () => {
@@ -852,10 +794,7 @@ describe("Config advertising section", () => {
       // Trigger validation
       await driver.expectValidate().toBe(false);
 
-      await expect.element(id5PartnerIdField).not.toBeValid();
-      await expect
-        .element(id5PartnerIdField)
-        .toHaveAccessibleDescription(/please enter a valid data element/i);
+      await id5PartnerIdField.expectError(/please enter a valid data element/i);
     });
 
     it("validates data element format in RampID JS Path field", async () => {
@@ -889,10 +828,7 @@ describe("Config advertising section", () => {
       // Trigger validation
       await driver.expectValidate().toBe(false);
 
-      await expect.element(rampIdJSPathField).not.toBeValid();
-      await expect
-        .element(rampIdJSPathField)
-        .toHaveAccessibleDescription(/please enter a valid data element/i);
+      await rampIdJSPathField.expectError(/please enter a valid data element/i);
     });
 
     it("shows error when advertiser field is missing while DSP is enabled", async () => {
@@ -919,10 +855,7 @@ describe("Config advertising section", () => {
       // Trigger validation
       await driver.expectValidate().toBe(false);
 
-      await expect.element(advertiser0Field).not.toBeValid();
-      await expect
-        .element(advertiser0Field)
-        .toHaveAccessibleDescription(/please select an advertiser/i);
+      await advertiser0Field.expectError(/please select an advertiser/i);
     });
   });
 });

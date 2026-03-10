@@ -15,6 +15,7 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -30,16 +31,18 @@ let confirmDeleteInstanceButton;
 describe("Config Multiple Instances", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    nameField = view.getByTestId("nameField");
-    orgIdField = view.getByTestId("orgIdField");
-    productionEnvironmentTextfield = view.getByTestId(
-      "productionEnvironmentTextfield",
+    nameField = field(view.getByTestId("nameField"));
+    orgIdField = field(view.getByTestId("orgIdField"));
+    productionEnvironmentTextfield = field(
+      view.getByTestId("productionEnvironmentTextfield"),
     );
-    addInstanceButton = view.getByTestId("addInstanceButton");
-    deleteInstanceButton = view.getByTestId("deleteInstanceButton");
-    cancelDeleteInstanceButton = view.getByTestId("cancelDeleteInstanceButton");
-    confirmDeleteInstanceButton = view.getByTestId(
-      "confirmDeleteInstanceButton",
+    addInstanceButton = field(view.getByTestId("addInstanceButton"));
+    deleteInstanceButton = field(view.getByTestId("deleteInstanceButton"));
+    cancelDeleteInstanceButton = field(
+      view.getByTestId("cancelDeleteInstanceButton"),
+    );
+    confirmDeleteInstanceButton = field(
+      view.getByTestId("confirmDeleteInstanceButton"),
     );
   });
 
@@ -69,16 +72,12 @@ describe("Config Multiple Instances", () => {
 
     // Change the name back to "alloy" to create a duplicate
     await nameField.fill("alloy");
-    await driver.tab();
 
     await driver.expectValidate().toBe(false);
 
-    await expect.element(nameField).not.toBeValid();
-    await expect
-      .element(nameField)
-      .toHaveAccessibleDescription(
-        /please provide a name unique from those used for other instances/i,
-      );
+    await nameField.expectError(
+      /please provide a name unique from those used for other instances/i,
+    );
   });
 
   it("prevents creating two instances with the org name", async () => {
@@ -103,16 +102,12 @@ describe("Config Multiple Instances", () => {
     await secondTab.click();
 
     await nameField.fill("alloy2");
-    await driver.tab();
 
     await driver.expectValidate().toBe(false);
 
-    await expect.element(orgIdField).not.toBeValid();
-    await expect
-      .element(orgIdField)
-      .toHaveAccessibleDescription(
-        /please provide an IMS organization ID unique from those used for other instances/i,
-      );
+    await orgIdField.expectError(
+      /please provide an IMS organization ID unique from those used for other instances/i,
+    );
   });
 
   it("prevents creating two instances with the same edge config id", async () => {
@@ -145,16 +140,12 @@ describe("Config Multiple Instances", () => {
     await productionEnvironmentTextfield.fill(
       "2fdb3763-0507-42ea-8856-e91bf3b64faa",
     );
-    await driver.tab();
 
     await driver.expectValidate().toBe(false);
 
-    await expect.element(productionEnvironmentTextfield).not.toBeValid();
-    await expect
-      .element(productionEnvironmentTextfield)
-      .toHaveAccessibleDescription(
-        /please provide a value unique from those used for other instances/i,
-      );
+    await productionEnvironmentTextfield.expectError(
+      /please provide a value unique from those used for other instances/i,
+    );
   });
 
   it("allows creating two instances with different names and different org ids", async () => {
@@ -223,14 +214,14 @@ describe("Config Multiple Instances", () => {
     const firstTab = view.getByRole("tab", { name: "alloy" }).nth(0);
     await firstTab.click();
 
-    await expect.element(deleteInstanceButton).toBeVisible();
+    await deleteInstanceButton.expectVisible();
 
     // Click the delete button on the first instance
     await deleteInstanceButton.click();
 
     // Verify the confirmation dialog appears
-    await expect.element(cancelDeleteInstanceButton).toBeVisible();
-    await expect.element(confirmDeleteInstanceButton).toBeVisible();
+    await cancelDeleteInstanceButton.expectVisible();
+    await confirmDeleteInstanceButton.expectVisible();
 
     // First, test canceling the deletion
     await cancelDeleteInstanceButton.click();
@@ -298,7 +289,7 @@ describe("Config Multiple Instances", () => {
     const firstTab = view.getByRole("tab", { name: "alloy" }).nth(0);
     await firstTab.click();
 
-    await expect.element(deleteInstanceButton).toBeVisible();
+    await deleteInstanceButton.expectVisible();
 
     await deleteInstanceButton.click();
 
@@ -308,10 +299,10 @@ describe("Config Multiple Instances", () => {
     await driver.expectValidate().toBe(true);
 
     // Check that a tab is still visible in the page
-    await expect.element(nameField).toHaveValue("alloy2");
+    await nameField.expectValue("alloy2");
 
     // Check that the confirmation dialog is closed
-    await expect.element(confirmDeleteInstanceButton).not.toBeInTheDocument();
+    await confirmDeleteInstanceButton.expectHidden();
   });
 
   it("allows deleting last instance", async () => {
@@ -349,7 +340,7 @@ describe("Config Multiple Instances", () => {
     const lastTab = view.getByRole("tab", { name: "alloy" }).nth(2);
     await lastTab.click();
 
-    await expect.element(deleteInstanceButton).toBeVisible();
+    await deleteInstanceButton.expectVisible();
 
     await deleteInstanceButton.click();
 
@@ -359,10 +350,10 @@ describe("Config Multiple Instances", () => {
     await driver.expectValidate().toBe(true);
 
     // Check that a tab is still visible in the page
-    await expect.element(nameField).toHaveValue("alloy2");
+    await nameField.expectValue("alloy2");
 
     // Check that the confirmation dialog is closed
-    await expect.element(confirmDeleteInstanceButton).not.toBeInTheDocument();
+    await confirmDeleteInstanceButton.expectHidden();
   });
 
   it("allows deleting the middle instance", async () => {
@@ -400,7 +391,7 @@ describe("Config Multiple Instances", () => {
     const middleTab = view.getByRole("tab", { name: "alloy" }).nth(1);
     await middleTab.click();
 
-    await expect.element(deleteInstanceButton).toBeVisible();
+    await deleteInstanceButton.expectVisible();
 
     await deleteInstanceButton.click();
 
@@ -410,9 +401,9 @@ describe("Config Multiple Instances", () => {
     await driver.expectValidate().toBe(true);
 
     // Check that a tab is still visible in the page
-    await expect.element(nameField).toHaveValue("alloy");
+    await nameField.expectValue("alloy");
 
     // Check that the confirmation dialog is closed
-    await expect.element(confirmDeleteInstanceButton).not.toBeInTheDocument();
+    await confirmDeleteInstanceButton.expectHidden();
   });
 });

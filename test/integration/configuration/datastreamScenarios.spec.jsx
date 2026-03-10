@@ -20,6 +20,7 @@ import {
   datastreamForbiddenHandlers,
   singleSandboxNoDefaultHandlers,
 } from "../helpers/mocks/defaultHandlers";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -32,17 +33,17 @@ let datastreamDisabledFieldProduction;
 describe("Config Sandboxes", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    edgeConfigInputMethodFreeformRadio = view.getByTestId(
-      "edgeConfigInputMethodFreeformRadio",
+    edgeConfigInputMethodFreeformRadio = field(
+      view.getByTestId("edgeConfigInputMethodFreeformRadio"),
     );
-    edgeConfigInputMethodSelectRadio = view.getByTestId(
-      "edgeConfigInputMethodSelectRadio",
+    edgeConfigInputMethodSelectRadio = field(
+      view.getByTestId("edgeConfigInputMethodSelectRadio"),
     );
-    productionEnvironmentTextfield = view.getByTestId(
-      "productionEnvironmentTextfield",
+    productionEnvironmentTextfield = field(
+      view.getByTestId("productionEnvironmentTextfield"),
     );
-    datastreamDisabledFieldProduction = view.getByTestId(
-      "datastreamDisabledFieldproduction",
+    datastreamDisabledFieldProduction = field(
+      view.getByTestId("datastreamDisabledFieldproduction"),
     );
   });
 
@@ -68,11 +69,11 @@ describe("Config Sandboxes", () => {
         ],
       },
     });
-    await expect.element(edgeConfigInputMethodFreeformRadio).toBeChecked();
+    await edgeConfigInputMethodFreeformRadio.expectChecked();
 
-    await expect
-      .element(productionEnvironmentTextfield)
-      .toHaveValue("2fdb3763-0507-42ea-8856-e91bf3b64faa");
+    await productionEnvironmentTextfield.expectValue(
+      "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+    );
 
     await expect
       .element(
@@ -110,10 +111,10 @@ describe("Config Sandboxes", () => {
       )
       .toBeVisible();
 
-    await expect.element(datastreamDisabledFieldProduction).toBeDisabled();
-    await expect
-      .element(datastreamDisabledFieldProduction)
-      .toHaveValue("2fdb3763-0507-42ea-8856-e91bf3b64faa");
+    await datastreamDisabledFieldProduction.expectDisabled();
+    await datastreamDisabledFieldProduction.expectValue(
+      "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+    );
   });
 
   it("shows alert panel with one non-default sandbox and forbidden datastreams access", async () => {

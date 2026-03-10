@@ -19,6 +19,7 @@ import {
   singleSandboxNoDefaultHandlers,
   sandboxUserRegionMissingHandlers,
 } from "../helpers/mocks/defaultHandlers";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -29,9 +30,9 @@ let edgeConfigInputMethodSelectRadio;
 describe("Config Sandboxes", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    productionSandboxField = view.getByTestId("productionSandboxField");
-    edgeConfigInputMethodSelectRadio = view.getByTestId(
-      "edgeConfigInputMethodSelectRadio",
+    productionSandboxField = field(view.getByTestId("productionSandboxField"));
+    edgeConfigInputMethodSelectRadio = field(
+      view.getByTestId("edgeConfigInputMethodSelectRadio"),
     );
   });
 
@@ -43,7 +44,7 @@ describe("Config Sandboxes", () => {
     worker.use(...singleSandboxNoDefaultHandlers);
     await driver.init();
 
-    await expect.element(productionSandboxField).toBeDisabled();
+    await productionSandboxField.expectDisabled();
   });
 
   it("shows alert panel when user region is missing", async () => {

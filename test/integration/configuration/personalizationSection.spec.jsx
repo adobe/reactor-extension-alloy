@@ -16,8 +16,10 @@ import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 
 let view;
+let bridge;
 let driver;
 let cleanup;
 let targetMigrationEnabledField;
@@ -30,21 +32,27 @@ let rulesEngineComponentCheckbox;
 
 describe("Config personalization section", () => {
   beforeEach(async () => {
-    ({ view, driver, cleanup } = await useView(ConfigurationView));
-    targetMigrationEnabledField = view.getByTestId(
-      "targetMigrationEnabledField",
+    ({ view, bridge, driver, cleanup } = await useView(ConfigurationView));
+    targetMigrationEnabledField = field(
+      view.getByTestId("targetMigrationEnabledField"),
     );
-    personalizationStorageEnabledField = view.getByTestId(
-      "personalizationStorageEnabledField",
+    personalizationStorageEnabledField = field(
+      view.getByTestId("personalizationStorageEnabledField"),
     );
-    prehidingStyleEditButton = view.getByTestId("prehidingStyleEditButton");
-    ajoPicker = view.getByTestId("autoCollectPropositionInteractionsAJOPicker");
-    tgtPicker = view.getByTestId("autoCollectPropositionInteractionsTGTPicker");
-    personalizationComponentCheckbox = view.getByTestId(
-      "personalizationComponentCheckbox",
+    prehidingStyleEditButton = field(
+      view.getByTestId("prehidingStyleEditButton"),
     );
-    rulesEngineComponentCheckbox = view.getByTestId(
-      "rulesEngineComponentCheckbox",
+    ajoPicker = field(
+      view.getByTestId("autoCollectPropositionInteractionsAJOPicker"),
+    );
+    tgtPicker = field(
+      view.getByTestId("autoCollectPropositionInteractionsTGTPicker"),
+    );
+    personalizationComponentCheckbox = field(
+      view.getByTestId("personalizationComponentCheckbox"),
+    );
+    rulesEngineComponentCheckbox = field(
+      view.getByTestId("rulesEngineComponentCheckbox"),
     );
   });
 
@@ -70,13 +78,11 @@ describe("Config personalization section", () => {
       }),
     );
 
-    await expect.element(targetMigrationEnabledField).toBeChecked();
-    await expect.element(personalizationStorageEnabledField).toBeChecked();
+    await targetMigrationEnabledField.expectChecked();
+    await personalizationStorageEnabledField.expectChecked();
 
-    await expect
-      .element(ajoPicker)
-      .toHaveTextContent(/decorated elements only/i);
-    await expect.element(tgtPicker).toHaveTextContent(/always/i);
+    await ajoPicker.expectValue(/decorated elements only/i);
+    await tgtPicker.expectValue(/always/i);
   });
 
   it("updates form values and saves to settings", async () => {
@@ -194,16 +200,14 @@ describe("Config personalization section", () => {
       )
       .toBeVisible();
 
-    await expect
-      .element(personalizationStorageEnabledField)
-      .not.toBeInTheDocument();
+    await personalizationStorageEnabledField.expectHidden();
   });
 
   it("shows default values for auto-collect pickers", async () => {
     await driver.init(buildSettings());
 
-    await expect.element(ajoPicker).toHaveTextContent(/always/i);
-    await expect.element(tgtPicker).toHaveTextContent(/never/i);
+    await ajoPicker.expectValue(/always/i);
+    await tgtPicker.expectValue(/never/i);
   });
 
   it("does not save default values to settings", async () => {
@@ -248,7 +252,7 @@ describe("Config personalization section", () => {
   });
 
   it("does not save prehidingStyle code if it matches placeholder", async () => {
-    driver.openCodeEditorMock = async ({ code }) => code;
+    bridge.openCodeEditorMock = async ({ code }) => code;
 
     await driver.init(
       buildSettings({

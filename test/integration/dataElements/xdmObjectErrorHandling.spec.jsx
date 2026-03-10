@@ -25,6 +25,7 @@ import {
   singleSchemaHandlers,
   schemaNotFoundHandlers,
 } from "../helpers/mocks/defaultHandlers";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -79,9 +80,7 @@ describe("XDM Object Data Element Error Handling", () => {
         },
       });
 
-      await expect
-        .element(view.getByTestId("schemaMissingAlert"))
-        .toBeVisible();
+      await field(view.getByTestId("schemaMissingAlert")).expectVisible();
     });
   });
 
@@ -91,8 +90,8 @@ describe("XDM Object Data Element Error Handling", () => {
       ({ view, driver, cleanup } = await useView(XdmObjectView));
       await driver.init();
 
-      const schemaField = view.getByTestId("schemaField");
-      await expect.element(schemaField).toBeVisible();
+      const schemaField = field(view.getByTestId("schemaField"));
+      await schemaField.expectVisible();
     });
 
     it("shows missing schema alert when auto-selected single schema returns 404", async () => {
@@ -100,9 +99,7 @@ describe("XDM Object Data Element Error Handling", () => {
       ({ view, driver, cleanup } = await useView(XdmObjectView));
       await driver.init();
 
-      await expect
-        .element(view.getByTestId("schemaMissingAlert"))
-        .toBeVisible();
+      await field(view.getByTestId("schemaMissingAlert")).expectVisible();
     });
 
     it("shows missing schema alert when saved schema cannot be loaded", async () => {
@@ -119,9 +116,7 @@ describe("XDM Object Data Element Error Handling", () => {
         },
       });
 
-      await expect
-        .element(view.getByTestId("schemaMissingAlert"))
-        .toBeVisible();
+      await field(view.getByTestId("schemaMissingAlert")).expectVisible();
     });
   });
 });

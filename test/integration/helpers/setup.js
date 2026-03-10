@@ -14,6 +14,7 @@ import { afterEach, afterAll } from "vitest";
 import { worker } from "./mocks/browser";
 import "./spectrumLocators";
 import "./spectrumMatchers";
+import field from "./field";
 
 // React (dev) logs to console when an error boundary catches an error. In Vitest browser
 // mode, onConsoleLog in the config has no effect (logs stay in the browser). Override
@@ -51,4 +52,5 @@ afterEach(() => {
 // Clean up after all tests
 afterAll(() => {
   worker.stop();
+  field.logTotalRetries();
 });

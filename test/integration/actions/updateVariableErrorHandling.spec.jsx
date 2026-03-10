@@ -20,6 +20,7 @@ import {
   dataElementsServerErrorHandlers,
   dataElementsEmptyHandlers,
 } from "../helpers/mocks/defaultHandlers";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -56,7 +57,7 @@ describe("Update Variable Action Error Handling", () => {
       ({ view, driver, cleanup } = await useView(UpdateVariableView));
       await driver.init();
 
-      await expect.element(view.getByTestId("noDataElements")).toBeVisible();
+      await field(view.getByTestId("noDataElements")).expectVisible();
     });
   });
 });

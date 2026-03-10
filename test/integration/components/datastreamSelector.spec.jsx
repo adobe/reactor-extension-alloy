@@ -15,6 +15,7 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -61,14 +62,16 @@ describe("Datastream Selector - Refresh Button", () => {
       }),
     );
 
-    const refreshButton = view.getByRole("button", {
-      name: "Refresh datastreams",
-    });
+    const refreshButton = field(
+      view.getByRole("button", {
+        name: "Refresh datastreams",
+      }),
+    );
 
     await refreshButton.click();
 
     // The button should eventually become enabled again after loading completes
-    await expect.element(refreshButton).not.toBeDisabled();
+    await refreshButton.expectEnabled();
   });
 
   it("refresh button reloads datastream list", async () => {
@@ -83,20 +86,24 @@ describe("Datastream Selector - Refresh Button", () => {
       }),
     );
 
-    const datastreamField = view.getByTestId("productionDatastreamField");
-    const refreshButton = view.getByRole("button", {
-      name: "Refresh datastreams",
-    });
+    const datastreamField = field(
+      view.getByTestId("productionDatastreamField"),
+    );
+    const refreshButton = field(
+      view.getByRole("button", {
+        name: "Refresh datastreams",
+      }),
+    );
 
-    await expect.element(datastreamField).toBeVisible();
+    await datastreamField.expectVisible();
 
     await refreshButton.click();
 
     // Wait for reload to complete by polling the button's disabled state
-    await expect.element(refreshButton).not.toBeDisabled();
+    await refreshButton.expectEnabled();
 
     // Verify the field is still functional after refresh
-    await expect.element(datastreamField).toBeVisible();
+    await datastreamField.expectVisible();
   });
 
   it("refresh button works independently for each environment", async () => {
@@ -118,9 +125,9 @@ describe("Datastream Selector - Refresh Button", () => {
 
     await expect.element(allRefreshButtons.nth(0)).toBeVisible();
 
-    const firstRefreshButton = allRefreshButtons.nth(0);
+    const firstRefreshButton = field(allRefreshButtons.nth(0));
     await firstRefreshButton.click();
 
-    await expect.element(firstRefreshButton).not.toBeDisabled();
+    await firstRefreshButton.expectEnabled();
   });
 });

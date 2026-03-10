@@ -21,6 +21,7 @@ import {
   sandboxEmptyHandlers,
   schemasServerErrorHandlers,
 } from "../helpers/mocks/defaultHandlers";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -69,8 +70,8 @@ describe("Variable Data Element Error Handling", () => {
       ({ view, driver, cleanup } = await useView(VariableView));
       await driver.init();
 
-      const schemaField = view.getByTestId("schemaField");
-      await expect.element(schemaField).toBeVisible();
+      const schemaField = field(view.getByTestId("schemaField"));
+      await schemaField.expectVisible();
     });
   });
 });

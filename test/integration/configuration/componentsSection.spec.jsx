@@ -10,12 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, beforeEach, afterEach, expect } from "vitest";
+import { describe, it, beforeEach, afterEach } from "vitest";
 
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { toggleComponent } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -34,31 +35,35 @@ let eventMergeComponentCheckbox;
 describe("Config components section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    personalizationComponentCheckbox = view.getByTestId(
-      "personalizationComponentCheckbox",
+    personalizationComponentCheckbox = field(
+      view.getByTestId("personalizationComponentCheckbox"),
     );
-    consentComponentCheckbox = view.getByTestId("consentComponentCheckbox");
-    pushNotificationsComponentCheckbox = view.getByTestId(
-      "pushNotificationsComponentCheckbox",
+    consentComponentCheckbox = field(
+      view.getByTestId("consentComponentCheckbox"),
     );
-    advertisingComponentCheckbox = view.getByTestId(
-      "advertisingComponentCheckbox",
+    pushNotificationsComponentCheckbox = field(
+      view.getByTestId("pushNotificationsComponentCheckbox"),
     );
-    activityCollectorComponentCheckbox = view.getByTestId(
-      "activityCollectorComponentCheckbox",
+    advertisingComponentCheckbox = field(
+      view.getByTestId("advertisingComponentCheckbox"),
     );
-    audiencesComponentCheckbox = view.getByTestId("audiencesComponentCheckbox");
-    rulesEngineComponentCheckbox = view.getByTestId(
-      "rulesEngineComponentCheckbox",
+    activityCollectorComponentCheckbox = field(
+      view.getByTestId("activityCollectorComponentCheckbox"),
     );
-    streamingMediaComponentCheckbox = view.getByTestId(
-      "streamingMediaComponentCheckbox",
+    audiencesComponentCheckbox = field(
+      view.getByTestId("audiencesComponentCheckbox"),
     );
-    mediaAnalyticsBridgeComponentCheckbox = view.getByTestId(
-      "mediaAnalyticsBridgeComponentCheckbox",
+    rulesEngineComponentCheckbox = field(
+      view.getByTestId("rulesEngineComponentCheckbox"),
     );
-    eventMergeComponentCheckbox = view.getByTestId(
-      "eventMergeComponentCheckbox",
+    streamingMediaComponentCheckbox = field(
+      view.getByTestId("streamingMediaComponentCheckbox"),
+    );
+    mediaAnalyticsBridgeComponentCheckbox = field(
+      view.getByTestId("mediaAnalyticsBridgeComponentCheckbox"),
+    );
+    eventMergeComponentCheckbox = field(
+      view.getByTestId("eventMergeComponentCheckbox"),
     );
   });
 
@@ -102,16 +107,16 @@ describe("Config components section", () => {
     );
 
     // Verify checkboxes are unchecked
-    await expect.element(personalizationComponentCheckbox).not.toBeChecked();
-    await expect.element(consentComponentCheckbox).not.toBeChecked();
+    await personalizationComponentCheckbox.expectUnchecked();
+    await consentComponentCheckbox.expectUnchecked();
   });
 
   it("does not include new components when creating a new configuration", async () => {
     await driver.init();
 
     // Verify new beta components are unchecked
-    await expect.element(pushNotificationsComponentCheckbox).not.toBeChecked();
-    await expect.element(advertisingComponentCheckbox).not.toBeChecked();
+    await pushNotificationsComponentCheckbox.expectUnchecked();
+    await advertisingComponentCheckbox.expectUnchecked();
 
     await driver.expectSettings((s) => s.components).toBeDefined();
     // Only eventMerge is saved as false (it's deprecated/not default)
@@ -135,8 +140,8 @@ describe("Config components section", () => {
     );
 
     // Verify new beta components are unchecked
-    await expect.element(pushNotificationsComponentCheckbox).not.toBeChecked();
-    await expect.element(advertisingComponentCheckbox).not.toBeChecked();
+    await pushNotificationsComponentCheckbox.expectUnchecked();
+    await advertisingComponentCheckbox.expectUnchecked();
 
     await driver.expectSettings((s) => s.components).toBeDefined();
     await driver.expectSettings((s) => s.components.eventMerge).toBe(false);
@@ -146,13 +151,13 @@ describe("Config components section", () => {
     await driver.init();
 
     // Verify default components are checked
-    await expect.element(activityCollectorComponentCheckbox).toBeChecked();
-    await expect.element(audiencesComponentCheckbox).toBeChecked();
-    await expect.element(consentComponentCheckbox).toBeChecked();
-    await expect.element(personalizationComponentCheckbox).toBeChecked();
-    await expect.element(rulesEngineComponentCheckbox).toBeChecked();
-    await expect.element(streamingMediaComponentCheckbox).toBeChecked();
-    await expect.element(mediaAnalyticsBridgeComponentCheckbox).toBeChecked();
+    await activityCollectorComponentCheckbox.expectChecked();
+    await audiencesComponentCheckbox.expectChecked();
+    await consentComponentCheckbox.expectChecked();
+    await personalizationComponentCheckbox.expectChecked();
+    await rulesEngineComponentCheckbox.expectChecked();
+    await streamingMediaComponentCheckbox.expectChecked();
+    await mediaAnalyticsBridgeComponentCheckbox.expectChecked();
   });
 
   it("allows toggling components on and off", async () => {
@@ -178,7 +183,7 @@ describe("Config components section", () => {
     await driver.expectSettings((s) => s.components.advertising).toBe(true);
 
     // Verify checkbox is checked
-    await expect.element(advertisingComponentCheckbox).toBeChecked();
+    await advertisingComponentCheckbox.expectChecked();
   });
 
   it("preserves enabled beta components from settings", async () => {
@@ -192,8 +197,8 @@ describe("Config components section", () => {
     );
 
     // Verify beta components are checked
-    await expect.element(advertisingComponentCheckbox).toBeChecked();
-    await expect.element(pushNotificationsComponentCheckbox).toBeChecked();
+    await advertisingComponentCheckbox.expectChecked();
+    await pushNotificationsComponentCheckbox.expectChecked();
 
     await driver.expectSettings((s) => s.components.advertising).toBe(true);
     await driver
@@ -233,7 +238,7 @@ describe("Config components section", () => {
     await driver.init();
 
     // eventMerge is deprecated and should be disabled by default for new configs
-    await expect.element(eventMergeComponentCheckbox).not.toBeChecked();
+    await eventMergeComponentCheckbox.expectUnchecked();
 
     await driver.expectSettings((s) => s.components.eventMerge).toBe(false);
   });
@@ -248,7 +253,7 @@ describe("Config components section", () => {
     );
 
     // Verify deprecated component is enabled from settings
-    await expect.element(eventMergeComponentCheckbox).toBeChecked();
+    await eventMergeComponentCheckbox.expectChecked();
 
     // When eventMerge is true (its default value), it won't be in settings
     // because only non-default values are saved

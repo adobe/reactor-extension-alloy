@@ -14,6 +14,7 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
 import useView from "../helpers/useView";
 import SendEventView from "../../../src/view/actions/sendEventView";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -25,14 +26,14 @@ let handleAdvertisingDataWaitOption;
 describe("Send Event Action", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(SendEventView));
-    handleAdvertisingDataDisabledOption = view.getByTestId(
-      "handleAdvertisingDatadisabledOption",
+    handleAdvertisingDataDisabledOption = field(
+      view.getByTestId("handleAdvertisingDatadisabledOption"),
     );
-    handleAdvertisingDataAutoOption = view.getByTestId(
-      "handleAdvertisingDataautoOption",
+    handleAdvertisingDataAutoOption = field(
+      view.getByTestId("handleAdvertisingDataautoOption"),
     );
-    handleAdvertisingDataWaitOption = view.getByTestId(
-      "handleAdvertisingDatawaitOption",
+    handleAdvertisingDataWaitOption = field(
+      view.getByTestId("handleAdvertisingDatawaitOption"),
     );
   });
 
@@ -162,7 +163,7 @@ describe("Send Event Action", () => {
         .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
-      await expect.element(handleAdvertisingDataDisabledOption).toBeChecked();
+      await handleAdvertisingDataDisabledOption.expectChecked();
     });
 
     it("does not save advertising settings when default disabled value is selected", async () => {
@@ -237,7 +238,7 @@ describe("Send Event Action", () => {
         .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
-      await expect.element(handleAdvertisingDataAutoOption).toBeChecked();
+      await handleAdvertisingDataAutoOption.expectChecked();
     });
 
     it("loads existing advertising settings - wait", async () => {
@@ -257,7 +258,7 @@ describe("Send Event Action", () => {
         .element(view.getByText("Request default Advertising data"))
         .toBeVisible();
 
-      await expect.element(handleAdvertisingDataWaitOption).toBeChecked();
+      await handleAdvertisingDataWaitOption.expectChecked();
     });
 
     it("removes advertising settings when switching back to disabled", async () => {

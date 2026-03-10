@@ -16,6 +16,7 @@ import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -30,16 +31,20 @@ let consentComponentCheckbox;
 describe("Config consent section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    defaultConsentInRadio = view.getByTestId("defaultConsentInRadio");
-    defaultConsentOutRadio = view.getByTestId("defaultConsentOutRadio");
-    defaultConsentPendingRadio = view.getByTestId("defaultConsentPendingRadio");
-    defaultConsentDataElementRadio = view.getByTestId(
-      "defaultConsentDataElementRadio",
+    defaultConsentInRadio = field(view.getByTestId("defaultConsentInRadio"));
+    defaultConsentOutRadio = field(view.getByTestId("defaultConsentOutRadio"));
+    defaultConsentPendingRadio = field(
+      view.getByTestId("defaultConsentPendingRadio"),
     );
-    defaultConsentDataElementField = view.getByTestId(
-      "defaultConsentDataElementField",
+    defaultConsentDataElementRadio = field(
+      view.getByTestId("defaultConsentDataElementRadio"),
     );
-    consentComponentCheckbox = view.getByTestId("consentComponentCheckbox");
+    defaultConsentDataElementField = field(
+      view.getByTestId("defaultConsentDataElementField"),
+    );
+    consentComponentCheckbox = field(
+      view.getByTestId("consentComponentCheckbox"),
+    );
   });
 
   afterEach(() => {
@@ -58,7 +63,7 @@ describe("Config consent section", () => {
       }),
     );
 
-    await expect.element(defaultConsentOutRadio).toBeChecked();
+    await defaultConsentOutRadio.expectChecked();
   });
 
   it("updates form values and saves to settings", async () => {
@@ -105,13 +110,13 @@ describe("Config consent section", () => {
       )
       .toBeVisible();
 
-    await expect.element(defaultConsentInRadio).not.toBeInTheDocument();
+    await defaultConsentInRadio.expectHidden();
   });
 
   it("shows default value 'in' when no setting is provided", async () => {
     await driver.init(buildSettings());
 
-    await expect.element(defaultConsentInRadio).toBeChecked();
+    await defaultConsentInRadio.expectChecked();
   });
 
   it("does not save default value 'in' to settings", async () => {
@@ -131,7 +136,6 @@ describe("Config consent section", () => {
       await defaultConsentDataElementRadio.click();
 
       await defaultConsentDataElementField.fill("%consentDataElement%");
-      await driver.tab();
 
       await driver.expectValidate().toBe(true);
     });
@@ -144,14 +148,12 @@ describe("Config consent section", () => {
       await defaultConsentDataElementRadio.click();
 
       await defaultConsentDataElementField.fill("%consentDataElement");
-      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 
-      await expect.element(defaultConsentDataElementField).not.toBeValid();
-      await expect
-        .element(defaultConsentDataElementField)
-        .toHaveAccessibleDescription(/please specify a data element/i);
+      await defaultConsentDataElementField.expectError(
+        /please specify a data element/i,
+      );
     });
 
     it("shows error when value is missing in default consent field", async () => {
@@ -164,10 +166,9 @@ describe("Config consent section", () => {
       await driver.expectValidate().toBe(false);
 
       await defaultConsentDataElementField.clear();
-      await expect.element(defaultConsentDataElementField).not.toBeValid();
-      await expect
-        .element(defaultConsentDataElementField)
-        .toHaveAccessibleDescription(/please specify a data element/i);
+      await defaultConsentDataElementField.expectError(
+        /please specify a data element/i,
+      );
     });
   });
 });

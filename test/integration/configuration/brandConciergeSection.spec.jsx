@@ -16,6 +16,7 @@ import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { expandAccordion } from "../helpers/ui";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -27,12 +28,12 @@ let brandConciergeComponentCheckbox;
 describe("Config brand concierge section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    stickyConversationSessionField = view.getByTestId(
-      "stickyConversationSessionField",
+    stickyConversationSessionField = field(
+      view.getByTestId("stickyConversationSessionField"),
     );
-    streamTimeoutField = view.getByTestId("streamTimeoutDataTestId");
-    brandConciergeComponentCheckbox = view.getByTestId(
-      "brandConciergeComponentCheckbox",
+    streamTimeoutField = field(view.getByTestId("streamTimeoutDataTestId"));
+    brandConciergeComponentCheckbox = field(
+      view.getByTestId("brandConciergeComponentCheckbox"),
     );
   });
 
@@ -58,8 +59,8 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await expect.element(stickyConversationSessionField).toBeChecked();
-    await expect.element(streamTimeoutField).toHaveValue("20");
+    await stickyConversationSessionField.expectChecked();
+    await streamTimeoutField.expectValue("20");
   });
 
   it("updates form values and saves to settings", async () => {
@@ -74,7 +75,6 @@ describe("Config brand concierge section", () => {
     await stickyConversationSessionField.click();
 
     await streamTimeoutField.fill("30");
-    await driver.tab();
 
     await driver
       .expectSettings(
@@ -161,7 +161,7 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await expect.element(streamTimeoutField).toHaveValue("45");
+    await streamTimeoutField.expectValue("45");
   });
 
   it("does not save stream timeout when it equals default value", async () => {

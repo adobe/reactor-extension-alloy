@@ -10,11 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, beforeEach, afterEach, expect } from "vitest";
+import { describe, it, beforeEach, afterEach } from "vitest";
 
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -25,9 +26,11 @@ let thirdPartyCookiesEnabledField;
 describe("Config Identity section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    idMigrationEnabledField = view.getByTestId("idMigrationEnabledField");
-    thirdPartyCookiesEnabledField = view.getByTestId(
-      "thirdPartyCookiesEnabledField",
+    idMigrationEnabledField = field(
+      view.getByTestId("idMigrationEnabledField"),
+    );
+    thirdPartyCookiesEnabledField = field(
+      view.getByTestId("thirdPartyCookiesEnabledField"),
     );
   });
 
@@ -48,8 +51,8 @@ describe("Config Identity section", () => {
       }),
     );
 
-    await expect.element(idMigrationEnabledField).not.toBeChecked();
-    await expect.element(thirdPartyCookiesEnabledField).toHaveValue("Disabled");
+    await idMigrationEnabledField.expectUnchecked();
+    await thirdPartyCookiesEnabledField.expectValue("Disabled");
   });
 
   it("updates form values and saves to settings", async () => {
@@ -58,7 +61,6 @@ describe("Config Identity section", () => {
     await idMigrationEnabledField.click();
 
     await thirdPartyCookiesEnabledField.fill("Disabled");
-    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].idMigrationEnabled)
@@ -71,8 +73,8 @@ describe("Config Identity section", () => {
   it("shows default values when no settings are provided", async () => {
     await driver.init(buildSettings());
 
-    await expect.element(idMigrationEnabledField).toBeChecked();
-    await expect.element(thirdPartyCookiesEnabledField).toHaveValue("Enabled");
+    await idMigrationEnabledField.expectChecked();
+    await thirdPartyCookiesEnabledField.expectValue("Enabled");
   });
 
   it("does not save default values to settings", async () => {
@@ -98,9 +100,7 @@ describe("Config Identity section", () => {
       }),
     );
 
-    await expect
-      .element(thirdPartyCookiesEnabledField)
-      .toHaveValue("%myDataElement%");
+    await thirdPartyCookiesEnabledField.expectValue("%myDataElement%");
 
     await driver
       .expectSettings((s) => s.instances[0].thirdPartyCookiesEnabled)
@@ -112,14 +112,12 @@ describe("Config Identity section", () => {
       await driver.init(buildSettings());
 
       await thirdPartyCookiesEnabledField.fill("invalid%DataElement");
-      await driver.tab();
 
       await driver.expectValidate().toBe(false);
 
-      await expect.element(thirdPartyCookiesEnabledField).not.toBeValid();
-      await expect
-        .element(thirdPartyCookiesEnabledField)
-        .toHaveAccessibleDescription(/please enter a valid data element/i);
+      await thirdPartyCookiesEnabledField.expectError(
+        /please enter a valid data element/i,
+      );
     });
 
     it("accepts valid data element format in third-party cookies field", async () => {

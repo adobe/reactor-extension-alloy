@@ -21,17 +21,14 @@ const withRetries = async (fn) => {
       await fn();
       return;
     } catch (error) {
-      console.error(
-        "withRetries error in attempt",
-        i + 1,
-        error.message.split("\n")[0],
-      );
       if (i === RETRIES - 1) {
         throw error;
       }
     }
   }
 };
+
+const TIMEOUT = { timeout: 2000 };
 
 /**
  * Open the listbox and select an option.
@@ -45,20 +42,25 @@ export async function selectOption(locator, name) {
       const button = isComboBox
         ? locator.locator("xpath=../../..").getByRole("button")
         : locator;
-      await button.click({ timeout: 10000 });
+      await button.click(TIMEOUT);
       await expect
-        .element(locator, { timeout: 5000 })
+        .element(locator, TIMEOUT)
         .toHaveAttribute("aria-expanded", "true");
     }
     const listbox = locator.controls();
-    await expect.element(listbox, { timeout: 5000 }).toBeVisible();
+    await expect.element(listbox, TIMEOUT).toBeVisible();
     await listbox
       .getByRole("option", { name, exact: true })
       .nth(0)
-      .click({ timeout: 10000 });
+      .click(TIMEOUT);
     await expect
-      .element(locator, { timeout: 5000 })
+      .element(locator, TIMEOUT)
       .toHaveAttribute("aria-expanded", "false");
+    if (locator.element().tagName.toLowerCase() === "input") {
+      await expect.element(locator, TIMEOUT).toHaveValue(name);
+    } else {
+      await expect.element(locator, TIMEOUT).toHaveTextContent(name);
+    }
   });
 }
 
@@ -67,11 +69,11 @@ export async function selectOption(locator, name) {
  */
 export async function expand(locator) {
   await withRetries(async () => {
-    await expect.element(locator).toBeVisible({ timeout: 1000 });
+    await expect.element(locator).toBeVisible(TIMEOUT);
     if (locator.element().getAttribute("aria-expanded") !== "true") {
-      await locator.click({ timeout: 10000 });
+      await locator.click(TIMEOUT);
       await expect
-        .element(locator, { timeout: 1000 })
+        .element(locator, TIMEOUT)
         .toHaveAttribute("aria-expanded", "true");
     }
   });

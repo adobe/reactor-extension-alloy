@@ -10,11 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, beforeEach, afterEach, expect } from "vitest";
+import { describe, it, beforeEach, afterEach } from "vitest";
 
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { buildSettings } from "../helpers/settingsUtils";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -25,8 +26,10 @@ let edgeBasePathRestoreButton;
 describe("Config advanced section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    edgeBasePathField = view.getByTestId("edgeBasePathField");
-    edgeBasePathRestoreButton = view.getByTestId("edgeBasePathRestoreButton");
+    edgeBasePathField = field(view.getByTestId("edgeBasePathField"));
+    edgeBasePathRestoreButton = field(
+      view.getByTestId("edgeBasePathRestoreButton"),
+    );
   });
 
   afterEach(() => {
@@ -45,14 +48,13 @@ describe("Config advanced section", () => {
       }),
     );
 
-    await expect.element(edgeBasePathField).toHaveValue("custom-path");
+    await edgeBasePathField.expectValue("custom-path");
   });
 
   it("updates form values and saves to settings", async () => {
     await driver.init(buildSettings());
 
     await edgeBasePathField.fill("my-custom-path");
-    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0].edgeBasePath)
@@ -62,7 +64,7 @@ describe("Config advanced section", () => {
   it("shows default value 'ee' when no setting is provided", async () => {
     await driver.init(buildSettings());
 
-    await expect.element(edgeBasePathField).toHaveValue("ee");
+    await edgeBasePathField.expectValue("ee");
   });
 
   it("does not save default value 'ee' to settings", async () => {
@@ -85,7 +87,7 @@ describe("Config advanced section", () => {
       }),
     );
 
-    await expect.element(edgeBasePathField).toHaveValue("%myDataElement%");
+    await edgeBasePathField.expectValue("%myDataElement%");
 
     await driver
       .expectSettings((s) => s.instances[0].edgeBasePath)
@@ -97,11 +99,11 @@ describe("Config advanced section", () => {
 
     await edgeBasePathField.fill("custom-path");
 
-    await expect.element(edgeBasePathField).toHaveValue("custom-path");
+    await edgeBasePathField.expectValue("custom-path");
 
     await edgeBasePathRestoreButton.click();
 
-    await expect.element(edgeBasePathField).toHaveValue("ee");
+    await edgeBasePathField.expectValue("ee");
   });
 
   describe("validation", () => {
@@ -110,13 +112,9 @@ describe("Config advanced section", () => {
 
       await driver.expectValidate().toBe(true);
 
-      await edgeBasePathField.fill("");
-      await driver.tab();
+      await edgeBasePathField.clear();
 
-      await expect.element(edgeBasePathField).not.toBeValid();
-      await expect
-        .element(edgeBasePathField)
-        .toHaveAccessibleDescription(/please specify an edge base path/i);
+      await edgeBasePathField.expectError(/please specify an edge base path/i);
 
       await driver.expectValidate().toBe(false);
     });

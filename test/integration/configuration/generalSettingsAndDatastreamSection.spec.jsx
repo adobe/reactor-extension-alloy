@@ -15,7 +15,7 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { buildSettings } from "../helpers/settingsUtils";
-import { selectOption } from "../helpers/spectrum";
+import field from "../helpers/field";
 
 let view;
 let driver;
@@ -37,29 +37,35 @@ let edgeDomainRestoreButton;
 describe("Config general settings and datastream section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
-    nameField = view.getByTestId("nameField");
-    orgIdField = view.getByTestId("orgIdField");
-    edgeDomainField = view.getByTestId("edgeDomainField");
-    edgeConfigInputMethodFreeformRadio = view.getByTestId(
-      "edgeConfigInputMethodFreeformRadio",
+    nameField = field(view.getByTestId("nameField"));
+    orgIdField = field(view.getByTestId("orgIdField"));
+    edgeDomainField = field(view.getByTestId("edgeDomainField"));
+    edgeConfigInputMethodFreeformRadio = field(
+      view.getByTestId("edgeConfigInputMethodFreeformRadio"),
     );
-    edgeConfigInputMethodSelectRadio = view.getByTestId(
-      "edgeConfigInputMethodSelectRadio",
+    edgeConfigInputMethodSelectRadio = field(
+      view.getByTestId("edgeConfigInputMethodSelectRadio"),
     );
-    productionEnvironmentTextfield = view.getByTestId(
-      "productionEnvironmentTextfield",
+    productionEnvironmentTextfield = field(
+      view.getByTestId("productionEnvironmentTextfield"),
     );
-    stagingEnvironmentTextfield = view.getByTestId(
-      "stagingEnvironmentTextfield",
+    stagingEnvironmentTextfield = field(
+      view.getByTestId("stagingEnvironmentTextfield"),
     );
-    developmentEnvironmentTextfield = view.getByTestId(
-      "developmentEnvironmentTextfield",
+    developmentEnvironmentTextfield = field(
+      view.getByTestId("developmentEnvironmentTextfield"),
     );
-    productionDatastreamField = view.getByTestId("productionDatastreamField");
-    stagingDatastreamField = view.getByTestId("stagingDatastreamField");
-    developmentDatastreamField = view.getByTestId("developmentDatastreamField");
-    orgIdRestoreButton = view.getByTestId("orgIdRestoreButton");
-    edgeDomainRestoreButton = view.getByTestId("edgeDomainRestoreButton");
+    productionDatastreamField = field(
+      view.getByTestId("productionDatastreamField"),
+    );
+    stagingDatastreamField = field(view.getByTestId("stagingDatastreamField"));
+    developmentDatastreamField = field(
+      view.getByTestId("developmentDatastreamField"),
+    );
+    orgIdRestoreButton = field(view.getByTestId("orgIdRestoreButton"));
+    edgeDomainRestoreButton = field(
+      view.getByTestId("edgeDomainRestoreButton"),
+    );
   });
 
   afterEach(() => {
@@ -85,21 +91,15 @@ describe("Config general settings and datastream section", () => {
       },
     });
 
-    await expect.element(nameField).toHaveValue("alloy");
-    await expect.element(orgIdField).toHaveValue("123456@AdobeOrg");
-    await expect.element(edgeDomainField).toHaveValue("custom.example.com");
+    await nameField.expectValue("alloy");
+    await orgIdField.expectValue("123456@AdobeOrg");
+    await edgeDomainField.expectValue("custom.example.com");
 
-    await expect.element(edgeConfigInputMethodFreeformRadio).toBeChecked();
+    await edgeConfigInputMethodFreeformRadio.expectChecked();
 
-    await expect
-      .element(productionEnvironmentTextfield)
-      .toHaveValue("prod-datastream-id");
-    await expect
-      .element(stagingEnvironmentTextfield)
-      .toHaveValue("staging-datastream-id");
-    await expect
-      .element(developmentEnvironmentTextfield)
-      .toHaveValue("dev-datastream-id");
+    await productionEnvironmentTextfield.expectValue("prod-datastream-id");
+    await stagingEnvironmentTextfield.expectValue("staging-datastream-id");
+    await developmentEnvironmentTextfield.expectValue("dev-datastream-id");
   });
 
   it("sets list form values from settings", async () => {
@@ -121,15 +121,9 @@ describe("Config general settings and datastream section", () => {
       },
     });
 
-    await expect
-      .element(productionDatastreamField)
-      .toHaveTextContent(/analytics enabled/i);
-    await expect
-      .element(stagingDatastreamField)
-      .toHaveTextContent(/aep-edge-samples/i);
-    await expect
-      .element(developmentDatastreamField)
-      .toHaveTextContent(/datastream enabled/i);
+    await productionDatastreamField.expectValue("analytics enabled");
+    await stagingDatastreamField.expectValue("aep-edge-samples");
+    await developmentDatastreamField.expectValue("datastream enabled");
   });
 
   it("updates free form values and saves to settings", async () => {
@@ -144,7 +138,6 @@ describe("Config general settings and datastream section", () => {
     await productionEnvironmentTextfield.fill("new-prod-datastream");
     await stagingEnvironmentTextfield.fill("new-staging-datastream");
     await developmentEnvironmentTextfield.fill("new-dev-datastream");
-    await driver.tab();
 
     await driver
       .expectSettings((s) => s.instances[0])
@@ -175,19 +168,9 @@ describe("Config general settings and datastream section", () => {
       }),
     );
 
-    await selectOption(productionDatastreamField, "analytics enabled");
-    await expect
-      .element(productionDatastreamField, { timeout: 1000 })
-      .toHaveTextContent(/analytics enabled/i);
-    await selectOption(stagingDatastreamField, "datastream enabled");
-    await expect
-      .element(stagingDatastreamField, { timeout: 1000 })
-      .toHaveTextContent(/datastream enabled/i);
-    await selectOption(developmentDatastreamField, "aep-edge-samples");
-    await expect
-      .element(developmentDatastreamField, { timeout: 1000 })
-      .toHaveTextContent(/aep-edge-samples/i);
-    await driver.tab();
+    await productionDatastreamField.selectOption("analytics enabled");
+    await stagingDatastreamField.selectOption("datastream enabled");
+    await developmentDatastreamField.selectOption("aep-edge-samples");
 
     await driver
       .expectSettings((s) => s.instances[0])
@@ -201,9 +184,9 @@ describe("Config general settings and datastream section", () => {
   it("shows default values when no settings are provided", async () => {
     await driver.init({ settings: null });
 
-    await expect.element(nameField).toHaveValue("alloy");
-    await expect.element(orgIdField).toHaveValue("1234@AdobeOrg");
-    await expect.element(edgeDomainField).toHaveValue("edge.adobedc.net");
+    await nameField.expectValue("alloy");
+    await orgIdField.expectValue("1234@AdobeOrg");
+    await edgeDomainField.expectValue("edge.adobedc.net");
   });
 
   it("does not save default values to settings", async () => {
@@ -220,9 +203,8 @@ describe("Config general settings and datastream section", () => {
     await driver.init(buildSettings());
 
     await nameField.fill("%instanceName%");
-    await driver.tab();
 
-    await expect.element(nameField).toHaveValue("%instanceName%");
+    await nameField.expectValue("%instanceName%");
 
     await driver
       .expectSettings((s) => s.instances[0].name)
@@ -241,7 +223,7 @@ describe("Config general settings and datastream section", () => {
       }),
     );
 
-    await expect.element(orgIdField).toHaveValue("%myOrgId%");
+    await orgIdField.expectValue("%myOrgId%");
 
     await driver.expectSettings((s) => s.instances[0].orgId).toBe("%myOrgId%");
   });
@@ -258,7 +240,7 @@ describe("Config general settings and datastream section", () => {
       }),
     );
 
-    await expect.element(edgeDomainField).toHaveValue("%myEdgeDomain%");
+    await edgeDomainField.expectValue("%myEdgeDomain%");
 
     await driver
       .expectSettings((s) => s.instances[0].edgeDomain)
@@ -281,10 +263,12 @@ describe("Config general settings and datastream section", () => {
         },
       });
 
-      await expect.element(edgeConfigInputMethodFreeformRadio).toBeChecked();
+      await edgeConfigInputMethodFreeformRadio.expectChecked();
 
-      const field = view.getByTestId(`${name}EnvironmentTextfield`);
-      await expect.element(field).toHaveValue(`%${name}Datastream%`);
+      const envTextField = field(
+        view.getByTestId(`${name}EnvironmentTextfield`),
+      );
+      await envTextField.expectValue(`%${name}Datastream%`);
 
       await driver
         .expectSettings(
@@ -307,9 +291,7 @@ describe("Config general settings and datastream section", () => {
       tokens: { imsAccess: "IMS_ACCESS" },
     });
 
-    await expect
-      .element(edgeDomainField)
-      .toHaveValue("mytenant.data.adobedc.net");
+    await edgeDomainField.expectValue("mytenant.data.adobedc.net");
   });
 
   it("sets default edge domain to edge.adobedc.net when editing existing instance without saved edgeDomain", async () => {
@@ -333,7 +315,7 @@ describe("Config general settings and datastream section", () => {
       },
     });
 
-    await expect.element(edgeDomainField).toHaveValue("edge.adobedc.net");
+    await edgeDomainField.expectValue("edge.adobedc.net");
   });
 
   it("saves tenant-specific edge domain even when it matches the default on new extension", async () => {
@@ -357,13 +339,9 @@ describe("Config general settings and datastream section", () => {
 
       await driver.expectValidate().toBe(true);
 
-      await nameField.fill("");
-      await driver.tab();
+      await nameField.clear();
 
-      await expect.element(nameField).not.toBeValid();
-      await expect
-        .element(nameField)
-        .toHaveAccessibleDescription(/please specify a name/i);
+      await nameField.expectError(/please specify a name/i);
 
       await driver.expectValidate().toBe(false);
     });
@@ -373,13 +351,9 @@ describe("Config general settings and datastream section", () => {
 
       await driver.expectValidate().toBe(true);
 
-      await orgIdField.fill("");
-      await driver.tab();
+      await orgIdField.clear();
 
-      await expect.element(orgIdField).not.toBeValid();
-      await expect
-        .element(orgIdField)
-        .toHaveAccessibleDescription(/please specify an IMS organization ID/i);
+      await orgIdField.expectError(/please specify an IMS organization ID/i);
 
       await driver.expectValidate().toBe(false);
     });
@@ -389,13 +363,9 @@ describe("Config general settings and datastream section", () => {
 
       await driver.expectValidate().toBe(true);
 
-      await edgeDomainField.fill("");
-      await driver.tab();
+      await edgeDomainField.clear();
 
-      await expect.element(edgeDomainField).not.toBeValid();
-      await expect
-        .element(edgeDomainField)
-        .toHaveAccessibleDescription(/please specify an edge domain/i);
+      await edgeDomainField.expectError(/please specify an edge domain/i);
 
       await driver.expectValidate().toBe(false);
     });
@@ -406,12 +376,8 @@ describe("Config general settings and datastream section", () => {
       await driver.expectValidate().toBe(true);
 
       await nameField.fill("123");
-      await driver.tab();
 
-      await expect.element(nameField).not.toBeValid();
-      await expect
-        .element(nameField)
-        .toHaveAccessibleDescription(/please provide a non-numeric name/i);
+      await nameField.expectError(/please provide a non-numeric name/i);
 
       await driver.expectValidate().toBe(false);
     });
@@ -422,14 +388,10 @@ describe("Config general settings and datastream section", () => {
       await driver.expectValidate().toBe(true);
 
       await nameField.fill("addEventListener");
-      await driver.tab();
 
-      await expect.element(nameField).not.toBeValid();
-      await expect
-        .element(nameField)
-        .toHaveAccessibleDescription(
-          /please provide a name that does not conflict with a property already found on the window object/i,
-        );
+      await nameField.expectError(
+        /please provide a name that does not conflict with a property already found on the window object/i,
+      );
 
       await driver.expectValidate().toBe(false);
     });
@@ -441,13 +403,11 @@ describe("Config general settings and datastream section", () => {
 
       await edgeConfigInputMethodFreeformRadio.click();
 
-      await productionEnvironmentTextfield.fill("");
-      await driver.tab();
+      await productionEnvironmentTextfield.clear();
 
-      await expect.element(productionEnvironmentTextfield).not.toBeValid();
-      await expect
-        .element(productionEnvironmentTextfield)
-        .toHaveAccessibleDescription(/please specify a datastream/i);
+      await productionEnvironmentTextfield.expectError(
+        /please specify a datastream/i,
+      );
 
       await driver.expectValidate().toBe(false);
     });
@@ -462,11 +422,10 @@ describe("Config general settings and datastream section", () => {
       await productionEnvironmentTextfield.fill("prod-datastream-id");
 
       await stagingEnvironmentTextfield.fill("");
-      await expect.element(stagingEnvironmentTextfield).toBeValid();
+      await stagingEnvironmentTextfield.expectValid();
 
       await developmentEnvironmentTextfield.fill("");
-      await expect.element(developmentEnvironmentTextfield).toBeValid();
-      await driver.tab();
+      await developmentEnvironmentTextfield.expectValid();
 
       await driver.expectValidate().toBe(true);
     });
@@ -483,7 +442,6 @@ describe("Config general settings and datastream section", () => {
       await productionEnvironmentTextfield.fill("%prodDatastream%");
       await stagingEnvironmentTextfield.fill("%stagingDatastream%");
       await developmentEnvironmentTextfield.fill("%devDatastream%");
-      await driver.tab();
 
       await driver.expectValidate().toBe(true);
     });
@@ -493,29 +451,27 @@ describe("Config general settings and datastream section", () => {
     it("restores default IMS organization ID when button is clicked", async () => {
       await driver.init(buildSettings());
 
-      const originalOrgId = orgIdField.element().value;
+      const originalOrgId = await orgIdField.getValue();
       await orgIdField.fill("custom@AdobeOrg");
-      await driver.tab();
 
-      await expect.element(orgIdField).toHaveValue("custom@AdobeOrg");
+      await orgIdField.expectValue("custom@AdobeOrg");
 
       await orgIdRestoreButton.click();
 
-      await expect.element(orgIdField).toHaveValue(originalOrgId);
+      await orgIdField.expectValue(originalOrgId);
     });
 
     it("restores default edge domain when button is clicked", async () => {
       await driver.init(buildSettings());
 
-      const originalEdgeDomain = edgeDomainField.element().value;
+      const originalEdgeDomain = await edgeDomainField.getValue();
       await edgeDomainField.fill("custom.example.com");
-      await driver.tab();
 
-      await expect.element(edgeDomainField).toHaveValue("custom.example.com");
+      await edgeDomainField.expectValue("custom.example.com");
 
       await edgeDomainRestoreButton.click();
 
-      await expect.element(edgeDomainField).toHaveValue(originalEdgeDomain);
+      await edgeDomainField.expectValue(originalEdgeDomain);
     });
 
     it("restores default edge domain to tenant-specific domain when restore button is clicked on new instance with tenant ID", async () => {
@@ -529,13 +485,10 @@ describe("Config general settings and datastream section", () => {
       });
 
       await edgeDomainField.fill("custom.example.com");
-      await driver.tab();
 
       await edgeDomainRestoreButton.click();
 
-      await expect
-        .element(edgeDomainField)
-        .toHaveValue("mytenant.data.adobedc.net");
+      await edgeDomainField.expectValue("mytenant.data.adobedc.net");
     });
 
     it("restores to tenant-specific default when restore button is clicked on existing instance with tenant ID", async () => {
@@ -560,13 +513,10 @@ describe("Config general settings and datastream section", () => {
       });
 
       await edgeDomainField.fill("custom.example.com");
-      await driver.tab();
 
       await edgeDomainRestoreButton.click();
 
-      await expect
-        .element(edgeDomainField)
-        .toHaveValue("mytenant.data.adobedc.net");
+      await edgeDomainField.expectValue("mytenant.data.adobedc.net");
     });
   });
 
@@ -583,7 +533,6 @@ describe("Config general settings and datastream section", () => {
       );
 
       await nameField.fill("newName");
-      await driver.tab();
 
       await expect
         .element(
@@ -598,7 +547,6 @@ describe("Config general settings and datastream section", () => {
       await driver.init({ settings: null });
 
       await nameField.fill("newName");
-      await driver.tab();
 
       await expect
         .element(
@@ -614,16 +562,16 @@ describe("Config general settings and datastream section", () => {
     it("can switch between select and freeform input methods", async () => {
       await driver.init(buildSettings());
 
-      await expect.element(edgeConfigInputMethodSelectRadio).toBeChecked();
+      await edgeConfigInputMethodSelectRadio.expectChecked();
 
       await edgeConfigInputMethodFreeformRadio.click();
 
-      await expect.element(edgeConfigInputMethodFreeformRadio).toBeChecked();
+      await edgeConfigInputMethodFreeformRadio.expectChecked();
 
-      await expect.element(productionEnvironmentTextfield).toBeVisible();
+      await productionEnvironmentTextfield.expectVisible();
 
       await edgeConfigInputMethodSelectRadio.click();
-      await expect.element(edgeConfigInputMethodSelectRadio).toBeChecked();
+      await edgeConfigInputMethodSelectRadio.expectChecked();
     });
   });
 });
