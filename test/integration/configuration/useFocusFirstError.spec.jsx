@@ -77,7 +77,7 @@ describe("useFocusFirstError hook", () => {
 
     // Verify the first tab is now selected (the hook should have switched to it)
     const firstTab = view.getByRole("tab").nth(0);
-    await expect.element(firstTab).toBeSelected();
+    await expect.element(firstTab).toHaveAttribute("aria-selected", "true");
 
     // Verify the name field is focused
     await nameField.expectFocus();
@@ -115,9 +115,9 @@ describe("useFocusFirstError hook", () => {
 
     await driver.expectValidate().toBe(false);
 
-    await expect
-      .element(view.getByRole("button", { name: "SDK instances" }))
-      .toBeExpanded();
+    await field(
+      view.getByRole("button", { name: "SDK instances" }),
+    ).expectExpanded();
 
     // Verify the name field is focused
     await nameField.expectFocus();
@@ -224,7 +224,7 @@ describe("useFocusFirstError hook", () => {
 
     // Verify the first tab is selected
     const firstTab = view.getByRole("tab").nth(0);
-    await expect.element(firstTab).toBeSelected();
+    await expect.element(firstTab).toHaveAttribute("aria-selected", "true");
 
     // Verify the name field is focused
     await nameField.expectFocus();

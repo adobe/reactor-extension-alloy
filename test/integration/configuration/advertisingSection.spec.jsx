@@ -14,7 +14,7 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { expandAccordion } from "../helpers/ui";
+import configurationUI from "../helpers/ui/configurationUI";
 import { buildSettings } from "../helpers/settingsUtils";
 import field from "../helpers/field";
 import { worker } from "../helpers/mocks/browser";
@@ -24,6 +24,7 @@ import {
 } from "../helpers/mocks/defaultHandlers";
 
 let view;
+let ui;
 let driver;
 let cleanup;
 let dspEnabledField;
@@ -53,6 +54,7 @@ const waitForOptionalFieldsToLoad = async () => {
 describe("Config advertising section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
+    ui = configurationUI(view);
     dspEnabledField = field(view.getByTestId("dspEnabledField"));
     id5PartnerIdField = field(view.getByTestId("id5PartnerIdField"));
     rampIdJSPathField = field(view.getByTestId("rampIdJSPathField"));
@@ -194,7 +196,7 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await expandAccordion("Build options");
+    await ui.expand("Build options");
     await advertisingComponentCheckbox.scrollIntoView();
     await advertisingComponentCheckbox.click();
 
@@ -223,7 +225,7 @@ describe("Config advertising section", () => {
       }),
     );
 
-    await expandAccordion("Build options");
+    await ui.expand("Build options");
     await advertisingComponentCheckbox.scrollIntoView();
     await advertisingComponentCheckbox.click();
 

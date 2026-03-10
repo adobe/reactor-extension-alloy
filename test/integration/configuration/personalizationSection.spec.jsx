@@ -14,11 +14,12 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { expandAccordion } from "../helpers/ui";
+import configurationUI from "../helpers/ui/configurationUI";
 import { buildSettings } from "../helpers/settingsUtils";
 import field from "../helpers/field";
 
 let view;
+let ui;
 let bridge;
 let driver;
 let cleanup;
@@ -33,6 +34,7 @@ let rulesEngineComponentCheckbox;
 describe("Config personalization section", () => {
   beforeEach(async () => {
     ({ view, bridge, driver, cleanup } = await useView(ConfigurationView));
+    ui = configurationUI(view);
     targetMigrationEnabledField = field(
       view.getByTestId("targetMigrationEnabledField"),
     );
@@ -142,7 +144,7 @@ describe("Config personalization section", () => {
       }),
     );
 
-    await expandAccordion("Build options");
+    await ui.expand("Build options");
     await personalizationComponentCheckbox.click();
 
     await driver
@@ -172,7 +174,7 @@ describe("Config personalization section", () => {
       }),
     );
 
-    await expandAccordion("Build options");
+    await ui.expand("Build options");
     await rulesEngineComponentCheckbox.click();
 
     await driver

@@ -14,11 +14,12 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { toggleComponent } from "../helpers/ui";
+import configurationUI from "../helpers/ui/configurationUI";
 import { buildSettings } from "../helpers/settingsUtils";
 import field from "../helpers/field";
 
 let view;
+let ui;
 let bridge;
 let driver;
 let cleanup;
@@ -47,6 +48,7 @@ let contextCheckbox;
 describe("Config data collection section", () => {
   beforeEach(async () => {
     ({ view, bridge, driver, cleanup } = await useView(ConfigurationView));
+    ui = configurationUI(view);
     internalLinkEnabledField = field(
       view.getByTestId("internalLinkEnabledField"),
     );
@@ -331,7 +333,7 @@ describe("Config data collection section", () => {
       }),
     );
 
-    await toggleComponent("activityCollector");
+    await ui.toggleComponent("activityCollector");
 
     await driver
       .expectSettings((s) => s.instances[0].clickCollectionEnabled)
@@ -347,7 +349,7 @@ describe("Config data collection section", () => {
   it("hides click collection fields and shows alert when activity collector is disabled", async () => {
     await driver.init(buildSettings({}));
 
-    await toggleComponent("activityCollector");
+    await ui.toggleComponent("activityCollector");
 
     await expect
       .element(

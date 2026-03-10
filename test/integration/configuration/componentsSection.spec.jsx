@@ -14,11 +14,12 @@ import { describe, it, beforeEach, afterEach } from "vitest";
 
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { toggleComponent } from "../helpers/ui";
+import configurationUI from "../helpers/ui/configurationUI";
 import { buildSettings } from "../helpers/settingsUtils";
 import field from "../helpers/field";
 
 let view;
+let ui;
 let driver;
 let cleanup;
 let personalizationComponentCheckbox;
@@ -35,6 +36,7 @@ let eventMergeComponentCheckbox;
 describe("Config components section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
+    ui = configurationUI(view);
     personalizationComponentCheckbox = field(
       view.getByTestId("personalizationComponentCheckbox"),
     );
@@ -86,8 +88,8 @@ describe("Config components section", () => {
     await driver.init();
 
     // Toggle off consent and personalization components
-    await toggleComponent("consent");
-    await toggleComponent("personalization");
+    await ui.toggleComponent("consent");
+    await ui.toggleComponent("personalization");
 
     await driver.expectSettings((s) => s.components).toBeDefined();
     await driver
@@ -164,12 +166,12 @@ describe("Config components section", () => {
     await driver.init();
 
     // Toggle off a component
-    await toggleComponent("audiences");
+    await ui.toggleComponent("audiences");
 
     await driver.expectSettings((s) => s.components.audiences).toBe(false);
 
     // Toggle it back on
-    await toggleComponent("audiences");
+    await ui.toggleComponent("audiences");
 
     await driver.expectSettings((s) => s.components.audiences).toBeUndefined();
   });
@@ -178,7 +180,7 @@ describe("Config components section", () => {
     await driver.init();
 
     // Enable advertising component
-    await toggleComponent("advertising");
+    await ui.toggleComponent("advertising");
 
     await driver.expectSettings((s) => s.components.advertising).toBe(true);
 
@@ -210,13 +212,13 @@ describe("Config components section", () => {
     await driver.init();
 
     // Disable all default components
-    await toggleComponent("activityCollector");
-    await toggleComponent("audiences");
-    await toggleComponent("consent");
-    await toggleComponent("personalization");
-    await toggleComponent("rulesEngine");
-    await toggleComponent("streamingMedia");
-    await toggleComponent("mediaAnalyticsBridge");
+    await ui.toggleComponent("activityCollector");
+    await ui.toggleComponent("audiences");
+    await ui.toggleComponent("consent");
+    await ui.toggleComponent("personalization");
+    await ui.toggleComponent("rulesEngine");
+    await ui.toggleComponent("streamingMedia");
+    await ui.toggleComponent("mediaAnalyticsBridge");
 
     await driver.expectSettings((s) => s.components).toBeDefined();
     await driver

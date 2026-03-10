@@ -13,7 +13,6 @@ governing permissions and limitations under the License.
 import { afterEach, afterAll } from "vitest";
 import { worker } from "./mocks/browser";
 import "./spectrumLocators";
-import "./spectrumMatchers";
 import field from "./field";
 
 // React (dev) logs to console when an error boundary catches an error. In Vitest browser

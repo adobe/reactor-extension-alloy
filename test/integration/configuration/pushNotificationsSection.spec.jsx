@@ -14,11 +14,12 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { expandAccordion } from "../helpers/ui";
+import configurationUI from "../helpers/ui/configurationUI";
 import { buildSettings } from "../helpers/settingsUtils";
 import field from "../helpers/field";
 
 let view;
+let ui;
 let driver;
 let cleanup;
 let vapidPublicKeyField;
@@ -29,6 +30,7 @@ let pushNotificationsComponentCheckbox;
 describe("Config push notifications section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
+    ui = configurationUI(view);
     vapidPublicKeyField = field(view.getByTestId("vapidPublicKeyField"));
     appIdField = field(view.getByTestId("appIdField"));
     trackingDatasetIdField = field(view.getByTestId("trackingDatasetIdField"));
@@ -108,7 +110,7 @@ describe("Config push notifications section", () => {
       }),
     );
 
-    await expandAccordion("Build options");
+    await ui.expand("Build options");
     await pushNotificationsComponentCheckbox.click();
 
     await driver
@@ -136,7 +138,7 @@ describe("Config push notifications section", () => {
       }),
     );
 
-    await expandAccordion("Build options");
+    await ui.expand("Build options");
     await pushNotificationsComponentCheckbox.click();
 
     await expect
@@ -153,7 +155,7 @@ describe("Config push notifications section", () => {
       await driver.init(buildSettings());
 
       await driver.expectValidate().toBe(true);
-      await expandAccordion("Build options");
+      await ui.expand("Build options");
       await pushNotificationsComponentCheckbox.click();
 
       await appIdField.fill("test-app-id");
@@ -170,7 +172,7 @@ describe("Config push notifications section", () => {
     it("requires application ID", async () => {
       await driver.init(buildSettings());
 
-      await expandAccordion("Build options");
+      await ui.expand("Build options");
       await pushNotificationsComponentCheckbox.click();
 
       await vapidPublicKeyField.fill("test-vapid-key");
@@ -185,7 +187,7 @@ describe("Config push notifications section", () => {
     it("requires tracking dataset ID", async () => {
       await driver.init(buildSettings());
 
-      await expandAccordion("Build options");
+      await ui.expand("Build options");
       await pushNotificationsComponentCheckbox.click();
 
       await vapidPublicKeyField.fill("test-vapid-key");

@@ -14,11 +14,12 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { expandAccordion } from "../helpers/ui";
+import configurationUI from "../helpers/ui/configurationUI";
 import { buildSettings } from "../helpers/settingsUtils";
 import field from "../helpers/field";
 
 let view;
+let ui;
 let driver;
 let cleanup;
 let stickyConversationSessionField;
@@ -28,6 +29,7 @@ let brandConciergeComponentCheckbox;
 describe("Config brand concierge section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
+    ui = configurationUI(view);
     stickyConversationSessionField = field(
       view.getByTestId("stickyConversationSessionField"),
     );
@@ -104,7 +106,7 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await expandAccordion("Build options");
+    await ui.expand("Build options");
     await brandConciergeComponentCheckbox.click();
 
     await driver
@@ -132,7 +134,7 @@ describe("Config brand concierge section", () => {
       }),
     );
 
-    await expandAccordion("Build options");
+    await ui.expand("Build options");
     await brandConciergeComponentCheckbox.click();
 
     await expect

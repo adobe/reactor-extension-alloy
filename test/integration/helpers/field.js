@@ -162,6 +162,12 @@ const field = (locator) => ({
     withRetries(async () => {
       await expect.element(locator, TIMEOUT).not.toBeDisabled();
     }),
+  expectExpanded: async () =>
+    withRetries(async () => {
+      await expect
+        .element(locator, TIMEOUT)
+        .toHaveAttribute("aria-expanded", "true");
+    }),
   expectError: async (message) =>
     withRetries(async () => {
       await expect.element(locator, TIMEOUT).not.toBeValid();
@@ -185,11 +191,15 @@ const field = (locator) => ({
     }),
   expectNotSelected: async () =>
     withRetries(async () => {
-      await expect.element(locator, TIMEOUT).not.toBeSelected();
+      await expect
+        .element(locator, TIMEOUT)
+        .not.toHaveAttribute("aria-selected", "true");
     }),
   expectSelected: async () =>
     withRetries(async () => {
-      await expect.element(locator, TIMEOUT).toBeSelected();
+      await expect
+        .element(locator, TIMEOUT)
+        .toHaveAttribute("aria-selected", "true");
     }),
   expectUnchecked: async () =>
     withRetries(async () => {

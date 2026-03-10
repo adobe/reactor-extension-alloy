@@ -14,11 +14,12 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 
 import useView from "../helpers/useView";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { expandAccordion } from "../helpers/ui";
+import configurationUI from "../helpers/ui/configurationUI";
 import { buildSettings } from "../helpers/settingsUtils";
 import field from "../helpers/field";
 
 let view;
+let ui;
 let driver;
 let cleanup;
 let mediaChannelField;
@@ -31,6 +32,7 @@ let streamingMediaComponentCheckbox;
 describe("Config streaming media section", () => {
   beforeEach(async () => {
     ({ view, driver, cleanup } = await useView(ConfigurationView));
+    ui = configurationUI(view);
     mediaChannelField = field(view.getByTestId("mediaChannelField"));
     mediaPlayerNameField = field(view.getByTestId("mediaPlayerNameField"));
     mediaVersionField = field(view.getByTestId("mediaVersionField"));
@@ -128,7 +130,7 @@ describe("Config streaming media section", () => {
 
   it("hides form fields and shows alert when component is toggled off", async () => {
     await driver.init(buildSettings());
-    await expandAccordion("Build options");
+    await ui.expand("Build options");
     await streamingMediaComponentCheckbox.click();
 
     await expect
