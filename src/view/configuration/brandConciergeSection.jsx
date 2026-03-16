@@ -147,7 +147,7 @@ const BrandConciergeSection = ({ instanceFieldName }) => {
           description="If the conversation stream chunks are not returned within this timeout duration, a timeout error will be triggered."
           width="size-5000"
         />
-         <FormikCheckbox
+        <FormikCheckbox
           data-test-id="collectSourcesDataTestId"
           label=""
           name={`${instanceFieldName}.conversation.collectSources`}
