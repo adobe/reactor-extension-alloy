@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@adobe/alloy':
-        specifier: 2.31.2-beta.2
-        version: 2.31.2-beta.2(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)
+        specifier: 3.0.0-beta.3
+        version: 3.0.0-beta.3(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)
       '@adobe/react-spectrum':
         specifier: ^3.45.0
         version: 3.45.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -246,11 +246,11 @@ packages:
   '@adobe/aep-rules-engine@3.1.1':
     resolution: {integrity: sha512-YeFDDSEM4wjwTNM4drKTIbYvfSdYS3DmeOgb1SxZfSXTcVg8vdxcd5blE2wKO42Qa4KUJK+ziK7ABvbHoO7T8Q==}
 
-  '@adobe/alloy-core@1.1.0':
-    resolution: {integrity: sha512-52ZuM8etYsLTyx/5iVWb96ft5DYkPLiCU6JgG88J7ziiizduKNvHiIzfN5V6RLXTN1/jvdvBVms1X5vDnj0XXQ==}
+  '@adobe/alloy-core@1.1.1-beta.0':
+    resolution: {integrity: sha512-L6B/ZBFaOolBw6bVKxujrs3CJLaGxj7lQzhJOVXLMFwqtwBZhMhlcO5QpcYIU1gWuiR096BrT14YpABJvGheOQ==}
 
-  '@adobe/alloy@2.31.2-beta.2':
-    resolution: {integrity: sha512-COTCfPFA6eUoTJwBFxZ85+ajV8z1gV8o5xg6Y1oU7NExI/bAtIrgKyZn5J7PPpxT8zx7Vy69e0371cwd6FBExw==}
+  '@adobe/alloy@3.0.0-beta.3':
+    resolution: {integrity: sha512-QCtGlVzFgOyRUeubtN0gyRD0nPOsw9aQKBehh1DY4LFExBYS8g0jZETZN5XcVPQufIfkC7CVjUmWCum+l6zXTw==}
     hasBin: true
 
   '@adobe/auth-token@1.0.1':
@@ -8288,7 +8288,7 @@ snapshots:
       - supports-color
       - vitest
 
-  '@adobe/alloy-core@1.1.0(vitest@4.0.8)':
+  '@adobe/alloy-core@1.1.1-beta.0(vitest@4.0.8)':
     dependencies:
       '@adobe/aep-rules-engine': 3.1.1(vitest@4.0.8)
       '@adobe/reactor-query-string': 2.0.0
@@ -8299,9 +8299,9 @@ snapshots:
       - supports-color
       - vitest
 
-  '@adobe/alloy@2.31.2-beta.2(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)':
+  '@adobe/alloy@3.0.0-beta.3(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)':
     dependencies:
-      '@adobe/alloy-core': 1.1.0(vitest@4.0.8)
+      '@adobe/alloy-core': 1.1.1-beta.0(vitest@4.0.8)
       '@babel/core': 7.28.5
       '@babel/plugin-transform-modules-commonjs': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-template-literals': 7.27.1(@babel/core@7.28.5)
