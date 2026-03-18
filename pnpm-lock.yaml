@@ -67,8 +67,8 @@ importers:
         specifier: ^28.1.0
         version: 28.1.0
       '@adobe/reactor-turbine-schemas':
-        specifier: ^10.8.0
-        version: 10.8.0
+        specifier: ^10.9.0
+        version: 10.9.0
       '@babel/cli':
         specifier: ^7.28.3
         version: 7.28.3(@babel/core@7.28.5)
@@ -319,8 +319,8 @@ packages:
   '@adobe/reactor-turbine-edge@3.0.1':
     resolution: {integrity: sha512-RhLHziTvnUY7qUB8kPMxq3QwrMnpsnUV6EYp6TePbk2eWMqO/4fkOW9ffAs7+WKi/g4nCSsi5/fqET3bx0Lkzg==}
 
-  '@adobe/reactor-turbine-schemas@10.8.0':
-    resolution: {integrity: sha512-bmhxkdIlYaWj7nUtl9JxR+DPoP4mnsQGrK2iJrua9MFTToS2QTS/rdnE5qOecAwAm+eqkYP5yfGFWze1SNHrtA==}
+  '@adobe/reactor-turbine-schemas@10.9.0':
+    resolution: {integrity: sha512-yNaqlYWgSbhBPDGPDRCKNzcMM8zEhmf8JA3OPCLHNOPiG1NpiWa7YuvwTn0GyECEBYZJB6kBwag77OzWUstqOA==}
     engines: {node: '>=20.17.0'}
 
   '@adobe/reactor-turbine@28.1.0':
@@ -8674,7 +8674,7 @@ snapshots:
 
   '@adobe/reactor-turbine-edge@3.0.1': {}
 
-  '@adobe/reactor-turbine-schemas@10.8.0': {}
+  '@adobe/reactor-turbine-schemas@10.9.0': {}
 
   '@adobe/reactor-turbine@28.1.0':
     dependencies:
@@ -8689,7 +8689,7 @@ snapshots:
 
   '@adobe/reactor-validator@2.5.0':
     dependencies:
-      '@adobe/reactor-turbine-schemas': 10.8.0
+      '@adobe/reactor-turbine-schemas': 10.9.0
       ajv: 8.18.0
       ajv-draft-04: 1.0.0(ajv@8.18.0)
       ajv-formats: 2.1.1(ajv@8.18.0)

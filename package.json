@@ -83,7 +83,7 @@
     "@adobe/auth-token": "^1.0.1",
     "@adobe/reactor-sandbox": "^13.4.0",
     "@adobe/reactor-turbine": "^28.1.0",
-    "@adobe/reactor-turbine-schemas": "^10.8.0",
+    "@adobe/reactor-turbine-schemas": "^10.9.0",
     "@babel/cli": "^7.28.3",
     "@babel/core": "^7.28.5",
     "@babel/eslint-parser": "^7.28.5",
