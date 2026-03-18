@@ -25,6 +25,7 @@ let cleanup;
 let stickyConversationSessionField;
 let streamTimeoutField;
 let brandConciergeComponentCheckbox;
+let collectSourcesField;
 
 describe("Config brand concierge section", () => {
   beforeEach(async () => {
@@ -34,6 +35,7 @@ describe("Config brand concierge section", () => {
       view.getByTestId("stickyConversationSessionField"),
     );
     streamTimeoutField = field(view.getByTestId("streamTimeoutDataTestId"));
+    collectSourcesField = field(view.getByTestId("collectSourcesDataTestId"));
     brandConciergeComponentCheckbox = field(
       view.getByTestId("brandConciergeComponentCheckbox"),
     );
@@ -54,7 +56,8 @@ describe("Config brand concierge section", () => {
             name: "alloy",
             conversation: {
               stickyConversationSession: true,
-              streamTimeout: 20000,
+              streamTimeout: 20000, // 20 seconds in milliseconds
+              collectSources: true,
             },
           },
         ],
@@ -63,6 +66,7 @@ describe("Config brand concierge section", () => {
 
     await stickyConversationSessionField.expectChecked();
     await streamTimeoutField.expectValue("20");
+    await collectSourcesField.expectChecked();
   });
 
   it("updates form values and saves to settings", async () => {
@@ -78,6 +82,10 @@ describe("Config brand concierge section", () => {
 
     await streamTimeoutField.fill("30");
 
+    await stickyConversationSessionField.expectChecked();
+    await streamTimeoutField.expectValue("30");
+    await collectSourcesField.expectChecked();
+
     await driver
       .expectSettings(
         (s) => s.instances[0].conversation.stickyConversationSession,
@@ -86,6 +94,10 @@ describe("Config brand concierge section", () => {
     await driver
       .expectSettings((s) => s.instances[0].conversation.streamTimeout)
       .toBe(30000);
+
+    await driver
+      .expectSettings((s) => s.instances[0].conversation.collectSources)
+      .toBe(true);
   });
 
   it("does not emit brand concierge settings when component is disabled", async () => {
@@ -177,6 +189,22 @@ describe("Config brand concierge section", () => {
 
     await driver
       .expectSettings((s) => s.instances[0].conversation?.streamTimeout)
+      .toBeUndefined();
+  });
+
+  it("does not save collectSources when it equals default value", async () => {
+    await driver.init(
+      buildSettings({
+        components: {
+          brandConcierge: true,
+        },
+      }),
+    );
+
+    await collectSourcesField.expectUnchecked();
+
+    await driver
+      .expectSettings((s) => s.instances[0].conversation?.collectSources)
       .toBeUndefined();
   });
 });
