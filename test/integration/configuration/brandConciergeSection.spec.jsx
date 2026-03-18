@@ -79,8 +79,8 @@ describe("Config brand concierge section", () => {
     );
 
     await stickyConversationSessionField.click();
-
     await streamTimeoutField.fill("30");
+    await collectSourcesField.click();
 
     await stickyConversationSessionField.expectChecked();
     await streamTimeoutField.expectValue("30");
