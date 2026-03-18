@@ -21,6 +21,7 @@ import {
   dataElementsEmptyHandlers,
 } from "../helpers/mocks/defaultHandlers";
 import field from "../helpers/field";
+import { suppressReactErrorBoundaryMessage } from "../helpers/errorSuppression";
 
 let view;
 let driver;
@@ -34,6 +35,7 @@ describe("Update Variable Action Error Handling", () => {
   describe("Data elements API errors", () => {
     it("displays error when access token is invalid", async () => {
       worker.use(...dataElementsUnauthorizedHandlers);
+      suppressReactErrorBoundaryMessage();
       ({ view, driver, cleanup } = await useView(UpdateVariableView));
       await driver.init();
 
@@ -44,6 +46,7 @@ describe("Update Variable Action Error Handling", () => {
 
     it("displays error when data elements API returns server error", async () => {
       worker.use(...dataElementsServerErrorHandlers);
+      suppressReactErrorBoundaryMessage();
       ({ view, driver, cleanup } = await useView(UpdateVariableView));
       await driver.init();
 

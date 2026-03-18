@@ -17,6 +17,9 @@ locators.extend({
   },
   controls() {
     const id = this.element().getAttribute("aria-controls");
+    if (!id) {
+      throw new Error("aria-controls attribute not found");
+    }
     return page.getById(id);
   },
 });

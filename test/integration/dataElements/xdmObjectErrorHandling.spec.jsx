@@ -26,6 +26,7 @@ import {
   schemaNotFoundHandlers,
 } from "../helpers/mocks/defaultHandlers";
 import field from "../helpers/field";
+import { suppressReactErrorBoundaryMessage } from "../helpers/errorSuppression";
 
 let view;
 let driver;
@@ -39,6 +40,7 @@ describe("XDM Object Data Element Error Handling", () => {
   describe("Sandbox errors", () => {
     it("displays error when access token is invalid", async () => {
       worker.use(...sandboxUnauthorizedHandlers);
+      suppressReactErrorBoundaryMessage();
       ({ view, driver, cleanup } = await useView(XdmObjectView));
       await driver.init();
 
@@ -49,6 +51,7 @@ describe("XDM Object Data Element Error Handling", () => {
 
     it("displays error when sandbox API returns server error", async () => {
       worker.use(...sandboxServerErrorHandlers);
+      suppressReactErrorBoundaryMessage();
       ({ view, driver, cleanup } = await useView(XdmObjectView));
       await driver.init();
 
@@ -59,6 +62,7 @@ describe("XDM Object Data Element Error Handling", () => {
 
     it("displays error when user has no access to any sandboxes", async () => {
       worker.use(...sandboxEmptyHandlers);
+      suppressReactErrorBoundaryMessage();
       ({ view, driver, cleanup } = await useView(XdmObjectView));
       await driver.init();
 

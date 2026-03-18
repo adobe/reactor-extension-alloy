@@ -77,7 +77,10 @@ const field = (locator) => ({
     }),
   collapse: async () =>
     withRetries(async () => {
-      await expect.element(locator).toBeVisible(TIMEOUT);
+      await expect.element(locator, TIMEOUT).toBeVisible();
+      if (!locator.element().hasAttribute("aria-expanded")) {
+        throw new Error("aria-expanded attribute not found on element");
+      }
       if (locator.element().getAttribute("aria-expanded") !== "false") {
         await locator.click(TIMEOUT);
         await expect
@@ -87,7 +90,10 @@ const field = (locator) => ({
     }),
   expand: async () =>
     withRetries(async () => {
-      await expect.element(locator).toBeVisible(TIMEOUT);
+      await expect.element(locator, TIMEOUT).toBeVisible();
+      if (!locator.element().hasAttribute("aria-expanded")) {
+        throw new Error("aria-expanded attribute not found on element");
+      }
       if (locator.element().getAttribute("aria-expanded") !== "true") {
         await locator.click(TIMEOUT);
         await expect
@@ -243,8 +249,7 @@ const field = (locator) => ({
 });
 
 field.logTotalRetries = () => {
-  if (TOTAL_RETRIES[0] > 0)
-    console.error(`Retries: ${TOTAL_RETRIES.join(", ")}`);
+  if (TOTAL_RETRIES[0] > 0) console.log(`Retries: ${TOTAL_RETRIES.join(", ")}`);
 };
 
 export default field;

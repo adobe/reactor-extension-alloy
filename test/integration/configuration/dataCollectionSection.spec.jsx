@@ -475,8 +475,6 @@ describe("Config data collection section", () => {
     await downloadLinkQualifierTestButton.click();
 
     await downloadLinkQualifierField.expectValue(/edited regex/i);
-    // const value = await downloadLinkQualifierField.getValue();
-    // expect(value).toMatch(/edited regex/i);
   });
 
   it("does not save onBeforeEventSend code if it matches placeholder", async () => {
