@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@adobe/alloy':
-        specifier: 2.32.0-beta.3
-        version: 2.32.0-beta.3(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)
+        specifier: 2.32.0
+        version: 2.32.0(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)
       '@adobe/react-spectrum':
         specifier: ^3.45.0
         version: 3.45.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -246,11 +246,11 @@ packages:
   '@adobe/aep-rules-engine@3.1.1':
     resolution: {integrity: sha512-YeFDDSEM4wjwTNM4drKTIbYvfSdYS3DmeOgb1SxZfSXTcVg8vdxcd5blE2wKO42Qa4KUJK+ziK7ABvbHoO7T8Q==}
 
-  '@adobe/alloy-core@1.1.1-beta.0':
-    resolution: {integrity: sha512-L6B/ZBFaOolBw6bVKxujrs3CJLaGxj7lQzhJOVXLMFwqtwBZhMhlcO5QpcYIU1gWuiR096BrT14YpABJvGheOQ==}
+  '@adobe/alloy-core@1.1.1':
+    resolution: {integrity: sha512-z2Ol+MgY9sgEJwaRYu5mH8BTAKoUN4KA0oGQjKICBhQQXuG01WzgYmXPysGi7jCmY7hO6ohob0jb9LnoHz/2yg==}
 
-  '@adobe/alloy@2.32.0-beta.3':
-    resolution: {integrity: sha512-jPVvDQmRQgbwlbaR/baRlHrW4e6ky9iS5Wafr4EH4QNID6OR0Jn0OARpYMglaMJ/3ZHNUHXP1FGk8bwhJb0HnA==}
+  '@adobe/alloy@2.32.0':
+    resolution: {integrity: sha512-sy1Dr1BNVMTzxPDY4q+GowvC9+In8ZxF4ipQbVp9Slil8wAORVsjkrBF/yQvk2HFaXb5+HedOR6Zhb08kJfjhg==}
     hasBin: true
 
   '@adobe/auth-token@1.0.1':
@@ -8288,7 +8288,7 @@ snapshots:
       - supports-color
       - vitest
 
-  '@adobe/alloy-core@1.1.1-beta.0(vitest@4.0.8)':
+  '@adobe/alloy-core@1.1.1(vitest@4.0.8)':
     dependencies:
       '@adobe/aep-rules-engine': 3.1.1(vitest@4.0.8)
       '@adobe/reactor-query-string': 2.0.0
@@ -8299,9 +8299,9 @@ snapshots:
       - supports-color
       - vitest
 
-  '@adobe/alloy@2.32.0-beta.3(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)':
+  '@adobe/alloy@2.32.0(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)':
     dependencies:
-      '@adobe/alloy-core': 1.1.1-beta.0(vitest@4.0.8)
+      '@adobe/alloy-core': 1.1.1(vitest@4.0.8)
       '@babel/core': 7.28.5
       '@babel/plugin-transform-modules-commonjs': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-template-literals': 7.27.1(@babel/core@7.28.5)
