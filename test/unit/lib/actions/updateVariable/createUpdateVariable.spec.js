@@ -100,4 +100,46 @@ describe("Update variable", () => {
     });
     expect(variableStore).toEqual({ var1: { b: 2 } });
   });
+
+  it("uses dataElementName as the store key when provided", () => {
+    updateVariable({
+      data: { a: 1 },
+      dataElementName: "myVariable",
+      dataElementId: "DE123",
+      transforms: {},
+    });
+    expect(variableStore).toEqual({ myVariable: { a: 1 } });
+    expect(variableStore.DE123).toBeUndefined();
+  });
+
+  it("falls back to dataElementId when dataElementName is not provided", () => {
+    updateVariable({
+      data: { a: 1 },
+      dataElementId: "DE123",
+      transforms: {},
+    });
+    expect(variableStore).toEqual({ DE123: { a: 1 } });
+  });
+
+  it("updates existing variable using dataElementName", () => {
+    variableStore.myVariable = { a: 1, b: 2 };
+    updateVariable({
+      data: { a: 3, c: 4 },
+      dataElementName: "myVariable",
+      dataElementId: "DE123",
+      transforms: {},
+    });
+    expect(variableStore).toEqual({ myVariable: { a: 3, b: 2, c: 4 } });
+  });
+
+  it("applies clear transform using dataElementName", () => {
+    variableStore.myVariable = { a: { b: { c: 3 } } };
+    updateVariable({
+      data: {},
+      dataElementName: "myVariable",
+      dataElementId: "DE123",
+      transforms: { "a.b": { clear: true } },
+    });
+    expect(variableStore).toEqual({ myVariable: { a: {} } });
+  });
 });
