@@ -9,7 +9,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-/* eslint-disable no-underscore-dangle -- __analytics is a legitimate property name. */
 import { describe, it, expect, beforeEach } from "vitest";
 import deepAssign from "../../../helpers/deepAssign";
 import createUpdateVariable from "../../../../../src/lib/actions/updateVariable/createUpdateVariable";

@@ -22,14 +22,23 @@ module.exports =
       return clear ? deletePath(memo, path) : memo;
     }, variableStore[storeKey] || {});
 
+    // Preserve existing analytics events before deepAssign overwrites them.
+    // events is a comma-separated accumulator — it should merge, not replace.
+    const previousEvents = existingValue?.__adobe?.analytics?.events || "";
+
     variableStore[storeKey] = deepAssign({}, existingValue, data);
+
+    const newEvents = variableStore[storeKey]?.__adobe?.analytics?.events || "";
+    if (previousEvents && newEvents && previousEvents !== newEvents) {
+      variableStore[storeKey].__adobe.analytics.events =
+        `${previousEvents},${newEvents}`;
+    }
 
     if (customCode) {
       customCode(variableStore[storeKey], event);
     }
 
     // This is a temporary fix to support the 'audienceManager' property that should be lowercased.
-    // eslint-disable-next-line no-underscore-dangle
     const adobe = variableStore[storeKey]?.__adobe || {};
     if (adobe.audienceManager) {
       adobe.audiencemanager = adobe.audienceManager;
