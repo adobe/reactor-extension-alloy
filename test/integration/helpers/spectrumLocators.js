@@ -1,5 +1,5 @@
 /*
-Copyright 2023 Adobe. All rights reserved.
+Copyright 2026 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,14 +9,17 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import { locators, page } from "vitest/browser";
 
-import {
-  components as optionalComponents,
-  createCustomInstance,
-} from "@adobe/alloy";
-
-const components = optionalComponents;
-
-export { createCustomInstance, components };
-export { default as createEventMergeId } from "@adobe/alloy/libEs6/components/EventMerge/createEventMergeId";
-export { default as deepAssign } from "@adobe/alloy/libEs6/utils/deepAssign";
+locators.extend({
+  getById(id) {
+    return `#${CSS.escape(id)}`;
+  },
+  controls() {
+    const id = this.element().getAttribute("aria-controls");
+    if (!id) {
+      throw new Error("aria-controls attribute not found");
+    }
+    return page.getById(id);
+  },
+});
