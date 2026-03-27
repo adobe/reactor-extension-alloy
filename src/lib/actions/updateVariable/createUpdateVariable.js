@@ -22,8 +22,6 @@ module.exports =
       return clear ? deletePath(memo, path) : memo;
     }, variableStore[storeKey] || {});
 
-    // Preserve existing analytics events before deepAssign overwrites them.
-    // events is a comma-separated accumulator — it should merge, not replace.
     const previousEvents = existingValue?.__adobe?.analytics?.events || "";
 
     variableStore[storeKey] = deepAssign({}, existingValue, data);
