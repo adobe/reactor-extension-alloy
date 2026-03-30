@@ -142,7 +142,7 @@ describe("Update variable", () => {
     expect(variableStore).toEqual({ myVariable: { a: {} } });
   });
 
-  describe("PDCL-15426: sequential updates should merge analytics events", () => {
+  describe("sequential updates should merge analytics events", () => {
     it("merges events from sequential rules", () => {
       updateVariable({
         data: { __adobe: { analytics: { events: "event99" } } },
