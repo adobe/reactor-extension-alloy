@@ -121,7 +121,7 @@
     "eslint-plugin-unused-imports": "^4.3.0",
     "eslint-plugin-vitest": "^0.5.4",
     "globals": "^16.5.0",
-    "happy-dom": "^20.0.10",
+    "happy-dom": "^20.8.9",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
     "minimist": "^1.2.8",
