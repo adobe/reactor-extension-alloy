@@ -38,5 +38,6 @@ new Parcel({
 })
   .run()
   .then(() => {
+    // eslint-disable-next-line no-console
     console.log("Built component fixtures");
   });

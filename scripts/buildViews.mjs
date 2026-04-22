@@ -45,7 +45,7 @@ const bundler = new Parcel({
   ],
 });
 if (watch) {
-  new Promise((resolve) => {
+  await new Promise((resolve) => {
     const subscription = bundler.watch(() => {
       resolve();
     });
@@ -57,5 +57,5 @@ if (watch) {
     });
   });
 } else {
-  bundler.run();
+  await bundler.run();
 }

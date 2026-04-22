@@ -37,7 +37,7 @@ export default [
   ...compat.extends("airbnb", "plugin:testcafe/recommended"),
   ...compat.plugins("testcafe"),
   {
-    ignores: ["dist/**", "src/lib/runAlloy.js"],
+    ignores: ["dist/**", "src/lib/runAlloy.js", "test/functional/**"],
   },
   {
     files: ["**/*.{mjs,cjs,js,jsx}"],
@@ -67,6 +67,8 @@ export default [
       "react/require-default-props": "off",
       "react/no-array-index-key": "off",
       "react/forbid-prop-types": "off",
+      // With the new JSX transform (React 17+), React is injected automatically
+      "react/react-in-jsx-scope": "off",
       "jsx-a11y/label-has-associated-control": [
         2,
         {
@@ -120,10 +122,21 @@ export default [
 
       "import/no-named-as-default-member": "off",
       "import/no-named-as-default": "off",
-      "vitest/expect-expect": "error",
-      "vitest/no-disabled-tests": "warn",
-      "vitest/no-focused-tests": "error",
-      "vitest/no-identical-title": "error",
+      // eslint-plugin-import's default resolver (browserify `resolve`) does not
+      // implement package.json "exports". Imports that only exist via "exports" are
+      // reported as unresolved even though Node and our bundlers resolve them.
+      // @adobe/alloy is exports-only; vitest/config and @vitejs/plugin-react hit the
+      // same gap from vitest.config.js.
+      "import/no-unresolved": [
+        "error",
+        {
+          ignore: [
+            "^@adobe/alloy(/.*)?$",
+            "^vitest/config$",
+            "^@vitejs/plugin-react$",
+          ],
+        },
+      ],
     },
   },
   {
@@ -138,14 +151,25 @@ export default [
     },
   },
   {
-    files: [
-      "src/view/**/*.{js,jsx}",
-      "test/functional/**/*.{js,jsx}",
-      "test/integration/**/*.{js,jsx}",
-    ],
+    files: ["test/integration/**/*.{js,jsx}"],
     rules: {
       ...react.configs.recommended.rules,
       ...react.configs["jsx-runtime"].rules,
+      "vitest/expect-expect": "off",
+      "vitest/no-disabled-tests": "warn",
+      "vitest/no-focused-tests": "error",
+      "vitest/no-identical-title": "error",
+      "import/no-unresolved": [
+        2,
+        {
+          ignore: [
+            "^@adobe/alloy(/.*)?$",
+            "^vitest/config$",
+            "^@vitejs/plugin-react$",
+            "vitest/browser",
+          ],
+        },
+      ],
     },
   },
   {
