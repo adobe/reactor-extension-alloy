@@ -122,6 +122,21 @@ export default [
 
       "import/no-named-as-default-member": "off",
       "import/no-named-as-default": "off",
+      // eslint-plugin-import's default resolver (browserify `resolve`) does not
+      // implement package.json "exports". Imports that only exist via "exports" are
+      // reported as unresolved even though Node and our bundlers resolve them.
+      // @adobe/alloy is exports-only; vitest/config and @vitejs/plugin-react hit the
+      // same gap from vitest.config.js.
+      "import/no-unresolved": [
+        "error",
+        {
+          ignore: [
+            "^@adobe/alloy(/.*)?$",
+            "^vitest/config$",
+            "^@vitejs/plugin-react$",
+          ],
+        },
+      ],
     },
   },
   {
@@ -147,7 +162,12 @@ export default [
       "import/no-unresolved": [
         2,
         {
-          ignore: ["vitest/browser"],
+          ignore: [
+            "^@adobe/alloy(/.*)?$",
+            "^vitest/config$",
+            "^@vitejs/plugin-react$",
+            "vitest/browser",
+          ],
         },
       ],
     },

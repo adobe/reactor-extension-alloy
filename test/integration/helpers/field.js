@@ -249,7 +249,10 @@ const field = (locator) => ({
 });
 
 field.logTotalRetries = () => {
-  if (TOTAL_RETRIES[0] > 0) console.log(`Retries: ${TOTAL_RETRIES.join(", ")}`);
+  if (TOTAL_RETRIES[0] > 0) {
+    // eslint-disable-next-line no-console
+    console.log(`Retries: ${TOTAL_RETRIES.join(", ")}`);
+  }
 };
 
 export default field;
