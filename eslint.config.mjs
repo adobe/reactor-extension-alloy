@@ -105,7 +105,13 @@ export default [
       "no-underscore-dangle": [
         2,
         {
-          allow: ["_experience", "__dirname", "__filename", "__alloyMonitors"],
+          allow: [
+            "_experience",
+            "__dirname",
+            "__filename",
+            "__alloyMonitors",
+            "__adobe",
+          ],
         },
       ],
       "react/jsx-props-no-spreading": "off",
@@ -158,7 +164,7 @@ export default [
       "func-names": "off",
       "no-underscore-dangle": [
         "error",
-        { allow: ["__alloyNS", "__alloyMonitors"] },
+        { allow: ["__alloyNS", "__alloyMonitors", "__adobe"] },
       ],
     },
   },
