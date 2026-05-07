@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> This project has bee merged into the [adobe/alloy](https://github.com/adobe/alloy/tree/main/packages/reactor-extension) repository.
+
 # Adobe Experience Platform Web SDK Tags extension
 
 This repository is for the Adobe Experience Platform Web SDK [Tags](https://www.adobe.com/experience-platform/launch.html) extension.
@@ -7,4 +10,3 @@ Adobe Experience Platform Web SDK is a client-side JavaScript library that allow
 For documentation on how to use the extension, please see the [user documentation](https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html).
 
 For documentation on how to contribute to the extension, please see the [developer documentation](https://github.com/adobe/reactor-extension-alloy/wiki).
-
